@@ -1,6 +1,6 @@
 # Project-DACTYLOS
 
-# Teclados customizáveis
+## Descrição
 A TECMEC é uma empresa de e-commerce especializada na fabricação e venda de teclados mecânicos customizáveis.
 Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plataforma digital intuitiva, onde o cliente pode visualizar em tempo real as modificações feitas em seu teclado antes da compra.
 
