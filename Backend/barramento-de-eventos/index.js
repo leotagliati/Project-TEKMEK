@@ -16,5 +16,9 @@ app.post('/event', async (req, res) => {
 
 const port = 5300
 app.listen(port, () => {
+    console.clear();
+    console.log('----------------------------------------------------')
     console.log(`'Barramento de eventos' at port ${port}`)
+    console.log('----------------------------------------------------')
+
 })
