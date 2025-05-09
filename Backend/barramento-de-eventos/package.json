@@ -1,5 +1,5 @@
 {
-  "name": "build-keyboard-service",
+  "name": "barramento-de-eventos",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "axios": "^1.9.0",
-    "build-keyboard-service": "file:",
+    "barramento-de-eventos": "file:",
     "express": "^5.1.0"
-  },
-  "description": ""
+  }
 }
