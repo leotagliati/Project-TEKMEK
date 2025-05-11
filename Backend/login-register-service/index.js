@@ -12,8 +12,18 @@ app.get('/login', (req, res) => {
 })
 
 
-app.post('/login', (req, res) => {
+app.post('/register', (req, res) => {
     const { username, password } = req.body
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and/or password invalid' })
+    }
+    const usernameExists = Object.values(loginDB).some(user => user.username === username);
+
+    if (usernameExists) {
+        return res.status(409).json({ error: 'Esse nome de usuário já está em uso.' })
+    }
+
     const login = {
         id: id,
         username: username,
@@ -22,7 +32,7 @@ app.post('/login', (req, res) => {
     loginDB[id] = login
     id++
     axios.post('http://localhost:5300/event', {
-        type: 'LoginCreated',
+        type: 'UserRegistered',
         data: {
             id: login.id,
             username: login.username,
@@ -33,9 +43,30 @@ app.post('/login', (req, res) => {
             console.log('Event sent sucessfully')
         })
         .catch(err => {
-            console.log('Error sending event:', err.message)
+            console.log('Error sending event: ', err.message)
         })
     res.status(201).json(login)
+
+})
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and/or password invalid' })
+    }
+
+    const user = Object.values(loginDB).find(user => user.username === username);
+
+    if (!user) {
+        return res.status(404).json({ error: 'Username not found' });
+    }
+
+    if (user.password !== password) {
+        return res.status(401).json({ error: 'Wrong pass' }); // 401 Unauthorized
+    }
+
+    res.status(200).json({ message: 'Success logging', user });
 
 })
 

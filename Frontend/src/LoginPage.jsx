@@ -11,15 +11,36 @@ export const LoginPage = () => {
 
     const handleSignUp = async () => {
         try {
-            const response = await axios.post('http://localhost:5315/login', {
+            const response = await axios.post('http://localhost:5315/register', {
                 username,
                 password
             });
             console.log('User registered:', response.data);
         } catch (error) {
             console.error('Register error:', error.message);
+            if (error.response && error.response.status === 400) {
+                alert('Por favor, preencha os campos corretamente.')
+            } else if (error.response.status == 409) {
+                alert('Login ja existe!.')
+            }
         }
-    };
+    }
+    const handleSignIn = async () => {
+        try {
+            const response = await axios.post('http://localhost:5315/login', {
+                username,
+                password
+            });
+            console.log('User logged:', response.data);
+        } catch (error) {
+            console.error('Logging error:', error.message);
+            if (error.response && error.response.status === 400) {
+                alert('Por favor, preencha os campos corretamente.')
+            } else {
+                alert('Erro ao loggar. Tente novamente mais tarde.')
+            }
+        }
+    }
 
     return (
         <div className="container-fluid vh-100">
@@ -44,7 +65,7 @@ export const LoginPage = () => {
                         <Button label='Esqueci a senha' text></Button>
                     </div>
 
-                    <Button label="Sign In" rounded />
+                    <Button label="Sign In" rounded onClick={handleSignIn} />
                 </div>
             </div>
         </div>
