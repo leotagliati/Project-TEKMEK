@@ -1,7 +1,9 @@
 const express = require('express')
 const axios = require('axios')
+const cors = require('cors')
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const loginDB = {}
 let id = 1
@@ -11,7 +13,6 @@ app.get('/login', (req, res) => {
 
 
 app.post('/login', (req, res) => {
-    // 1. Get keyboard props
     const { username, password } = req.body
     const login = {
         id: id,
@@ -20,7 +21,7 @@ app.post('/login', (req, res) => {
     }
     loginDB[id] = login
     id++
-    axios.post('http://localhost:5050/event', {
+    axios.post('http://localhost:5300/event', {
         type: 'LoginCreated',
         data: {
             id: login.id,
