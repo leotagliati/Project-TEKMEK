@@ -36,7 +36,7 @@ app.post('/register', (req, res) => {
         data: {
             id: login.id,
             username: login.username,
-            password: login.password
+            // password: login.password // estou expondo dados sensiveis no barramento?
         }
     })
         .then(resAxios => {
@@ -66,8 +66,22 @@ app.post('/login', (req, res) => {
         return res.status(401).json({ error: 'Wrong pass' }); // 401 Unauthorized
     }
 
-    res.status(200).json({ message: 'Success logging', user });
 
+    axios.post('http://localhost:5300/event', {
+        type: 'UserLogged',
+        data: {
+            username: username
+            // password: login.password // estou expondo dados sensiveis no barramento?
+        }
+    })
+        .then(resAxios => {
+            console.log('Event sent sucessfully')
+        })
+        .catch(err => {
+            console.log('Error sending event: ', err.message)
+        })
+
+    res.status(200).json({ message: 'Success logging', user })
 })
 
 const port = 5315
