@@ -27,7 +27,7 @@ app.post('/event', async (req, res) => {
             await Promise.all(promises)
             console.log(`Event ${eventType} sent successfully`)
         } catch (err) {
-            console.log('Error sending event: to all hearing MS:', err.message)
+            console.log('Error sending event to all hearing MS:', err.message)
         }
     }
     else {
