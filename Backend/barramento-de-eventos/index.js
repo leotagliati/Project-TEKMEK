@@ -8,8 +8,8 @@ const services = {
 }
 
 const eventRoutes = {
-    UserRegistered: [''],
-    UserLogged: [''],
+    UserRegistered: [{ service: '', path: '' }], // tem que trocar o service por um existente que precise ouvir
+    UserLogged: [{ service: '', path: '' }],
 
 }
 
@@ -26,7 +26,7 @@ app.post('/event', async (req, res) => {
             })
             await Promise.all(promises)
             console.log(`Evento ${eventType} enviado com sucesso`)
-        } catch (error) {
+        } catch (err) {
             console.log('Erro ao enviar evento para o(s) MS:', err.message)
         }
     }

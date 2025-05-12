@@ -15,6 +15,7 @@
     "axios": "^1.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "login-register-service": "file:"
+    "login-register-service": "file:",
+    "mysql2": "^3.14.1"
   }
 }

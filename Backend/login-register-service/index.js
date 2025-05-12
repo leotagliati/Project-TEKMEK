@@ -1,88 +1,128 @@
 const express = require('express')
 const axios = require('axios')
 const cors = require('cors')
+const mysql = require('mysql2')
+
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-const loginDB = {}
-let id = 1
-app.get('/login', (req, res) => {
-    res.json(loginDB)
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'imtdb',
 })
+
+connection.connect(err => {
+    if (err) {
+        return console.error('Erro ao conectar:', err.message)
+    }
+    console.log('Conectado ao MySQL com sucesso')
+
+    // TESTE: SELECT simples
+    connection.query('SELECT * FROM login_db.login', (err, results) => {
+        if (err) {
+            return console.error('Erro ao fazer SELECT:', err.message)
+        }
+        console.log('Resultado do SELECT:', results)
+    })
+})
+const registerUser = (username, password) => {
+    return new Promise((resolve, reject) => {
+        if (!username || !password) {
+            return reject({ code: 400, error: 'Username and/or password invalid' });
+        }
+
+        connection.query(
+            'SELECT username FROM login_db.login WHERE username = ?',
+            [username],
+            (err, results) => {
+                if (err) return reject({ code: 500, error: 'Internal server error' })
+
+                if (results.length !== 0) {
+                    return reject({ code: 409, error: 'Username already in use' })
+                    // deveria so comentar que esta invalido por questoes de seguranca?
+                }
+
+                connection.query(
+                    'INSERT INTO login_db.login (username, password) VALUES (?, ?)',
+                    [username, password],
+                    (err, results) => {
+                        if (err) return reject({ code: 500, error: 'Erro ao registrar usuário' })
+
+                        resolve({ username })
+                    }
+                )
+            }
+        )
+    })
+}
+const validateLogin = (username, password) => {
+    return new Promise((resolve, reject) => {
+        if (!username || !password) {
+            return reject({ code: 400, error: 'Username and/or password invalid' })
+        }
+
+        connection.query('SELECT * FROM login_db.login WHERE username = ?', username, (err, results) => {
+            if (err) return reject({ code: 500, error: 'Internal server error' })
+
+            if (results.length === 0) {
+                return reject({ code: 401, error: 'Username and/or password invalid' });
+            }
+            const user = results[0]
+            if (user.password !== password) {
+                return reject({ code: 401, error: 'Username and/or password invalid' })
+            }
+            else {
+                resolve({ username })
+            }
+        })
+
+    })
+}
 
 
 app.post('/register', (req, res) => {
-    const { username, password } = req.body
+    const { username, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Username and/or password invalid' })
-    }
-    const usernameExists = Object.values(loginDB).some(user => user.username === username);
+    registerUser(username, password)
+        .then(user => {
+            axios.post('http://localhost:5300/event', {
+                type: 'UserRegistered',
+                data: { username: user.username }
+            }).then(() => {
+                console.log('Event sent successfully');
+            }).catch(err => {
+                console.log('Error sending event:', err.message);
+            });
 
-    if (usernameExists) {
-        return res.status(409).json({ error: 'Esse nome de usuário já está em uso.' })
-    }
-
-    const login = {
-        id: id,
-        username: username,
-        password: password
-    }
-    loginDB[id] = login
-    id++
-    axios.post('http://localhost:5300/event', {
-        type: 'UserRegistered',
-        data: {
-            id: login.id,
-            username: login.username,
-            // password: login.password // estou expondo dados sensiveis no barramento?
-        }
-    })
-        .then(resAxios => {
-            console.log('Event sent sucessfully')
+            res.status(201).json(user);
         })
         .catch(err => {
-            console.log('Error sending event: ', err.message)
-        })
-    res.status(201).json(login)
-
-})
+            res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
+        });
+});
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body
 
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Username and/or password invalid' })
-    }
+    validateLogin(username, password)
+        .then(user => {
+            axios.post('http://localhost:5300/event', {
+                type: 'UserLogged',
+                data: { username: user.username }
+            }).then(() => {
+                console.log('Event sent successfully');
+            }).catch(err => {
+                console.log('Error sending event:', err.message);
+            });
 
-    const user = Object.values(loginDB).find(user => user.username === username);
-
-    if (!user) {
-        return res.status(404).json({ error: 'Username not found' });
-    }
-
-    if (user.password !== password) {
-        return res.status(401).json({ error: 'Wrong pass' }); // 401 Unauthorized
-    }
-
-
-    axios.post('http://localhost:5300/event', {
-        type: 'UserLogged',
-        data: {
-            username: username
-            // password: login.password // estou expondo dados sensiveis no barramento?
-        }
-    })
-        .then(resAxios => {
-            console.log('Event sent sucessfully')
+            res.status(201).json(user);
         })
         .catch(err => {
-            console.log('Error sending event: ', err.message)
-        })
-
-    res.status(200).json({ message: 'Success logging', user })
-})
+            res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
+        });
+});
 
 const port = 5315
 app.listen(port, () => {

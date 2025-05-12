@@ -20,8 +20,12 @@ export const LoginPage = () => {
             console.error('Register error:', error.message);
             if (error.response && error.response.status === 400) {
                 alert('Por favor, preencha os campos corretamente.')
-            } else if (error.response.status == 409) {
-                alert('Login ja existe!.')
+            } else if (error.response.status == 401) {
+                alert('Login e/ou senha inválidos.')
+            }
+            else
+            {
+                alert('Erro ao registrar.')
             }
         }
     }
@@ -36,8 +40,11 @@ export const LoginPage = () => {
             console.error('Logging error:', error.message);
             if (error.response && error.response.status === 400) {
                 alert('Por favor, preencha os campos corretamente.')
-            } else {
-                alert('Erro ao loggar. Tente novamente mais tarde.')
+            } else if (error.response.status == 401) {
+                alert('Login e/ou senha inválidos.')
+            }
+            else {
+                alert('Erro ao loggar.')
             }
         }
     }
