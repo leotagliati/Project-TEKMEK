@@ -25,23 +25,23 @@ app.post('/event', async (req, res) => {
                 return axios.post(url, event)
             })
             await Promise.all(promises)
-            console.log(`Evento ${eventType} enviado com sucesso`)
+            console.log(`Event ${eventType} sent successfully`)
         } catch (err) {
-            console.log('Erro ao enviar evento para o(s) MS:', err.message)
+            console.log('Error sending event: to all hearing MS:', err.message)
         }
     }
     else {
-        console.log(`Nenhum servico registrado para o evento ${eventType}`)
+        console.log(`No MS hearing ${eventType} event`)
     }
 
-    res.status(200).send({ status: 'Evento processado com sucesso' })
+    res.status(200).send({ status: 'Event processed successfully' })
 })
 
 const port = 5300
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------')
-    console.log(`'Barramento de eventos' at port ${port}`)
+    console.log(`'Event Bus' running at port ${port}`)
     console.log('----------------------------------------------------')
 
 })
