@@ -11,12 +11,12 @@ export function ProductPage({ product }) {
           />
           {/* Linha de imagens em outras posicoes*/}
           <div className="border border-2 border-black p-2">
-            linha de fotos
+            ----LINHA DE ANGULOS----
           </div>
         </div>
 
 
-        {/* Coluna de informações */}
+        {/* Coluna de informaces */}
         <div className="col ms-3 border border-2 border-black p-3">
           <h1>{product.name}</h1>
           <p>{product.description}</p>

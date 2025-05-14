@@ -13,12 +13,12 @@ const mockProduct = {
   name: 'Teclado Mecânico RGB',
   description: 'Teclado mecânico com switches azuis, iluminação RGB e layout ABNT2.',
   price: 349.90,
-  image: 'https://via.placeholder.com/300x150?text=Teclado+RGB'
+  image: 'fotodotecladoparceiro'
 }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* <LoginPage/> */}
-    {/* <ProductPage product={mockProduct} /> */}
+    <ProductPage product={mockProduct} />
   </StrictMode>,
 )
