@@ -13,7 +13,12 @@ const mockProduct = {
   name: 'Teclado Mecânico RGB',
   description: 'Teclado mecânico com switches azuis, iluminação RGB e layout ABNT2.',
   price: 349.90,
-  image: 'fotodotecladoparceiro'
+  image: 'fotodotecladoparceiro',
+  misc: {
+    color: ['Carbon-Shell', 'White-Shell'],
+    type: ['fully-assembled', 'barebone'],
+    switches: ['Gateron Jupiter Banana', 'Gateron Jupiter Brown']
+  }
 }
 
 createRoot(document.getElementById('root')).render(
