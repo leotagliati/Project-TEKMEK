@@ -1,70 +1,83 @@
 export function ProductPage({ product }) {
   return (
     <>
-      <div className="d-flex border border-2 border-black p-3">
-        {/* Coluna da imagem */}
-        <div className="d-flex row col-4 border border-2 border-black p-2 justify-content-center">
-          <img
-            src={product.images[0]}
-            alt="productphoto"
-            className="img-fluid border border-2 border-black p-2"
-          />
-          {/* Linha de imagens em outras posicoes*/}
-          <div className="border border-2 border-black p-2">
-            <div
-              className="d-flex flex-row flex-nowrap gap-3 justify-content-start p-2"
-            >
-              {Object.entries(product.images).map(([key, url]) => (
-                <div key={key} >
-                  <img
-                    src={url}
-                    alt={`Imagem do ângulo ${key}`}
+      <div className="container my-4">
+        <div className="d-flex flex-column flex-lg-row border border-2 border-black p-3 gap-4">
+          {/* Coluna das imagens */}
+          <div className="col-12 col-md-6 border border-2 border-black p-2 d-flex flex-column">
+            {/* Imagem principal */}
+            <div className="d-flex justify-content-center flex-grow-1  mb-3" style={{ minHeight: '300px' }}>
+              <img
+                src={product.images[0]}
+                alt="productphoto"
+                className="img-fluid w-100 h-100 border border-2 border-black p-2"
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+
+            {/* Linha de imagens menores */}
+            <div className="border border-2 border-black p-2 overflow-auto">
+              <div className="d-flex flex-row flex-nowrap gap-3">
+                {Object.entries(product.images).map(([key, url]) => (
+                  <div
+                    key={key}
                     style={{
+                      aspectRatio: '1 / 1',
                       width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      border: '2px solid black',
+                      maxWidth: '120px',
+                      minWidth: '80px',
+                      flex: '0 0 auto',
                     }}
-                  />
+                  >
+                    <img
+                      className="img-fluid border border-2 border-black rounded"
+                      // src={url}
+                      src="https://placehold.co/80x80"
+                      alt={`Imagem do ângulo ${key}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Coluna de informações */}
+          <div className="col-12 col-md-6 border border-2 border-black p-3">
+            <h1>{product.name}</h1>
+            <p>{product.description}</p>
+            <h4 className="text-success">R$ {product.price}</h4>
+
+            {/* Escolha dos componentes */}
+            <div>
+              {Object.entries(product.misc).map(([key, options]) => (
+                <div key={key} className="mb-3">
+                  <strong>{key.toUpperCase()}</strong>
+                  <div className="d-flex gap-3 mt-2 flex-wrap">
+                    {options.map((option) => (
+                      <button key={option} className="btn btn-outline-secondary">
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
+
+            <button className="btn btn-primary mt-3">Adicionar ao carrinho</button>
           </div>
         </div>
 
-
-        {/* Coluna de informaces */}
-        <div className="col ms-3 border border-2 border-black p-3">
-          <h1>{product.name}</h1>
-          <p>{product.description}</p>
-          <h4 className="text-success">R$ {product.price}</h4>
-
-          {/* Escolha dos componentes*/}
-          <div>
-            {Object.entries(product.misc).map(([key, options]) => (
-              <div key={key} style={{ marginBottom: '1rem' }}>
-                <strong>{key.toUpperCase()}</strong>
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                  {options.map((option) => (
-                    <button key={option} style={{ padding: '0.5rem 1rem' }}>
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button className="btn btn-primary mt-3">Adicionar ao carrinho</button>
+        {/* Avaliações */}
+        <div className="mt-4">
+          <h4 className="mb-3">Avaliações</h4>
+          {/* Aqui entra seu código de reviews */}
         </div>
-      </div>
-
-      {/* Coluna de Avaliacao */}
-      <div className="mt-4">
-        <h4 className="mb-3">Avaliações</h4>
-        
       </div>
     </>
-  )
+  );
 }
