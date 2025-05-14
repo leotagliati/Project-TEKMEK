@@ -5,13 +5,31 @@ export function ProductPage({ product }) {
         {/* Coluna da imagem */}
         <div className="d-flex row col-4 border border-2 border-black p-2 justify-content-center">
           <img
-            src={product.image}
+            src={product.images[0]}
             alt="productphoto"
             className="img-fluid border border-2 border-black p-2"
           />
           {/* Linha de imagens em outras posicoes*/}
           <div className="border border-2 border-black p-2">
-            ----LINHA DE ANGULOS----
+            <div
+              className="d-flex flex-row flex-nowrap gap-3 justify-content-start p-2"
+            >
+              {Object.entries(product.images).map(([key, url]) => (
+                <div key={key} >
+                  <img
+                    src={url}
+                    alt={`Imagem do ângulo ${key}`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      border: '2px solid black',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -43,9 +61,10 @@ export function ProductPage({ product }) {
       </div>
 
       {/* Coluna de Avaliacao */}
-      <div className="col  border border-2 border-black p-3">
-        -----AVALIACOES-----
+      <div className="mt-4">
+        <h4 className="mb-3">Avaliações</h4>
+        
       </div>
     </>
-  );
+  )
 }

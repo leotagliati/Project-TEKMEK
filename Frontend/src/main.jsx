@@ -13,7 +13,12 @@ const mockProduct = {
   name: 'Teclado Mecânico RGB',
   description: 'Teclado mecânico com switches azuis, iluminação RGB e layout ABNT2.',
   price: 349.90,
-  image: 'fotodotecladoparceiro',
+  images: [
+    'url-do-produto-frontal.jpg',
+    'url-do-produto-lateral.jpg',
+    'url-do-produto-traseira.jpg',
+    'url-do-produto-iluminado.jpg'
+  ],
   misc: {
     color: ['Carbon-Shell', 'White-Shell'],
     type: ['fully-assembled', 'barebone'],
