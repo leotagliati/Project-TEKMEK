@@ -49,7 +49,6 @@ const registerUser = (username, password) => {
         try {
           // Aguarda o hash ser gerado
           const hashedPassword = await bcrypt.hash(password, saltRounds)
-          console.log(hashedPassword)
           connection.query(
             'INSERT INTO login_db.login (username, password) VALUES (?, ?)',
             [username, hashedPassword],
@@ -63,8 +62,8 @@ const registerUser = (username, password) => {
           reject({ code: 500, error: 'Erro interno do servidor.' })
         }
       }
-    );
-  });
+    )
+  })
 }
 const validateLogin = (username, password) => {
   return new Promise((resolve, reject) => {
