@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import ProductCard from './components/ProductCard'
-import client from './utils/searchClient'
-export const ProductSearchPage = () => {
+import client from './utils/searchClient.js'
+export const ProductSearchPage = ({ termo }) => {
     const [produtos, setProdutos] = useState([])
 
     useEffect(() => {
-        client.get('/products')
+        client.get('/search', {
+            params: {
+                query: termo
+            }
+        })
             .then((response) => {
+                // console.log('Resultados encontrados:', response.data)
                 setProdutos(response.data)
             })
             .catch((error) => {
@@ -29,10 +34,10 @@ export const ProductSearchPage = () => {
                         {produtos.map((product) => (
                             <ProductCard
                                 key={product.id}
-                                title={product.name}
-                                description={product.description}
+                                title={product.name} // corrigido
+                                description={product.description} // corrigido
                                 price={product.price}
-                                image={product.imageUrl}
+                                image={product.image_url} // corrigido
                                 link={`/products/${product.id}`}
                             />
                         ))}
