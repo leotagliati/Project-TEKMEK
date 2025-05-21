@@ -31,7 +31,7 @@ function App() {
   return (
     <>
       {/* <ProductPage product={mockProduct} /> */}
-      <ProductSearchPage termo = 'leo' />
+      <ProductSearchPage termo = '' />
     </>
   )
 }

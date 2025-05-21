@@ -36,18 +36,27 @@ app.get('/search', (req, res) => {
     // console.log("Termo recebido:", searchTerm);
 
     if (!searchTerm) {
-        return res.status(400).json({ error: 'Search term is required' })
+        const query = `SELECT * FROM products_db.products_tb`
+        connection.query(query, (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal server error' })
+            }
+            res.json(results)
+        })
+    }
+    else {
+        
+        const query = `SELECT * FROM products_db.products_tb WHERE name LIKE ?`
+        const values = [`%${searchTerm}%`]
+    
+        connection.query(query, values, (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal server error' })
+            }
+            res.json(results)
+        })
     }
 
-    const query = `SELECT * FROM products_db.products_tb WHERE name LIKE ?`
-    const values = [`%${searchTerm}%`]
-
-    connection.query(query, values, (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Internal server error' })
-        }
-        res.json(results)
-    })
 });
 
 const port = 5240
