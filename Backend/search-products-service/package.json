@@ -12,6 +12,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
+    "mysql2": "^3.14.1",
     "search-products-service": "file:"
   }
 }
