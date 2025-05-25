@@ -25,6 +25,19 @@ Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plata
 - Linguagens de programação II
 - Arquitetura de Sistemas Computacionais
 
+## Como utilizar
+Para testar e analisar o funcionamento do sistema, siga os passos abaixo:
+
+Certifique-se de estar na branch correta para o teste da entrega escolhido:
+O professor deve garantir que está analisando a release referente a tarefa.
+
+Instalação de dependências:
+Execute o script install.sh localizado na raiz do projeto. Ele instalará automaticamente todas as dependências necessárias.
+  bash ./install.sh
+  
+Execução do projeto:
+Após a instalação, siga as instruções adicionais fornecidas na documentação para rodar o sistema localmente.
+
 ## Contribuidores:
 [André R.A Abreu](https://github.com/andre-rabreu)<br>
 [Arthur Jin Woo Lee](https://github.com/Tutzjwlee)<br>
