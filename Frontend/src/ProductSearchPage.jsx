@@ -43,7 +43,6 @@ export const ProductSearchPage = ({ termo }) => {
                 </div>
             </div>
 
-            {/* Filtros + Resultados */}
             <div className='d-flex'>
                 {/* Sidebar de Filtros */}
                 <ProductFilters
@@ -61,7 +60,6 @@ export const ProductSearchPage = ({ termo }) => {
                                 description={product.description}
                                 price={product.price}
                                 image={product.image_url}
-                                link={`/products/${product.id}`}
                             />
                         ))}
                     </div>

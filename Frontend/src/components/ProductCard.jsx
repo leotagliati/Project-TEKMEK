@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from 'primereact/button'
 
 export default function ProductCard({ title, description, price, imageUrl }) {
     return (
@@ -9,7 +10,7 @@ export default function ProductCard({ title, description, price, imageUrl }) {
                     <h5 className='card-title'>{title}</h5>
                     <p className='card-text'>{description}</p>
                     <p className='card-text'>R$ {price}</p>
-                    <a href='/products/1' className='btn btn-primary'>Ver detalhes</a>
+                    <Button label='Add to Cart' className='p-button-outlined' />
                 </div>
             </div>
         </div>
