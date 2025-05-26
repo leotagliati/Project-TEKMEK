@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ProductCard from './components/ProductCard'
 import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
-import { Checkbox } from "primereact/checkbox"
-import {
-    layoutSizes,
-    connectivities,
-    keycapsTypes,
-    productTypes
-} from './utils/searchFilters.js'
+import ProductFilters from './components/ProductFilters.jsx'
 
 export const ProductSearchPage = ({ termo }) => {
     const [produtos, setProdutos] = useState([])
@@ -52,28 +46,10 @@ export const ProductSearchPage = ({ termo }) => {
             {/* Filtros + Resultados */}
             <div className='d-flex'>
                 {/* Sidebar de Filtros */}
-                <aside className='bg-dark-subtle col-3 p-3' style={{ height: '100vh' }}>
-                    <h3>Filter Results</h3>
-
-                    {/* Filtro: Layout Sizes */}
-                    <div className="mb-4">
-                        <h5>Layout Size</h5>
-                        <div className="d-flex row row-gap-2 px-2">
-                            {layoutSizes.map((size) => (
-                            <div key={size} className="">
-                                <Checkbox
-                                    inputId={size}
-                                    onChange={() => handleLayoutChange(size)}
-                                    checked={selectedLayoutSizes.includes(size)}
-                                />
-                                <label htmlFor={size} className="form-check-label ms-2">
-                                    {size}
-                                </label>
-                            </div>
-                        ))}</div>
-
-                    </div>
-                </aside>
+                <ProductFilters
+                    selectedLayoutSizes={selectedLayoutSizes}
+                    onLayoutChange={handleLayoutChange}
+                />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
