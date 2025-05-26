@@ -1,4 +1,4 @@
-// ProductFilters.jsx
+import React, { useEffect, useState } from 'react'
 import { Accordion, AccordionTab } from 'primereact/accordion'
 import { Checkbox } from 'primereact/checkbox'
 import {
@@ -8,75 +8,100 @@ import {
     productTypes
 } from '../utils/searchFilters'
 
-const ProductFilters = ({ selectedLayoutSizes, onLayoutChange }) => {
+const ProductFilters = ({ onChange }) => {
+    const [selectedLayoutSizes, setSelectedLayoutSizes] = useState([])
+    const [selectedConnectivities, setSelectedConnectivities] = useState([])
+    const [selectedKeycaps, setSelectedKeycaps] = useState([])
+    const [selectedProductTypes, setSelectedProductTypes] = useState([])
+
+    const toggleSelection = (item, selectedList, setSelectedList) => {
+        const updated = selectedList.includes(item)
+            ? selectedList.filter((i) => i !== item)
+            : [...selectedList, item]
+
+        setSelectedList(updated)
+    }
+
+    useEffect(() => {
+        onChange({
+            layoutSizes: selectedLayoutSizes,
+            connectivities: selectedConnectivities,
+            keycapsTypes: selectedKeycaps,
+            productTypes: selectedProductTypes
+        })
+    }, [
+        selectedLayoutSizes.join(','),
+        selectedConnectivities.join(','),
+        selectedKeycaps.join(','),
+        selectedProductTypes.join(',')
+    ])
+
     return (
-        <aside className='bg-dark-subtle col-3 p-3' style={{ height: '100vh' }}>
+        <>
             <h3>Filter Results</h3>
 
             <Accordion className="mb-4">
                 <AccordionTab header="Layout Size">
-                    <div className="d-flex row row-gap-2 px-2">
-                        {layoutSizes.map((size) => (
-                            <div key={size}>
-                                <Checkbox
-                                    inputId={size}
-                                    onChange={() => onLayoutChange(size)}
-                                    checked={selectedLayoutSizes.includes(size)}
-                                />
-                                <label htmlFor={size} className="form-check-label ms-2">
-                                    {size}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
+                    {layoutSizes.map((size) => (
+                        <div key={size} className="mb-2 px-2">
+                            <Checkbox
+                                inputId={size}
+                                checked={selectedLayoutSizes.includes(size)}
+                                onChange={() => toggleSelection(size, selectedLayoutSizes, setSelectedLayoutSizes)}
+                            />
+                            <label htmlFor={size} className="form-check-label ms-2">
+                                {size}
+                            </label>
+                        </div>
+                    ))}
                 </AccordionTab>
-            </Accordion>
 
-            <Accordion className="mb-4">
                 <AccordionTab header="Connectivities">
-                    <div className="d-flex row row-gap-2 px-2">
-                        {connectivities.map((c) => (
-                            <div key={c}>
-                                <Checkbox inputId={c} />
-                                <label htmlFor={c} className="form-check-label ms-2">
-                                    {c}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
+                    {connectivities.map((c) => (
+                        <div key={c} className="mb-2 px-2">
+                            <Checkbox
+                                inputId={c}
+                                checked={selectedConnectivities.includes(c)}
+                                onChange={() => toggleSelection(c, selectedConnectivities, setSelectedConnectivities)}
+                            />
+                            <label htmlFor={c} className="form-check-label ms-2">
+                                {c}
+                            </label>
+                        </div>
+                    ))}
                 </AccordionTab>
-            </Accordion>
 
-            <Accordion className="mb-4">
                 <AccordionTab header="Keycaps Types">
-                    <div className="d-flex row row-gap-2 px-2">
-                        {keycapsTypes.map((type) => (
-                            <div key={type}>
-                                <Checkbox inputId={type} />
-                                <label htmlFor={type} className="form-check-label ms-2">
-                                    {type}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
+                    {keycapsTypes.map((k) => (
+                        <div key={k} className="mb-2 px-2">
+                            <Checkbox
+                                inputId={k}
+                                checked={selectedKeycaps.includes(k)}
+                                onChange={() => toggleSelection(k, selectedKeycaps, setSelectedKeycaps)}
+                            />
+                            <label htmlFor={k} className="form-check-label ms-2">
+                                {k}
+                            </label>
+                        </div>
+                    ))}
                 </AccordionTab>
-            </Accordion>
 
-            <Accordion className="mb-4">
                 <AccordionTab header="Product Types">
-                    <div className="d-flex row row-gap-2 px-2">
-                        {productTypes.map((type) => (
-                            <div key={type}>
-                                <Checkbox inputId={type} />
-                                <label htmlFor={type} className="form-check-label ms-2">
-                                    {type}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
+                    {productTypes.map((p) => (
+                        <div key={p} className="mb-2 px-2">
+                            <Checkbox
+                                inputId={p}
+                                checked={selectedProductTypes.includes(p)}
+                                onChange={() => toggleSelection(p, selectedProductTypes, setSelectedProductTypes)}
+                            />
+                            <label htmlFor={p} className="form-check-label ms-2">
+                                {p}
+                            </label>
+                        </div>
+                    ))}
                 </AccordionTab>
             </Accordion>
-        </aside>
+        </>
     )
 }
 

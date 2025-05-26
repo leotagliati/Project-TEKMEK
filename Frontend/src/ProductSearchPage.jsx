@@ -6,7 +6,8 @@ import ProductFilters from './components/ProductFilters.jsx'
 
 export const ProductSearchPage = ({ termo }) => {
     const [produtos, setProdutos] = useState([])
-    const [selectedLayoutSizes, setSelectedLayoutSizes] = useState([])
+    const [filters, setFilters] = useState({})
+
 
     useEffect(() => {
         client.get('/search', {
@@ -20,14 +21,10 @@ export const ProductSearchPage = ({ termo }) => {
             .catch((error) => {
                 console.error('Erro ao buscar produtos:', error)
             })
-    }, [termo])
+    }, [termo, filters])
 
-    const handleLayoutChange = (size) => {
-        setSelectedLayoutSizes((prev) =>
-            prev.includes(size)
-                ? prev.filter((s) => s !== size) // desmarca
-                : [...prev, size] // marca
-        )
+    const handleFiltersChange = (newFilters) => {
+        setFilters(newFilters)
     }
 
     return (
@@ -45,10 +42,7 @@ export const ProductSearchPage = ({ termo }) => {
 
             <div className='d-flex'>
                 {/* Sidebar de Filtros */}
-                <ProductFilters
-                    selectedLayoutSizes={selectedLayoutSizes}
-                    onLayoutChange={handleLayoutChange}
-                />
+                <ProductFilters onChange={handleFiltersChange} />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
