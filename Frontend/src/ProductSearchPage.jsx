@@ -4,14 +4,14 @@ import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
 
-export const ProductSearchPage = ({ termo }) => {
+export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
 
 
     useEffect(() => {
         client.post('/search',
-            { query: termo, filters: filters }
+            { filters }
         )
             .then((response) => {
                 setProdutos(response.data)
@@ -19,7 +19,7 @@ export const ProductSearchPage = ({ termo }) => {
             .catch((error) => {
                 console.error('Erro ao buscar produtos:', error)
             })
-    }, [termo, filters])
+    }, [filters])
 
     const handleFiltersChange = (newFilters) => {
         setFilters(newFilters)

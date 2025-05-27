@@ -32,62 +32,38 @@ connection.connect(err => {
 
 
 app.post('/search', (req, res) => {
-    const { query, filters } = req.body;
+    const { filters } = req.body;
 
     const layoutSizes = filters.layoutSizes || [];
     const connectivities = filters.connectivities || [];
     const productTypes = filters.productTypes || [];
-
-    let sql = `SELECT * FROM products_db.products_tb WHERE 1 = 1`;
-    const values = [];
-
-    // Filtro por nome
-    if (query && query.trim() !== '') {
-        sql += ` AND name LIKE ?`;
-        values.push(`%${query}%`);
-    }
-
-    // Filtro por layoutSizes
-    if (layoutSizes.length > 0) {
-        const placeholders = layoutSizes.map(() => '?').join(', ');
-        sql += ` AND layout_size IN (${placeholders})`;
-        values.push(...layoutSizes);
-    }
-
-    // Filtro por connectivities
-    if (connectivities.length > 0) {
-        const placeholders = connectivities.map(() => '?').join(', ');
-        sql += ` AND connectivity IN (${placeholders})`;
-        values.push(...connectivities);
-    }
-
-    // Filtro por productTypes
-    if (productTypes.length > 0) {
-        const placeholders = productTypes.map(() => '?').join(', ');
-        sql += ` AND product_type IN (${placeholders})`;
-        values.push(...productTypes);
-    }
-    // Filtro por keycapsTypes
     const keycapsTypes = filters.keycapsTypes || [];
-    if (keycapsTypes.length > 0) {
-        const placeholders = keycapsTypes.map(() => '?').join(', ');
-        sql += ` AND keycaps_type IN (${placeholders})`;
-        values.push(...keycapsTypes);
-    }
 
-    // console.log("Query SQL final:", sql);
-    // console.log("Valores:", values);
-
-    connection.query(sql, values, (err, results) => {
+    connection.query('SELECT * FROM products_db.products_tb', (err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'Internal server error' })
+            return res.status(500).json({ error: 'Internal server error' });
         }
-        // console.log("Produtos encontrados:");
-        // results.forEach((produto, index) => {
-        //     console.log(`${index + 1}. ${produto.name} - R$${produto.price}`);
-        // });
-        res.json(results)
-    })
+
+        let filteredResults = results;
+
+        if (layoutSizes.length > 0) {
+            filteredResults = filteredResults.filter(p => layoutSizes.includes(p.layout_size));
+        }
+
+        if (connectivities.length > 0) {
+            filteredResults = filteredResults.filter(p => connectivities.includes(p.connectivity));
+        }
+
+        if (productTypes.length > 0) {
+            filteredResults = filteredResults.filter(p => productTypes.includes(p.product_type));
+        }
+
+        if (keycapsTypes.length > 0) {
+            filteredResults = filteredResults.filter(p => keycapsTypes.includes(p.keycaps_type));
+        }
+
+        res.json(filteredResults);
+    });
 
 });
 
