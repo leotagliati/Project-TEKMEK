@@ -10,11 +10,9 @@ export const ProductSearchPage = ({ termo }) => {
 
 
     useEffect(() => {
-        client.get('/search', {
-            params: {
-                query: termo
-            }
-        })
+        client.post('/search',
+            { query: termo, filters: filters }
+        )
             .then((response) => {
                 setProdutos(response.data)
             })

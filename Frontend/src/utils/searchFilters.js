@@ -7,8 +7,8 @@ export const layoutSizes = [
     '100%',
 ]
 export const connectivities = [
-    'Bluetooth Wireless',
-    'Wired'
+    'Bluetooth',
+    'USB'
 ]
 export const keycapsTypes = [
     'ABS',
