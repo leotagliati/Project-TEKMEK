@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -11,7 +12,7 @@ function App() {
 
   // Para aquele que resolveu fazer a sua task, ignora objetos criados nessa classe pq a maioria esta aqui para testar funcionalidade de uma pagina que precisa de referencia para ser criada
   // So ir na root, comentar todos dentro de StrictMode e montar sua task
-  
+
   // const mockProduct = {
   //   name: 'Teclado Mecânico RGB',
   //   description: 'Teclado mecânico com switches azuis, iluminação RGB e layout ABNT2.',
@@ -30,8 +31,14 @@ function App() {
   // }
   return (
     <>
-      {/* <ProductPage product={mockProduct} /> */}
-      <ProductSearchPage />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/product/:id" element={<ProductPage/>} />
+          <Route path="/search" element={<ProductSearchPage />} />
+        </Routes>
+
+      </BrowserRouter>
     </>
   )
 }

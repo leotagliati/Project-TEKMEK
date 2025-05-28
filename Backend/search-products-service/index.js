@@ -63,8 +63,8 @@ app.post('/search', (req, res) => {
         }
         if (req.body.searchTerm) {
             const searchTerm = req.body.searchTerm.toLowerCase();
-            filteredResults = filteredResults.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) || 
+            filteredResults = filteredResults.filter(p =>
+                p.name.toLowerCase().includes(searchTerm) ||
                 p.description.toLowerCase().includes(searchTerm)
             );
         }
@@ -72,6 +72,23 @@ app.post('/search', (req, res) => {
         res.json(filteredResults);
     });
 
+});
+app.get('/product/:id', (req, res) => {
+    const productId = req.params.id;
+
+    const query = 'SELECT * FROM products_db.products_tb WHERE id = ?'
+
+    connection.query(query, [productId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro interno do servidor.' })
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado.' })
+        }
+
+        res.json(results[0])
+    });
 });
 
 const port = 5240

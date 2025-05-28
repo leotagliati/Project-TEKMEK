@@ -1,4 +1,21 @@
-export function ProductPage({ product }) {
+export function ProductPage() {
+  const { id } = useParams();
+  const [product, setProductData] = useState(null);
+
+  useEffect(() => {
+    client.get(`/product/${id}`)
+      .then((response) => {
+        setProductData(response.data);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar produto:', error);
+      });
+  }, [id]);
+
+  if (!product) {
+    return <div className="p-5">Carregando dados do produto...</div>;
+  }
+
   return (
     <>
       <div className=" container my-4 ">
