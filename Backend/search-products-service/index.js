@@ -73,12 +73,12 @@ app.post('/search', (req, res) => {
     });
 
 });
-app.get('/product/:id', (req, res) => {
-    const productId = req.params.id;
+app.get('/product/:title', (req, res) => {
+    const productTitle = req.params.title;
 
-    const query = 'SELECT * FROM products_db.products_tb WHERE id = ?'
+    const query = 'SELECT * FROM products_db.products_tb WHERE name = ?'
 
-    connection.query(query, [productId], (err, results) => {
+    connection.query(query, [productTitle], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Erro interno do servidor.' })
         }

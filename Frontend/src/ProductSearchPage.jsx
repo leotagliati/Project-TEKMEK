@@ -3,6 +3,7 @@ import ProductCard from './components/ProductCard'
 import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
+import { Link } from 'react-router-dom'
 
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
@@ -28,6 +29,9 @@ export const ProductSearchPage = () => {
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value)
     }
+    const handleCartClick = () => {
+        console.log('Exibir carrinho')
+    }
 
     return (
         <>
@@ -45,12 +49,14 @@ export const ProductSearchPage = () => {
                         </div>
                     </div>
                     <div className="d-flex align-items-center gap-3 ms-4">
-                        <a href="#" className="text-dark" title="Conta">
+                        <Link to="/login" className="text-dark" title="Login">
                             <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
-                        </a>
-                        <a href="#" className="text-dark" title="Carrinho">
+                        </Link>
+
+                        {/* Aqui eu chamaria a funcao que exibe o cart.jsx */}
+                        <div onClick={handleCartClick} className="text-dark" style={{ cursor: 'pointer' }} title="Carrinho">
                             <i className="pi pi-shopping-cart" style={{ fontSize: '1.3rem' }} />
-                        </a>
+                        </div>
                     </div>
                 </header>
             </div>

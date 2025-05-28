@@ -4,19 +4,25 @@ import client from './utils/searchClient.js'
 
 
 export function ProductPage() {
-  const { id } = useParams();
+  const { title } = useParams();
   const [product, setProductData] = useState(null);
+  const [mainImage, setMainImage] = useState(' https://placehold.co/500x500?text=Imagem+Principal');
 
 
   useEffect(() => {
-    client.get(`/product/${id}`)
+    client.get(`/product/${title}`)
       .then((response) => {
         setProductData(response.data);
       })
       .catch((error) => {
         console.error('Erro ao buscar produto:', error);
       });
-  }, [id]);
+  }, [title]);
+
+  const handleImageClick = (imageUrl) => {
+    setMainImage(imageUrl);
+  }
+
 
   if (!product) {
     return <div className="p-5">Produto nao encontrado...</div>;
@@ -37,7 +43,7 @@ export function ProductPage() {
             {/* Imagem principal */}
             <div className="d-flex justify-content-center flex-grow-1  mb-3" style={{ maxHeight: '500px' }}>
               <img
-                src={'https://placehold.co/500x500'}
+                src={mainImage}
                 alt="productphoto"
                 className="img-fluid w-100 h-100 border border-2 border-black p-2"
               />
@@ -67,6 +73,7 @@ export function ProductPage() {
                         height: '100%',
                         objectFit: 'cover',
                       }}
+                      onClick={() => handleImageClick(mockImages[key])}
                     />
                   </div>
                 ))}
