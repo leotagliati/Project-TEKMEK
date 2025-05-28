@@ -33,9 +33,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/product/:id" element={<ProductPage/>} />
-          <Route path="/search" element={<ProductSearchPage />} />
+          <Route path="/" element={<ProductSearchPage />} />
         </Routes>
 
       </BrowserRouter>

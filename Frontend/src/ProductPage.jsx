@@ -1,6 +1,12 @@
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import client from './utils/searchClient.js'
+
+
 export function ProductPage() {
   const { id } = useParams();
   const [product, setProductData] = useState(null);
+
 
   useEffect(() => {
     client.get(`/product/${id}`)
@@ -13,7 +19,13 @@ export function ProductPage() {
   }, [id]);
 
   if (!product) {
-    return <div className="p-5">Carregando dados do produto...</div>;
+    return <div className="p-5">Produto nao encontrado...</div>;
+  }
+  const mockImages = {
+    front: 'https://placehold.co/80x80?text=Frente',
+    back: 'https://placehold.co/80x80?text=Verso',
+    left: 'https://placehold.co/80x80?text=Esquerda',
+    right: 'https://placehold.co/80x80?text=Direita',
   }
 
   return (
@@ -21,11 +33,11 @@ export function ProductPage() {
       <div className=" container my-4 ">
         <div className="d-flex flex-column flex-lg-row border border-2 border-black p-3 gap-3">
           {/* Coluna das imagens */}
-          <div className="d-flex border flex-grow-1 border-2 border-black p-2 d-flex flex-column">
+          <div className="d-flex border flex-grow-1 border-2 border-black p-2 flex-column gap-3">
             {/* Imagem principal */}
-            <div className="d-flex justify-content-center flex-grow-1  mb-3" style={{ minHeight: '300px' }}>
+            <div className="d-flex justify-content-center flex-grow-1  mb-3" style={{ maxHeight: '500px' }}>
               <img
-                src={product.images[0]}
+                src={'https://placehold.co/500x500'}
                 alt="productphoto"
                 className="img-fluid w-100 h-100 border border-2 border-black p-2"
               />
@@ -34,7 +46,7 @@ export function ProductPage() {
             {/* Linha de imagens menores */}
             <div className="border border-2 border-black p-2 overflow-auto">
               <div className="d-flex  flex-row flex-nowrap gap-3">
-                {Object.entries(product.images).map(([key, url]) => (
+                {Object.entries(product.images || mockImages).map(([key, url]) => (
                   <div
                     key={key}
                     style={{
@@ -48,7 +60,7 @@ export function ProductPage() {
                     <img
                       className="img-fluid border border-2 border-black rounded"
                       // src={url}
-                      src="https://placehold.co/80x80"
+                      src={mockImages[key]}
                       alt={`Imagem do ângulo ${key}`}
                       style={{
                         width: '100%',
@@ -70,7 +82,7 @@ export function ProductPage() {
 
             {/* Escolha dos componentes */}
             <div>
-              {Object.entries(product.misc).map(([key, options]) => (
+              {Object.entries(product.misc || {}).map(([key, options]) => (
                 <div key={key} className="mb-3">
                   <strong>{key.toUpperCase()}</strong>
                   <div className="d-flex gap-3 mt-2 flex-wrap">

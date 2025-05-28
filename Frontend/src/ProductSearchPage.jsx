@@ -66,6 +66,7 @@ export const ProductSearchPage = () => {
                                 produtos.map((product) => (
                                     <ProductCard
                                         key={product.id}
+                                        id={product.id}
                                         title={product.name}
                                         description={product.description}
                                         price={product.price}
