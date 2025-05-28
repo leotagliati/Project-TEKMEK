@@ -25,6 +25,7 @@ pool.connect((err, client, release) => {
   release()
 })
 
+
 // Adicionar teclado customizado
 app.post('/keyboards', async (req, res) => {
   const { name, switch: switchType, keycaps, case_type, stabs, foam, mods, pcb, stock, price } = req.body
