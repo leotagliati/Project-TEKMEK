@@ -61,6 +61,13 @@ app.post('/search', (req, res) => {
         if (keycapsTypes.length > 0) {
             filteredResults = filteredResults.filter(p => keycapsTypes.includes(p.keycaps_type));
         }
+        if (req.body.searchTerm) {
+            const searchTerm = req.body.searchTerm.toLowerCase();
+            filteredResults = filteredResults.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) || 
+                p.description.toLowerCase().includes(searchTerm)
+            );
+        }
 
         res.json(filteredResults);
     });

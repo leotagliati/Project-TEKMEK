@@ -7,11 +7,12 @@ import ProductFilters from './components/ProductFilters.jsx'
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
+    const [searchTerm, setSearchTerm] = useState('')
 
 
     useEffect(() => {
         client.post('/search',
-            { filters }
+            { searchTerm, filters }
         )
             .then((response) => {
                 setProdutos(response.data)
@@ -19,25 +20,40 @@ export const ProductSearchPage = () => {
             .catch((error) => {
                 console.error('Erro ao buscar produtos:', error)
             })
-    }, [filters])
+    }, [searchTerm, filters])
 
     const handleFiltersChange = (newFilters) => {
         setFilters(newFilters)
+    }
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value)
     }
 
     return (
         <>
             {/* Header e Barra de Pesquisa */}
-            <div className='d-flex row row-gap-3 justify-content-center bg-light p-3'>
-                <h1 className='bg-primary text-center'>Product Search</h1>
-                <div className="col-5 p-inputgroup flex-1">
-                    <span className="p-inputgroup-addon">
-                        <i className="pi pi-search"></i>
-                    </span>
-                    <InputText placeholder="Search" />
-                </div>
-            </div>
+            <div>
+                <header className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4 py-2">
+                    <a className="navbar-brand me-4" href="#">TEKMEK</a>
 
+                    <div className="flex-grow-1 d-flex justify-content-center">
+                        <div className="p-input-icon-left " style={{ width: '100%', maxWidth: '600px' }}>
+                            <i className="px-2 pi pi-search" />
+                            <InputText placeholder="Search"
+                                className="px-5 w-100"
+                                onChange={handleSearchChange} />
+                        </div>
+                    </div>
+                    <div className="d-flex align-items-center gap-3 ms-4">
+                        <a href="#" className="text-dark" title="Conta">
+                            <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
+                        </a>
+                        <a href="#" className="text-dark" title="Carrinho">
+                            <i className="pi pi-shopping-cart" style={{ fontSize: '1.3rem' }} />
+                        </a>
+                    </div>
+                </header>
+            </div>
             <div className='d-flex'>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
