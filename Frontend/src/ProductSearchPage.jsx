@@ -61,15 +61,25 @@ export const ProductSearchPage = () => {
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
                     <div className='row'>
-                        {produtos.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                title={product.name}
-                                description={product.description}
-                                price={product.price}
-                                image={product.image_url}
-                            />
-                        ))}
+                        {
+                            produtos.length > 0 ? (
+                                produtos.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        title={product.name}
+                                        description={product.description}
+                                        price={product.price}
+                                        image={product.image_url}
+                                    />
+                                ))
+                            ) : (
+                                <div className='col-12 text-center'>
+                                    <h3>Nenhum produto encontrado</h3>
+                                </div>
+                            )
+
+                        }
+
                     </div>
                 </main>
             </div>
