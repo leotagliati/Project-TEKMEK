@@ -14,6 +14,9 @@ cd ../build-keyboard-service && npm install
 echo "-> Backend: delivery-service"
 cd ../delivery-service && npm install
 
+echo "-> Backend: admin-product-manager"
+cd ../admin-product-manager && npm install
+
 # Voltar para a raiz
 cd ../../
 
