@@ -13,13 +13,6 @@ Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plata
 5. [Contribuidores](#contribuidores)
 
 
-## Infraestrutura
-
-## Documentação
-
-## Vídeo
-
-
 ## Matérias integradas
 - Empreendedorismo e Gestão
 - Linguagens de programação II
