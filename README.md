@@ -31,11 +31,9 @@ Para testar e analisar o funcionamento do sistema, siga os passos abaixo:
 Instalação de dependências:
 Execute o script install.sh localizado na raiz do projeto. Ele instalará automaticamente todas as dependências necessárias.
   bash ./install.sh
+  
 Terminais:
 Inicialize os microsserviços, o barramento e o front. 
-  
-Execução do projeto:
-Após a instalação, siga as instruções adicionais fornecidas na documentação para rodar o sistema localmente.
 
 ## Contribuidores:
 [André R.A Abreu](https://github.com/andre-rabreu)<br>
