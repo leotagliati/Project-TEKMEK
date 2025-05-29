@@ -4,10 +4,12 @@ import { InputText } from 'primereact/inputtext'
 import { Password } from 'primereact/password'
 import React, { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export const LoginPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
 
     const handleSignUp = async () => {
         try {
@@ -23,8 +25,7 @@ export const LoginPage = () => {
             } else if (error.response.status == 401) {
                 alert('Login e/ou senha inválidos.')
             }
-            else
-            {
+            else {
                 alert('Erro ao registrar.')
             }
         }
@@ -36,6 +37,11 @@ export const LoginPage = () => {
                 password
             });
             console.log('User logged:', response.data);
+
+            const { accountId } = response.data;
+            // localStorage.setItem('token', token);
+            navigate(`/home/account/${accountId}`)
+
         } catch (error) {
             console.error('Logging error:', error.message);
             if (error.response && error.response.status === 400) {

@@ -3,7 +3,7 @@ import { Button } from 'primereact/button'
 import { useNavigate } from 'react-router-dom'
 
 
-export default function ProductCard({ id, title, description, price, imageUrl }) {
+export default function ProductCard({ title, description, price, imageUrl }) {
     const navigate = useNavigate()
     const handleClick = () => {
         navigate(`/product/${title}`)

@@ -10,24 +10,24 @@ app.use(cors())
 const saltRounds = 10
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'imtdb',
+  host: 'localhost',
+  user: 'root',
+  password: 'imtdb',
 })
 
 connection.connect(err => {
-    if (err) {
-        return console.error('Erro ao conectar:', err.message)
-    }
-    console.log('Conectado ao MySQL com sucesso')
+  if (err) {
+    return console.error('Erro ao conectar:', err.message)
+  }
+  console.log('Conectado ao MySQL com sucesso')
 
-    // TESTE: SELECT simples
-    connection.query('SELECT * FROM login_db.login', (err, results) => {
-        if (err) {
-            return console.error('Erro ao fazer SELECT:', err.message)
-        }
-        console.log('Resultado do SELECT:', results)
-    })
+  // TESTE: SELECT simples
+  connection.query('SELECT * FROM login_db.login', (err, results) => {
+    if (err) {
+      return console.error('Erro ao fazer SELECT:', err.message)
+    }
+    console.log('Resultado do SELECT:', results)
+  })
 })
 const registerUser = (username, password) => {
   return new Promise((resolve, reject) => {
@@ -82,6 +82,8 @@ const validateLogin = (username, password) => {
         }
 
         const user = results[0];
+        // console.log('data:', results[0])
+        // console.log('UserId found:', results[0].idlogin)
 
         try {
           const isPasswordValid = await bcrypt.compare(password, user.password)
@@ -90,7 +92,7 @@ const validateLogin = (username, password) => {
             return reject({ code: 401, error: 'Username and/or password invalid' })
           }
 
-          resolve({ username })
+          resolve({ username: user.username, accountId: user.idlogin })
         } catch (compareError) {
           reject({ code: 500, error: 'Internal server error' })
         }
@@ -101,51 +103,54 @@ const validateLogin = (username, password) => {
 
 
 app.post('/register', (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    registerUser(username, password)
-        .then(user => {
-            axios.post('http://localhost:5300/event', {
-                type: 'UserRegistered',
-                data: { username: user.username }
-            }).then(() => {
-                console.log('Event sent successfully')
-            }).catch(err => {
-                console.log('Error sending event:', err.message)
-            });
+  registerUser(username, password)
+    .then(user => {
+      axios.post('http://localhost:5300/event', {
+        type: 'UserRegistered',
+        data: { username: user.username }
+      }).then(() => {
+        console.log('Event sent successfully')
+      }).catch(err => {
+        console.log('Error sending event:', err.message)
+      });
 
-            res.status(201).json(user);
-        })
-        .catch(err => {
-            res.status(err.code || 500).json({ error: err.error || 'Unknown error' })
-        });
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      res.status(err.code || 500).json({ error: err.error || 'Unknown error' })
+    });
 });
 
 app.post('/login', (req, res) => {
-    const { username, password } = req.body
+  const { username, password } = req.body
 
-    validateLogin(username, password)
-        .then(user => {
-            axios.post('http://localhost:5300/event', {
-                type: 'UserLogged',
-                data: { username: user.username }
-            }).then(() => {
-                console.log('Event sent successfully');
-            }).catch(err => {
-                console.log('Error sending event:', err.message);
-            });
+  validateLogin(username, password)
+    .then(user => {
+      axios.post('http://localhost:5300/event', {
+        type: 'UserLogged',
+        data: {
+          username: user.username
+          , accountId: user.accountId
+        }
+      }).then(() => {
+        console.log('Event sent successfully');
+      }).catch(err => {
+        console.log('Error sending event:', err.message);
+      });
 
-            res.status(201).json(user);
-        })
-        .catch(err => {
-            res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
-        });
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
+    });
 });
 
 const port = 5315
 app.listen(port, () => {
-    console.clear()
-    console.log('----------------------------------------------------')
-    console.log(`'Login service' running at port ${port}.`)
-    console.log('----------------------------------------------------')
+  console.clear()
+  console.log('----------------------------------------------------')
+  console.log(`'Login service' running at port ${port}.`)
+  console.log('----------------------------------------------------')
 })

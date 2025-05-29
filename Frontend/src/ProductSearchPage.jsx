@@ -3,13 +3,13 @@ import ProductCard from './components/ProductCard'
 import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
-
+    const { idlogin } = useParams()
 
     useEffect(() => {
         client.post('/search',
@@ -63,6 +63,12 @@ export const ProductSearchPage = () => {
                     </div>
                 </header>
             </div>
+            
+            {/* Mensagem personalizada */}
+            <div className="text-center mt-4">
+                {idlogin && <h4>Seja bem vindo, usuário {idlogin}!</h4>}
+            </div>
+
             <div className='mt-4 d-flex '>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />

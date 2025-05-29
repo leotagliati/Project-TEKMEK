@@ -35,7 +35,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/product/:title" element={<ProductPage/>} />
-          <Route path="/" element={<ProductSearchPage />} />
+          <Route path="/home" element={<ProductSearchPage />} />
+          <Route path="/home/account/:idlogin" element={<ProductSearchPage />} />
         </Routes>
 
       </BrowserRouter>
