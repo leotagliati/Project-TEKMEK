@@ -63,13 +63,13 @@ export const ProductSearchPage = () => {
                     </div>
                 </header>
             </div>
-            <div className='mt-4 d-flex'>
+            <div className='mt-4 d-flex '>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
-                    <div className='row'>
+                    <div className='row row-gap-4'>
                         {
                             produtos.length > 0 ? (
                                 produtos.map((product) => (
