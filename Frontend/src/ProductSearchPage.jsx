@@ -38,9 +38,12 @@ export const ProductSearchPage = () => {
             {/* Header e Barra de Pesquisa */}
             <div>
                 <header className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4 py-2">
-                    <a className="navbar-brand me-4" href="#">TEKMEK</a>
+                    <Link to="/" className="d-flex align-items-center text-decoration-none text-dark">
+                        <img src="logo.png" alt="Logo" style={{ height: '50px' }} />
+                        <h2 className="ms-2">Tekmek</h2>
+                    </Link>
 
-                    <div className="flex-grow-1 d-flex justify-content-center">
+                    <div className=" flex-grow-1 d-flex justify-content-center">
                         <div className="p-input-icon-left " style={{ width: '100%', maxWidth: '600px' }}>
                             <i className="px-2 pi pi-search" />
                             <InputText placeholder="Search"
@@ -60,7 +63,7 @@ export const ProductSearchPage = () => {
                     </div>
                 </header>
             </div>
-            <div className='d-flex'>
+            <div className='mt-4 d-flex'>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
 

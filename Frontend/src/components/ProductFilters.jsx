@@ -40,7 +40,7 @@ const ProductFilters = ({ onChange }) => {
         <>
             <div className=" mb-4">
 
-                <h2 className="mb-4">Filters</h2>
+                <h2 className="px-3 mb-4">Filters</h2>
 
                 <Accordion className="mb-4">
                     <AccordionTab header="Layout Size">
