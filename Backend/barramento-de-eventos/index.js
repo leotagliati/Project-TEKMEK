@@ -1,41 +1,52 @@
-const express = require('express')
-const axios = require('axios')
-const app = express()
-app.use(express.json())
+const express = require('express');
+const axios = require('axios');
+const app = express();
+app.use(express.json());
 
 const services = {
     userLoginService: { baseUrl: 'http://localhost', port: 5315 },
-}
+    cartService: { baseUrl: 'http://localhost', port: 5316 },
+    orderGenerationService: { baseUrl: 'http://localhost', port: 5317 },
+};
 
 const eventRoutes = {
-    UserRegistered: [{ service: '', path: '' }], // tem que trocar o service por um existente que precise ouvir
-    UserLogged: [{ service: '', path: '' }],
+    UserRegistered: [{ service: 'userLoginService', path: '/handle-register' }],
+    UserLogged: [{ service: 'userLoginService', path: '/handle-login' }],
 
-}
+    CartCheckoutInitiated: [
+        { service: 'orderGenerationService', path: '/handle-order' }
+    ],
+
+    OrderCreated: [
+        { service: 'cartService', path: '/order-confirmation' }
+    ],
+};
 
 app.post('/event', async (req, res) => {
-    const event = req.body
-    const eventType = event.type
+    const event = req.body;
+    const eventType = event.type;
 
     if (eventRoutes[eventType]) {
         try {
             const promises = eventRoutes[eventType].map(({ service, path }) => {
-                const { baseUrl, port } = services[service]
-                const url = `${baseUrl}:${port}${path}`
-                return axios.post(url, event)
-            })
-            await Promise.all(promises)
-            console.log(`Event ${eventType} sent successfully`)
-        } catch (err) {
-            console.log('Error sending event to all hearing MS:', err.message)
-        }
-    }
-    else {
-        console.log(`No MS hearing ${eventType} event`)
-    }
+                const { baseUrl, port } = services[service];
+                const url = `${baseUrl}:${port}${path}`;
+                return axios.post(url, event);
+            });
 
-    res.status(200).send({ status: 'Event processed successfully' })
-})
+            await Promise.all(promises);
+
+            console.log(`Evento '${eventType}' enviado com sucesso para os microsserviços ouvintes.`);
+        } 
+        catch (err) {
+            console.error(`Erro ao enviar evento '${eventType}':`, err.message);
+        }
+    } 
+    else {
+        console.log(`Nenhum microsserviço ouvindo o evento '${eventType}'`);
+    }
+    res.status(200).send({ status: 'Evento processado com sucesso.' });
+});
 
 const port = 5300
 app.listen(port, () => {
