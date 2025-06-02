@@ -10,6 +10,7 @@ export const ProductSearchPage = () => {
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
     const { idlogin } = useParams()
+    const username = localStorage.getItem("username")
 
     useEffect(() => {
         client.post('/search',
@@ -51,6 +52,7 @@ export const ProductSearchPage = () => {
                                 onChange={handleSearchChange} />
                         </div>
                     </div>
+
                     <div className="d-flex align-items-center gap-3 ms-4">
                         <Link to="/login" className="text-dark" title="Login">
                             <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
@@ -66,7 +68,7 @@ export const ProductSearchPage = () => {
             
             {/* Mensagem personalizada */}
             <div className="text-center mt-4">
-                {idlogin && <h4>Seja bem vindo, usuário {idlogin}!</h4>}
+                {username && <h4>Seja bem vindo,  {username}!</h4>}
             </div>
 
             <div className='mt-4 d-flex '>

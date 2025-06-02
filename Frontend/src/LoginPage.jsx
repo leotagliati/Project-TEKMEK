@@ -39,7 +39,7 @@ export const LoginPage = () => {
             console.log('User logged:', response.data);
 
             const { accountId } = response.data;
-            // localStorage.setItem('token', token);
+            localStorage.setItem("username", response.data.username)
             navigate(`/home/account/${accountId}`)
 
         } catch (error) {
