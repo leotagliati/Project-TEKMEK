@@ -65,5 +65,4 @@ app.listen(port, () => {
     console.log('----------------------------------------------------');
     console.log(`'Order Service' rodando na porta ${port}.`);
     console.log('----------------------------------------------------');
-    start();
 });
