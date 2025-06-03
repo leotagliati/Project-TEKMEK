@@ -90,6 +90,16 @@ app.get('/product/:title', (req, res) => {
         res.json(results[0])
     });
 });
+app.get('/event', (req, res) => {
+    const eventType = req.query.type;
+
+    if (!eventType) {
+        return res.status(400).json({ error: 'Tipo de evento não especificado.' });
+    }
+    if (['UserRegistered', 'UserLogged'].includes(eventType)) {
+        console.log(`Evento ${eventType} recebido pelo Search Products Service`)
+    }
+});
 
 const port = 5240
 app.listen(port, () => {
