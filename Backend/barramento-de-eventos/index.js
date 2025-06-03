@@ -14,16 +14,11 @@ const services = {
 const eventRoutes = {
     UserRegistered: [{ service: 'userLoginService', path: '/handle-register' }],
     UserLogged: [{ service: 'userLoginService', path: '/handle-login' }],
-}
 
-
-    CartCheckoutInitiated: [
-        { service: 'orderGenerationService', path: '/handle-order' }
-    ],
-
-    OrderCreated: [
-        { service: 'cartService', path: '/order-confirmation' }
-    ],
+    CartCheckoutInitiated: [{ service: 'orderGenerationService', path: '/handle-order' }],
+    OrderCreated: [{ service: 'cartService', path: '/order-confirmation' }],
+    
+    ProductSearched: [{ service: 'searchProductsService', path: '/handle-search' }],
 };
 
 app.post('/event', async (req, res) => {
@@ -41,12 +36,12 @@ app.post('/event', async (req, res) => {
             await Promise.all(promises);
 
             console.log(`Evento '${eventType}' enviado com sucesso para os microsserviços ouvintes.`);
-        } 
+        }
         catch (err) {
             console.error(`Erro ao enviar evento '${eventType}':`, err.message);
 
         }
-    } 
+    }
     else {
         console.log(`Nenhum microsserviço ouvindo o evento '${eventType}'`);
     }
