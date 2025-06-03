@@ -3,13 +3,14 @@ import ProductCard from './components/ProductCard'
 import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
-
+    const { idlogin } = useParams()
+    const username = localStorage.getItem("username")
 
     useEffect(() => {
         client.post('/search',
@@ -51,6 +52,7 @@ export const ProductSearchPage = () => {
                                 onChange={handleSearchChange} />
                         </div>
                     </div>
+
                     <div className="d-flex align-items-center gap-3 ms-4">
                         <Link to="/login" className="text-dark" title="Login">
                             <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
@@ -63,13 +65,19 @@ export const ProductSearchPage = () => {
                     </div>
                 </header>
             </div>
-            <div className='mt-4 d-flex'>
+            
+            {/* Mensagem personalizada */}
+            <div className="text-center mt-4">
+                {username && <h4>Seja bem vindo,  {username}!</h4>}
+            </div>
+
+            <div className='mt-4 d-flex '>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
-                    <div className='row'>
+                    <div className='row row-gap-4'>
                         {
                             produtos.length > 0 ? (
                                 produtos.map((product) => (
