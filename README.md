@@ -1,7 +1,7 @@
 # Project-DACTYLOS
 
 ## Descrição
-A TECMEC é uma empresa de e-commerce especializada na fabricação e venda de teclados mecânicos customizáveis.
+A Tekmek é uma empresa de e-commerce especializada na fabricação e venda de teclados mecânicos customizáveis.
 Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plataforma digital intuitiva, onde o cliente pode visualizar em tempo real as modificações feitas em seu teclado antes da compra.
 
 
@@ -13,17 +13,20 @@ Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plata
 5. [Contribuidores](#contribuidores)
 
 
-## Infraestrutura
-
-## Documentação
-
-## Vídeo
-
-
 ## Matérias integradas
 - Empreendedorismo e Gestão
 - Linguagens de programação II
 - Arquitetura de Sistemas Computacionais
+
+## Como utilizar
+Para testar e analisar o funcionamento do sistema, siga os passos abaixo:
+
+Instalação de dependências:
+Execute o script install.sh localizado na raiz do projeto. Ele instalará automaticamente todas as dependências necessárias.
+  bash ./install.sh
+  
+Terminais:
+Inicialize os microsserviços, o barramento e o front. 
 
 ## Contribuidores:
 [André R.A Abreu](https://github.com/andre-rabreu)<br>
