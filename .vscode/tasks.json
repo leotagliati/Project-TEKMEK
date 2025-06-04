@@ -51,5 +51,22 @@
 			"problemMatcher": [],
 			"label": "Execute - login-register-service"
 		},
+		{
+			"label": "Build Workspace",
+			"dependsOn": [
+				"Execute - Frontend",
+				"Execute - barramento-de-eventos",
+				"Execute - admin-product-manager",
+				"Execute - search-products-service",
+				"Execute - order-generation-service",
+				"Execute - cart-service",
+				"Execute - login-register-service"
+			],
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
 	]
 }
