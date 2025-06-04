@@ -19,7 +19,7 @@ const eventRoutes = {
     UserLogged: [{ service: 'userLoginService' }],
 
     CartCheckoutInitiated: [{ service: 'orderGenerationService' }],
-    OrderCreated: [{ service: 'cartService' }],
+    OrderCreated: [],
 
     ProductSearched: [{ service: 'searchProductsService' }],
 

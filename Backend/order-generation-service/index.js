@@ -25,52 +25,79 @@ pool.connect((err, client, release) => {
 }
 );
 
-app.post('/handle-order', async (req, res) => {
-    const { userId, items } = req.body.data || {};
+app.post('/event', async (req, res) => {
+    const eventType = req.body.type;
 
-    if (!userId || !items || !Array.isArray(items)) {
-        return res.status(400).send({ message: 'Dados inválidos para criação de pedido' });
-    }
-
-    const orderId = uuidv4();
-    const client = await pool.connect();
-
-    try {
-        await client.query('BEGIN');
-
-        await client.query(
-            'INSERT INTO orders (order_id, user_id) VALUES ($1, $2)',
-            [orderId, userId]
+    if (eventType === 'CartCheckoutInitiated') {
+        const { userId, items } = req.body.data;
+        // procura se o usuário ja possui um pedido em andamento
+        const existingOrder = await pool.query(
+            'SELECT * FROM orders_tb WHERE user_id = $1 AND status = $2',
+            [userId, 'PENDING']
         );
-
-        for (const item of items) {
-            await client.query(
-                'INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)',
-                [orderId, item.productId, item.quantity]
+        if (existingOrder.rows.length > 0) {
+            // Se já existe um pedido pendente, ele so adiciona os itens ao pedido existente
+            console.log(`Pedido existente encontrado para o usuário ${userId}. Adicionando itens ao pedido existente.`);
+            const orderId = existingOrder.rows[0].id;
+            let totalPrice = parseFloat(existingOrder.rows[0].total);
+            // pega todos os produtos do carrinho e soma o preco
+            for (const item of items) {
+                const product = await pool.query(
+                    'SELECT price FROM known_products_tb WHERE id = $1',
+                    [item.productId]
+                );
+                if (product.rows.length > 0) {
+                    totalPrice += parseFloat(product.rows[0].price) * item.quantity;
+                }
+            }
+            // Atualiza o total do pedido existente
+            await pool.query(
+                'UPDATE orders_tb SET total = $1 WHERE id = $2',
+                [totalPrice, orderId]
             );
+            // Adiciona os itens ao pedido existente
+            for (const item of items) {
+                await pool.query(
+                    'INSERT INTO order_items_tb (order_id, product_id, quantity) VALUES ($1, $2, $3)',
+                    [orderId, item.productId, item.quantity]
+                );
+            }
+            console.log(`Itens adicionados ao pedido existente ${orderId} para o usuário ${userId}.`);
+        }
+        else {
+            // Cria um novo pedido
+            console.log(`Criando um novo pedido para o usuário ${userId}.`);
+            const orderId = uuidv4();
+            // pega todos os produtos do carrinho e soma o preco
+            let totalPrice = 0;
+            for (const item of items) {
+                const product = await pool.query(
+                    'SELECT price FROM known_products_tb WHERE id = $1',
+                    [item.productId]
+                );
+                if (product.rows.length > 0) {
+                    totalPrice += parseFloat(product.rows[0].price) * item.quantity;
+                }
+            }
+
+            await pool.query(
+                'INSERT INTO orders_tb (id, user_id, status, total) VALUES ($1, $2, $3, $4)',
+                [orderId, userId, 'PENDING', totalPrice]
+            );
+            for (const item of items) {
+                await pool.query(
+                    'INSERT INTO order_items_tb (order_id, product_id, quantity) VALUES ($1, $2, $3)',
+                    [orderId, item.productId, item.quantity]
+                );
+            }
+            console.log(`Pedido ${orderId} criado com sucesso para o usuário ${userId}.`);
         }
 
-        await client.query('COMMIT');
 
-        console.log(`Pedido ${orderId} criado com sucesso.`);
 
-        await axios.post('http://localhost:5300/event', {
-            type: 'OrderCreated',
-            data: {
-                orderId,
-                userId,
-                status: 'created',
-            }
-        });
-
-        res.status(201).send({ message: 'Pedido criado com sucesso.', orderId });
-
-    } catch (err) {
-        await client.query('ROLLBACK');
-        console.error('Erro ao criar pedido:', err.message);
-        res.status(500).send({ message: 'Erro interno ao criar o pedido.' });
-    } finally {
-        client.release();
+    } else {
+        // Tipo de evento não tratado
+        res.status(200).send({ message: `Evento ${eventType} ignorado.` });
     }
 });
 

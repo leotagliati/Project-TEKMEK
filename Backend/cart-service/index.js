@@ -23,7 +23,8 @@ app.post('/checkout', async (req, res) => {
     try {
         await axios.post('http://localhost:5300/event', event);
         res.status(200).json({ message: 'Checkout iniciado com sucesso.' })
-    } 
+        console.log(`Checkout iniciado para o usuário ${userId} com os itens:`, items)
+    }
     catch (e) {
         console.error('Erro ao enviar evento para o barramento:', e.message)
         res.status(500).json({ message: 'Erro interno ao processar o checkout.' })

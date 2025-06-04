@@ -26,7 +26,7 @@ export function ProductPage() {
   const handleAddToCart = async () => {
     try {
       const payload = {
-        userId: 1, // Substitua por ID real do usuário autenticado
+        userId: 1,
         items: [{ productId: product.id, quantity: 1 }]
       };
 
