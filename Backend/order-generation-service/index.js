@@ -1,61 +1,76 @@
+require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
+
 const app = express();
 app.use(express.json());
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'imtdb',
-    database: 'order_service_db',
+// Conexão com PostgreSQL
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT
 });
+pool.connect((err, client, release) => {
+    if (err) {
+        console.error('Erro ao conectar ao PostgreSQL:', err);
+        process.exit(1);
+    }
+    console.log('Conectado ao PostgreSQL com sucesso!');
+    release();
+}
+);
 
 app.post('/handle-order', async (req, res) => {
     const { userId, items } = req.body.data || {};
+
     if (!userId || !items || !Array.isArray(items)) {
         return res.status(400).send({ message: 'Dados inválidos para criação de pedido' });
     }
+
     const orderId = uuidv4();
+    const client = await pool.connect();
 
     try {
-        db.beginTransaction((err) => {
-            if (err) throw err;
+        await client.query('BEGIN');
 
-            db.query('INSERT INTO orders (order_id, user_id) VALUES (?, ?)', [orderId, userId], (err) => {
-                if (err) return db.rollback(() => { throw err; });
+        await client.query(
+            'INSERT INTO orders (order_id, user_id) VALUES ($1, $2)',
+            [orderId, userId]
+        );
 
-                const insertions = items.map(item => new Promise((resolve, reject) => {
-                    db.query(
-                        'INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)',
-                        [orderId, item.productId, item.quantity],
-                        (err) => err ? reject(err) : resolve()
-                    );
-                }));
+        for (const item of items) {
+            await client.query(
+                'INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)',
+                [orderId, item.productId, item.quantity]
+            );
+        }
 
-                Promise.all(insertions)
-                    .then(() => {
-                        db.commit(async (err) => {
-                            if (err) return db.rollback(() => { throw err; });
-                            console.log(`Pedido ${orderId} criado com sucesso.`);
-                            await axios.post('http://localhost:5300/event', {
-                                type: 'OrderCreated',
-                                data: {
-                                    orderId,
-                                    userId,
-                                    status: 'created',
-                                }
-                            });
-                            res.status(201).send({ message: 'Pedido criado com sucesso.', orderId });
-                        });
-                    })
-                    .catch((err) => db.rollback(() => { throw err; }));
-            });
+        await client.query('COMMIT');
+
+        console.log(`Pedido ${orderId} criado com sucesso.`);
+
+        await axios.post('http://localhost:5300/event', {
+            type: 'OrderCreated',
+            data: {
+                orderId,
+                userId,
+                status: 'created',
+            }
         });
-    }
-    catch (err) {
+
+        res.status(201).send({ message: 'Pedido criado com sucesso.', orderId });
+
+    } catch (err) {
+        await client.query('ROLLBACK');
         console.error('Erro ao criar pedido:', err.message);
         res.status(500).send({ message: 'Erro interno ao criar o pedido.' });
+    } finally {
+        client.release();
     }
 });
 
