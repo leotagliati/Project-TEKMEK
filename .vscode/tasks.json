@@ -44,5 +44,12 @@
 			"problemMatcher": [],
 			"label": "Execute - cart-service"
 		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/login-register-service",
+			"problemMatcher": [],
+			"label": "Execute - login-register-service"
+		},
 	]
 }
