@@ -9,11 +9,11 @@ app.use(express.json());
 
 // Configuração da conexão PostgreSQL
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT
 })
 
 // Teste de conexão
@@ -22,14 +22,7 @@ pool.connect((err, client, release) => {
         return console.error('Erro ao conectar ao PostgreSQL:', err.stack);
     }
     console.log('Conectado ao PostgreSQL com sucesso');
-
-    client.query('SELECT * FROM products_tb', (err, result) => {
-        release();
-        if (err) {
-            return console.error('Erro ao fazer SELECT:', err.stack);
-        }
-        console.log('Resultado do SELECT:', result.rows);
-    });
+    release();
 });
 
 // Rota de busca com filtros
@@ -93,19 +86,56 @@ app.get('/product/:title', async (req, res) => {
     }
 });
 
-// Rota de evento (mock)
-app.get('/event', (req, res) => {
-    const eventType = req.query.type;
+app.post('/event', async (req, res) => {
+    const { type, data } = req.body;
 
-    if (!eventType) {
+    console.log('Evento recebido:', type);
+
+    if (!type) {
         return res.status(400).json({ error: 'Tipo de evento não especificado.' });
     }
 
-    if (['UserRegistered', 'UserLogged'].includes(eventType)) {
-        console.log(`Evento ${eventType} recebido pelo Search Products Service`);
+    if (['ProductCreated', 'ProductDeleted'].includes(type)) {
+        console.log(`Evento ${type} recebido pelo Search Products Service`);
+        try {
+            if (type === 'ProductCreated') {
+                const query = `
+                    INSERT INTO products_tb (id, name, description, layout_size, connectivity, product_type, keycaps_type)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    ON CONFLICT (id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        layout_size = EXCLUDED.layout_size,
+                        connectivity = EXCLUDED.connectivity,
+                        product_type = EXCLUDED.product_type,
+                        keycaps_type = EXCLUDED.keycaps_type;
+                `;
+
+                await pool.query(query, [
+                    data.id,
+                    data.name,
+                    data.description,
+                    data.layout_size,
+                    data.connectivity,
+                    data.product_type,
+                    data.keycaps_type
+                ]);
+
+                console.log(`Produto ${data.id} inserido/atualizado na base local.`);
+
+            } else if (type === 'ProductDeleted') {
+                const query = 'DELETE FROM products_tb WHERE id = $1';
+                await pool.query(query, [data.id]);
+                console.log(`Produto ${data.id} deletado da base local.`);
+            }
+
+            return res.status(200).json({ status: 'Evento processado com sucesso.' });
+        } catch (error) {
+            console.error('Erro ao atualizar base local:', error);
+            return res.status(500).json({ error: 'Erro ao atualizar base local.' });
+        }
     }
 
-    res.status(200).json({ status: 'Evento processado.' });
 });
 
 // Inicialização do servidor
