@@ -17,8 +17,11 @@ const eventRoutes = {
 
     CartCheckoutInitiated: [{ service: 'orderGenerationService', path: '/handle-order' }],
     OrderCreated: [{ service: 'cartService', path: '/order-confirmation' }],
-    
+
     ProductSearched: [{ service: 'searchProductsService', path: '/handle-search' }],
+
+    ProductCreated: [{ service: 'searchProductsService', path: '/handle-product-created' }],
+    ProductDeleted: [{ service: 'searchProductsService', path: '/handle-product-deleted' }],
 };
 
 app.post('/event', async (req, res) => {
