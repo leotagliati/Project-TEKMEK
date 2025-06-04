@@ -8,20 +8,24 @@ const services = {
 
     cartService: { baseUrl: 'http://localhost', port: 5316 },
     orderGenerationService: { baseUrl: 'http://localhost', port: 5317 },
-    searchProductsService: { baseUrl: 'http://localhost', port: 5320 },
+    searchProductsService: { baseUrl: 'http://localhost', port: 5240 },
+    adminProductManager: { baseUrl: 'http://localhost', port: 4321 }
 };
 
 const eventRoutes = {
-    UserRegistered: [{ service: 'userLoginService', path: '/handle-register' }],
-    UserLogged: [{ service: 'userLoginService', path: '/handle-login' }],
+    // Registrar os servicos que ouvem os eventos
 
-    CartCheckoutInitiated: [{ service: 'orderGenerationService', path: '/handle-order' }],
-    OrderCreated: [{ service: 'cartService', path: '/order-confirmation' }],
+    UserRegistered: [{ service: 'userLoginService' }],
+    UserLogged: [{ service: 'userLoginService' }],
 
-    ProductSearched: [{ service: 'searchProductsService', path: '/handle-search' }],
+    CartCheckoutInitiated: [{ service: 'orderGenerationService' }],
+    OrderCreated: [{ service: 'cartService' }],
 
-    ProductCreated: [{ service: 'searchProductsService', path: '/handle-product-created' }],
-    ProductDeleted: [{ service: 'searchProductsService', path: '/handle-product-deleted' }],
+    ProductSearched: [{ service: 'searchProductsService' }],
+
+    ProductCreated: [{ service: 'searchProductsService'}],
+    ProductDeleted: [{ service: 'searchProductsService' }],
+    ProductsFetched: [],
 };
 
 app.post('/event', async (req, res) => {
@@ -29,10 +33,12 @@ app.post('/event', async (req, res) => {
     const eventType = event.type;
 
     if (eventRoutes[eventType]) {
+        console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
         try {
-            const promises = eventRoutes[eventType].map(({ service, path }) => {
+            const promises = eventRoutes[eventType].map(({ service }) => {
                 const { baseUrl, port } = services[service];
-                const url = `${baseUrl}:${port}${path}`;
+                const url = `${baseUrl}:${port}/event`;
+                // console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
                 return axios.post(url, event);
             });
 

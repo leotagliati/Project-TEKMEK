@@ -53,10 +53,10 @@ app.post('/products', async (req, res) => {
 
     res.status(201).json(result.rows[0])
     await axios.post('http://localhost:5300/event', {
-      type: 'ProductRegistered',
+      type: 'ProductCreated',
       data: result.rows[0]
     })
-    console.log(`Evento 'ProductRegistered' enviado com sucesso para o barramento de eventos.`)
+    console.log(`Evento 'ProductCreated',' enviado com sucesso para o barramento de eventos.`)
 
 
   } catch (err) {
