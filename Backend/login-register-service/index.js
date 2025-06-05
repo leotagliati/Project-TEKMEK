@@ -48,7 +48,7 @@ const registerUser = (username, password) => {
       }
 
       const hashedPassword = await bcrypt.hash(password, saltRounds)
-      await pool.query('INSERT INTO login_tb (username, user_pass) VALUES ($1, $2)', [username, hashedPassword])
+      await pool.query('INSERT INTO login_tb (username, user_pass, is_admin) VALUES ($1, $2, $3)', [username, hashedPassword, false])
 
       resolve({ username })
     } catch (err) {

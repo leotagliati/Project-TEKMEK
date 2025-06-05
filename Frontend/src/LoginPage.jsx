@@ -40,6 +40,7 @@ export const LoginPage = () => {
 
             const { accountId } = response.data;
             localStorage.setItem("username", response.data.username)
+            localStorage.setItem("idlogin", accountId)
             navigate(`/home/account/${accountId}`)
 
         } catch (error) {
