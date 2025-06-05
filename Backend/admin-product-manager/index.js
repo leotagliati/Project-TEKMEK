@@ -48,7 +48,7 @@ app.post('/products', async (req, res) => {
       (name, description, price, image_url, layout_size, connectivity, product_type, keycaps_type)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *`,
-      [name, description, price, image_url, layout_size, connectivity, product_type, keycaps_type]
+      [name, description, parseFloat(price), image_url, layout_size, connectivity, product_type, keycaps_type]
     )
 
     res.status(201).json(result.rows[0])
@@ -60,12 +60,8 @@ app.post('/products', async (req, res) => {
 
 
   } catch (err) {
-    if (err.code === '23505') {
-      res.status(409).json({ error: 'Já existe um produto com este nome' })
-    } else {
-      console.error(err)
-      res.status(500).json({ error: 'Erro ao registrar produto' })
-    }
+    console.error(err)
+    res.status(500).json({ error: 'Erro ao registrar produto' })
   }
 })
 
