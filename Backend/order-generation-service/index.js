@@ -101,7 +101,7 @@ app.post('/event', async (req, res) => {
     }
 });
 
-const port = 5317;
+const port = process.env.PORT;
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------');

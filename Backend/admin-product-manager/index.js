@@ -110,7 +110,7 @@ app.delete('/products/:id', async (req, res) => {
 })
 
 
-const port = process.env.PORT || 3000
+const port = process.env.MS_PORT
 app.listen(port, () => {
   console.clear()
   console.log('----------------------------------------------------')

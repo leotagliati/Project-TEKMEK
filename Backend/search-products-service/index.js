@@ -139,7 +139,7 @@ app.post('/event', async (req, res) => {
 });
 
 // Inicialização do servidor
-const port = 5240;
+const port = process.env.MS_PORT
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------');

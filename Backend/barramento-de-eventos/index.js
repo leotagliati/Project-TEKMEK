@@ -1,15 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const app = express();
 app.use(express.json());
 
 const services = {
-    userLoginService: { baseUrl: 'http://localhost', port: 5315 },
-
-    cartService: { baseUrl: 'http://localhost', port: 5316 },
-    orderGenerationService: { baseUrl: 'http://localhost', port: 5317 },
-    searchProductsService: { baseUrl: 'http://localhost', port: 5240 },
-    adminProductManager: { baseUrl: 'http://localhost', port: 4321 }
+    userLoginService: { port: process.env.USER_LOGIN_SERVICE_PORT },
+    cartService: { port: process.env.CART_SERVICE_PORT },
+    orderGenerationService: { port: process.env.ORDER_GENERATION_SERVICE_PORT },
+    searchProductsService: { port: process.env.SEARCH_PRODUCTS_SERVICE_PORT },
+    adminProductManager: { port: process.env.ADMIN_PRODUCTS_MANAGER_PORT }
 };
 
 const eventRoutes = {
@@ -23,7 +23,7 @@ const eventRoutes = {
 
     ProductSearched: [{ service: 'searchProductsService' }],
 
-    ProductCreated: [{ service: 'searchProductsService'}],
+    ProductCreated: [{ service: 'searchProductsService' }],
     ProductDeleted: [{ service: 'searchProductsService' }],
     ProductsFetched: [],
 };
@@ -36,8 +36,8 @@ app.post('/event', async (req, res) => {
         console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
         try {
             const promises = eventRoutes[eventType].map(({ service }) => {
-                const { baseUrl, port } = services[service];
-                const url = `${baseUrl}:${port}/event`;
+                const { port } = services[service];
+                const url = `http://localhost:${port}/event`;
                 // console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
                 return axios.post(url, event);
             });
@@ -57,7 +57,7 @@ app.post('/event', async (req, res) => {
     res.status(200).send({ status: 'Evento processado com sucesso.' });
 });
 
-const port = 5300
+const port = process.env.BUS_PORT
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------')
