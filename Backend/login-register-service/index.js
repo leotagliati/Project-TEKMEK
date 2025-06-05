@@ -38,7 +38,7 @@ pool.connect((err, client, release) => {
   });
 });
 
-const registerUser = (username, password) => {
+const registerUser = (username, password, token) => {
   return new Promise(async (resolve, reject) => {
     if (!username || !password) {
       return reject({ code: 400, error: 'Username and/or password invalid' });
@@ -53,17 +53,27 @@ const registerUser = (username, password) => {
       if (rows.length !== 0) {
         return reject({ code: 409, error: 'Could not register user: username already exists' });
       }
-
+      
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      // Insere novo usuário com is_admin = FALSE (valor padrão)
+      
+      if(token === undefined || token === null || token === ''){
+        isAdmin = 'false';
+      }
+      else if(token === process.env.ADMIN_TOKEN){
+        isAdmin = 'true';
+      }
+      else{
+        return reject({ code: 401, error: 'Invalid token' });
+      }
+     
+      
       await pool.query(
-        'INSERT INTO login_tb (username, user_pass, is_admin) VALUES ($1, $2, FALSE)',
-        [username, hashedPassword]
+        'INSERT INTO login_tb (username, user_pass, is_admin) VALUES ($1, $2, $3)',
+        [username, hashedPassword, isAdmin]
       );
 
-      resolve({ username });
+      resolve({ username , isAdmin });
     } catch (err) {
       console.error(err);
       reject({ code: 500, error: 'Erro ao registrar usuário' });
@@ -103,14 +113,15 @@ const validateLogin = (username, password) => {
 };
 
 app.post('/register', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, token} = req.body;
 
-  registerUser(username, password)
+  registerUser(username, password, token)
     .then(user => {
       // Envia evento de usuário registrado (opcional)
       axios.post('http://localhost:5300/event', {
         type: 'UserRegistered',
         data: { username: user.username }
+      
       })
       .then(() => {
         console.log('Event sent successfully');
