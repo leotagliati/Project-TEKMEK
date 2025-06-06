@@ -18,7 +18,7 @@ const pool = new Pool({
   host:     process.env.BD_HOST,
   database: process.env.BD_DATABASE,
   password: process.env.BD_PASSWORD,
-  port:     parseInt(process.env.BD_PORT, 10)
+  port:     process.env.BD_PORT
 });
 
 // 3) Teste de conexão + SELECT simples
