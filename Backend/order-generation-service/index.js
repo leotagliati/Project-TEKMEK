@@ -101,7 +101,7 @@ app.post('/event', async (req, res) => {
     }
 });
 
-const port = process.env.PORT;
+const port = process.env.MS_PORT;
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------');

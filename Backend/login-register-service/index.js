@@ -14,11 +14,11 @@ const saltRounds = 10;
 
 // 2) Configuração do PostgreSQL usando variáveis de ambiente
 const pool = new Pool({
-  user:     process.env.BD_USER,
-  host:     process.env.BD_HOST,
-  database: process.env.BD_DATABASE,
-  password: process.env.BD_PASSWORD,
-  port:     process.env.BD_PORT
+  user:     process.env.DB_USER,
+  host:     process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port:     process.env.DB_PORT
 });
 
 // 3) Teste de conexão + SELECT simples
