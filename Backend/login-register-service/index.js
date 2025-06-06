@@ -157,7 +157,7 @@ app.post('/login', (req, res) => {
         console.log('Error sending event:', err.message);
       });
 
-      // Retorna dados ao cliente (inclui isAdmin)
+      // Retorna dados ao cliente 
       res.status(200).json(user);
     })
     .catch(err => {

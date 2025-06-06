@@ -36,13 +36,22 @@ export const LoginPage = () => {
         try {
             const response = await axios.post('http://localhost:5315/login', {
                 username,
-                password
+                password,
+            
             });
             console.log('User logged:', response.data);
 
             const { accountId } = response.data;
+
+            const isAdmin = response.data.isAdmin;
             localStorage.setItem("username", response.data.username)
-            navigate(`/home/account/${accountId}`)
+            if (isAdmin) {
+                navigate(`/admin/${accountId}`)
+            }
+            else{
+                navigate(`/home/account/${accountId}`)
+            }
+            
 
         } catch (error) {
             console.error('Logging error:', error.message);
