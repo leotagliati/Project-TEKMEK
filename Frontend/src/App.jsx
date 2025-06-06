@@ -5,6 +5,7 @@ import viteLogo from '/vite.svg'
 import { LoginPage } from './LoginPage.jsx'
 import { ProductPage } from './ProductPage.jsx';
 import { ProductSearchPage } from './ProductSearchPage.jsx';
+import AdminSheet from './AdminSheet.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +23,8 @@ function App() {
           <Route path="/home" element={<ProductSearchPage />} />
           <Route path="/home/account/:idlogin" element={<ProductSearchPage />} />
           <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/admin/account/:idlogin" element={<AdminSheet></AdminSheet>} />
+
         </Routes>
 
       </BrowserRouter>
