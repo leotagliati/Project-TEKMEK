@@ -41,13 +41,13 @@ export const LoginPage = () => {
             });
             console.log('User logged:', response.data);
 
-            const { accountId } = response.data;
+            const accountId = response.data.idlogin;
 
             const isAdmin = response.data.isAdmin;
             localStorage.setItem("username", response.data.username)
             localStorage.setItem("idlogin", accountId)
             if (isAdmin) {
-                navigate(`/admin/${accountId}`)
+                navigate(`/admin/account/${accountId}`)
             }
             else{
                 navigate(`/home/account/${accountId}`)

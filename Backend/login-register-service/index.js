@@ -14,11 +14,11 @@ const saltRounds = 10;
 
 // 2) Configuração do PostgreSQL usando variáveis de ambiente
 const pool = new Pool({
-  user:     process.env.DB_USER,
-  host:     process.env.DB_HOST,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port:     process.env.DB_PORT
+  port: process.env.DB_PORT
 });
 
 // 3) Teste de conexão + SELECT simples
@@ -54,27 +54,27 @@ const registerUser = (username, password, token) => {
         return reject({ code: 409, error: 'Could not register user: username already exists' });
       }
 
-      
+
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      
-      if(token === undefined || token === null || token === ''){
+
+      if (token === undefined || token === null || token === '') {
         isAdmin = 'false';
       }
-      else if(token === process.env.ADMIN_TOKEN){
+      else if (token === process.env.ADMIN_TOKEN) {
         isAdmin = 'true';
       }
-      else{
+      else {
         return reject({ code: 401, error: 'Invalid token' });
       }
-     
-      
+
+
       await pool.query(
         'INSERT INTO login_tb (username, user_pass, is_admin) VALUES ($1, $2, $3)',
         [username, hashedPassword, isAdmin]
       );
 
-      resolve({ username , isAdmin });
+      resolve({ username, isAdmin });
     } catch (err) {
       console.error(err);
       reject({ code: 500, error: 'Erro ao registrar usuário' });
@@ -89,11 +89,12 @@ const validateLogin = (username, password) => {
     }
 
     try {
-      // Busca o usuário completo (incluindo is_admin)
+      // Agora buscando também o idlogin
       const { rows } = await pool.query(
-        'SELECT username, user_pass, is_admin FROM login_tb WHERE username = $1',
+        'SELECT idlogin, username, user_pass, is_admin FROM login_tb WHERE username = $1',
         [username]
       );
+
       if (rows.length === 0) {
         return reject({ code: 401, error: 'Username and/or password invalid' });
       }
@@ -105,7 +106,11 @@ const validateLogin = (username, password) => {
         return reject({ code: 401, error: 'Username and/or password invalid' });
       }
 
-      resolve({ username: user.username, isAdmin: user.is_admin });
+      resolve({
+        idlogin: user.idlogin,
+        username: user.username,
+        isAdmin: user.is_admin
+      });
     } catch (err) {
       console.error(err);
       reject({ code: 500, error: 'Internal server error' });
@@ -114,7 +119,7 @@ const validateLogin = (username, password) => {
 };
 
 app.post('/register', (req, res) => {
-  const { username, password, token} = req.body;
+  const { username, password, token } = req.body;
 
   registerUser(username, password, token)
     .then(user => {
@@ -122,14 +127,14 @@ app.post('/register', (req, res) => {
       axios.post('http://localhost:5300/event', {
         type: 'UserRegistered',
         data: { username: user.username }
-      
+
       })
-      .then(() => {
-        console.log('Event sent successfully');
-      })
-      .catch(err => {
-        console.log('Error sending event:', err.message);
-      });
+        .then(() => {
+          console.log('Event sent successfully');
+        })
+        .catch(err => {
+          console.log('Error sending event:', err.message);
+        });
 
       res.status(201).json(user);
     })
@@ -151,12 +156,12 @@ app.post('/login', (req, res) => {
           isAdmin: user.isAdmin
         }
       })
-      .then(() => {
-        console.log('Event sent successfully');
-      })
-      .catch(err => {
-        console.log('Error sending event:', err.message);
-      });
+        .then(() => {
+          console.log('Event sent successfully');
+        })
+        .catch(err => {
+          console.log('Error sending event:', err.message);
+        });
 
       // Retorna dados ao cliente 
       res.status(200).json(user);
