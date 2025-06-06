@@ -4,16 +4,20 @@ import { InputText } from 'primereact/inputtext'
 import { Password } from 'primereact/password'
 import React, { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export const LoginPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [token, setToken] = useState('')
+    const navigate = useNavigate()
 
     const handleSignUp = async () => {
         try {
             const response = await axios.post('http://localhost:5315/register', {
                 username,
-                password
+                password,
+                token
             });
             console.log('User registered:', response.data);
         } catch (error) {
@@ -23,8 +27,7 @@ export const LoginPage = () => {
             } else if (error.response.status == 401) {
                 alert('Login e/ou senha inválidos.')
             }
-            else
-            {
+            else {
                 alert('Erro ao registrar.')
             }
         }
@@ -33,9 +36,23 @@ export const LoginPage = () => {
         try {
             const response = await axios.post('http://localhost:5315/login', {
                 username,
-                password
+                password,
+            
             });
             console.log('User logged:', response.data);
+
+            const { accountId } = response.data;
+
+            const isAdmin = response.data.isAdmin;
+            localStorage.setItem("username", response.data.username)
+            if (isAdmin) {
+                navigate(`/admin/${accountId}`)
+            }
+            else{
+                navigate(`/home/account/${accountId}`)
+            }
+            
+
         } catch (error) {
             console.error('Logging error:', error.message);
             if (error.response && error.response.status === 400) {
@@ -65,7 +82,8 @@ export const LoginPage = () => {
                     <div className='d-flex flex-column justify-content-center gap-3 pb-4'>
                         <InputText placeholder='Username' onChange={(e) => setUsername(e.target.value)} />
                         <Password placeholder='Password' onChange={(e) => setPassword(e.target.value)} />
-
+                        <p className='text-secondary small m-0 gap-0 pb-0 "'>Somente complete se for registrar novo admin</p>
+                        <Password placeholder='Token' onChange={(e) => setToken(e.target.value)} />
                     </div>
                     <div className='d-flex flex-column-2 gap-2 mb-4'>
                         <Button label='Registre aqui' text onClick={handleSignUp}></Button>

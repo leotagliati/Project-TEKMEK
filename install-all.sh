@@ -5,17 +5,15 @@ echo " Instalando dependências...  "
 echo "=============================="
 
 # Backend
-echo "-> Backend: barramento-de-eventos"
-cd Backend/barramento-de-eventos && npm install
-
-echo "-> Backend: build-keyboard-service"
-cd ../build-keyboard-service && npm install
-
-echo "-> Backend: delivery-service"
-cd ../delivery-service && npm install
-
-echo "-> Backend: admin-product-manager"
-cd ../admin-product-manager && npm install
+echo "-> Backend"
+for dir in Backend/*/; do
+  if [ -f "$dir/package.json" ]; then
+    echo "Instalando dependências em: $dir"
+    (cd "$dir" && npm install)
+  else
+    echo "Ignorando: $dir (sem package.json)"
+  fi
+done
 
 # Voltar para a raiz
 cd ../../

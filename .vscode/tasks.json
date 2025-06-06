@@ -1,0 +1,72 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev",
+			"path": "Frontend",
+			"problemMatcher": [],
+			"label": "Execute - Frontend",
+			"detail": "vite"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/barramento-de-eventos",
+			"problemMatcher": [],
+			"label": "Execute - barramento-de-eventos"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/admin-product-manager",
+			"problemMatcher": [],
+			"label": "Execute - admin-product-manager"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/search-products-service",
+			"problemMatcher": [],
+			"label": "Execute - search-products-service"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/order-generation-service",
+			"problemMatcher": [],
+			"label": "Execute - order-generation-service"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/cart-service",
+			"problemMatcher": [],
+			"label": "Execute - cart-service"
+		},
+		{
+			"type": "npm",
+			"script": "start:dev",
+			"path": "Backend/login-register-service",
+			"problemMatcher": [],
+			"label": "Execute - login-register-service"
+		},
+		{
+			"label": "Build Workspace",
+			"dependsOn": [
+				"Execute - Frontend",
+				"Execute - barramento-de-eventos",
+				"Execute - admin-product-manager",
+				"Execute - search-products-service",
+				"Execute - order-generation-service",
+				"Execute - cart-service",
+				"Execute - login-register-service"
+			],
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

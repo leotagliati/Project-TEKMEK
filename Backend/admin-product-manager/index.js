@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const axios = require('axios')
 const cors = require('cors')
 const { Pool } = require('pg')
 
@@ -25,114 +26,91 @@ pool.connect((err, client, release) => {
   release()
 })
 
+app.post('/products', async (req, res) => {
+  const {
+    name,
+    description,
+    price,
+    image_url,
+    layout_size,
+    connectivity,
+    product_type,
+    keycaps_type
+  } = req.body
 
-// Adicionar teclado customizado
-app.post('/keyboards', async (req, res) => {
-  const { name, switch: switchType, keycaps, case_type, stabs, foam, mods, pcb, stock, price } = req.body
-  
   if (!name) {
     return res.status(400).json({ error: 'O campo "name" é obrigatório' })
   }
 
   try {
     const result = await pool.query(
-      `INSERT INTO keyboards 
-       (name, switch, keycaps, case_type, stabs, foam, mods, pcb, stock, price) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-       RETURNING *`,
-      [name, switchType, keycaps, case_type, stabs, foam, mods, pcb, stock, price]
+      `INSERT INTO products_tb
+      (name, description, price, image_url, layout_size, connectivity, product_type, keycaps_type)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *`,
+      [name, description, price, image_url, layout_size, connectivity, product_type, keycaps_type]
     )
+
     res.status(201).json(result.rows[0])
+    await axios.post('http://localhost:5300/event', {
+      type: 'ProductCreated',
+      data: result.rows[0]
+    })
+    console.log(`Evento 'ProductCreated',' enviado com sucesso para o barramento de eventos.`)
+
+
   } catch (err) {
-    if (err.code === '23505') { // Código de erro para violação de unique
-      res.status(409).json({ error: 'Já existe um teclado com este nome' })
+    if (err.code === '23505') {
+      res.status(409).json({ error: 'Já existe um produto com este nome' })
     } else {
       console.error(err)
-      res.status(500).json({ error: 'Erro ao registrar teclado' })
+      res.status(500).json({ error: 'Erro ao registrar produto' })
     }
   }
 })
 
-// Listar todos os teclados
-app.get('/keyboards', async (req, res) => {
+app.get('/products', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT name, switch, keycaps, case_type, stabs, foam, mods, pcb, stock, price FROM keyboards ORDER BY name'
+      `SELECT id, name, description, price, image_url, layout_size, connectivity, product_type, keycaps_type, created_at
+       FROM products_tb
+       ORDER BY created_at DESC`
     )
     res.json(result.rows)
+    await axios.post('http://localhost:5300/event', {
+      type: 'ProductsFetched',
+      data: result.rows
+    });
+    console.log(`Evento 'ProductsFetched' enviado com sucesso para o barramento de eventos.`)
   } catch (err) {
     console.error(err)
-    res.status(500).json({ error: 'Erro ao buscar teclados' })
+    res.status(500).json({ error: 'Erro ao buscar produtos' })
   }
 })
+app.delete('/products/:id', async (req, res) => {
+  const { id } = req.params
 
-// Buscar teclado por nome
-app.get('/keyboards/:name', async (req, res) => {
-  const { name } = req.params
   try {
-    const result = await pool.query(
-      'SELECT * FROM keyboards WHERE name = $1',
-      [name]
-    )
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Teclado não encontrado' })
+    const result = await pool.query('DELETE FROM products_tb WHERE id = $1 RETURNING *', [id])
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Produto não encontrado' })
     }
     res.json(result.rows[0])
+
+    await axios.post('http://localhost:5300/event', {
+      type: 'ProductDeleted',
+      data: { id }
+    });
+    console.log(`Evento 'ProductDeleted' enviado com sucesso para o barramento de eventos.`)
+
   } catch (err) {
     console.error(err)
-    res.status(500).json({ error: 'Erro ao buscar teclado' })
+    res.status(500).json({ error: 'Erro ao deletar produto' })
   }
 })
 
-// Atualizar teclado
-app.put('/keyboards/:name', async (req, res) => {
-  const { name } = req.params
-  const { switch: switchType, keycaps, case_type, stabs, foam, mods, pcb, stock, price } = req.body
 
-  try {
-    const result = await pool.query(
-      `UPDATE keyboards 
-       SET switch=$1, keycaps=$2, case_type=$3, stabs=$4, foam=$5, mods=$6, pcb=$7, stock=$8, price=$9 
-       WHERE name=$10 
-       RETURNING *`,
-      [switchType, keycaps, case_type, stabs, foam, mods, pcb, stock, price, name]
-    )
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Teclado não encontrado' })
-    }
-    
-    res.json(result.rows[0])
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Erro ao atualizar teclado' })
-  }
-})
-
-// Remover teclado
-app.delete('/keyboards/:name', async (req, res) => {
-  const { name } = req.params
-  try {
-    const result = await pool.query(
-      'DELETE FROM keyboards WHERE name = $1 RETURNING *',
-      [name]
-    )
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Teclado não encontrado' })
-    }
-    
-    res.json({ 
-      success: true,
-      deleted: result.rows[0]
-    })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Erro ao deletar teclado' })
-  }
-})
-
-const port = process.env.PORT || 3000
+const port = process.env.MS_PORT
 app.listen(port, () => {
   console.clear()
   console.log('----------------------------------------------------')
