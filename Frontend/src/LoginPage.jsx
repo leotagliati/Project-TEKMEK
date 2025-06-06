@@ -45,13 +45,13 @@ export const LoginPage = () => {
 
             const isAdmin = response.data.isAdmin;
             localStorage.setItem("username", response.data.username)
+            localStorage.setItem("idlogin", accountId)
             if (isAdmin) {
                 navigate(`/admin/${accountId}`)
             }
             else{
                 navigate(`/home/account/${accountId}`)
             }
-            
 
         } catch (error) {
             console.error('Logging error:', error.message);

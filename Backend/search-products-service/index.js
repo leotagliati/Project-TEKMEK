@@ -100,11 +100,12 @@ app.post('/event', async (req, res) => {
         try {
             if (type === 'ProductCreated') {
                 const query = `
-                    INSERT INTO products_tb (id, name, description, layout_size, connectivity, product_type, keycaps_type)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    INSERT INTO products_tb (id, name, description, price, layout_size, connectivity, product_type, keycaps_type)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                     ON CONFLICT (id) DO UPDATE SET
                         name = EXCLUDED.name,
                         description = EXCLUDED.description,
+                        price = EXCLUDED.price,
                         layout_size = EXCLUDED.layout_size,
                         connectivity = EXCLUDED.connectivity,
                         product_type = EXCLUDED.product_type,
@@ -115,6 +116,7 @@ app.post('/event', async (req, res) => {
                     data.id,
                     data.name,
                     data.description,
+                    parseFloat(data.price),
                     data.layout_size,
                     data.connectivity,
                     data.product_type,

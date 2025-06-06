@@ -8,6 +8,7 @@ export function ProductPage() {
   const [product, setProductData] = useState(null);
   const [mainImage, setMainImage] = useState('https://placehold.co/500x500?text=Imagem+Principal');
   const [message, setMessage] = useState('');
+  const userId = localStorage.getItem('idlogin')
 
   useEffect(() => {
     client.get(`/product/${title}`)
@@ -24,9 +25,13 @@ export function ProductPage() {
   };
 
   const handleAddToCart = async () => {
+    if(!userId) {
+      setMessage('Você precisa estar logado para adicionar produtos ao carrinho.');
+      return;
+    }
     try {
       const payload = {
-        userId: 1,
+        userId: userId,
         items: [{ productId: product.id, quantity: 1 }]
       };
 

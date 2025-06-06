@@ -53,6 +53,7 @@ const registerUser = (username, password, token) => {
       if (rows.length !== 0) {
         return reject({ code: 409, error: 'Could not register user: username already exists' });
       }
+
       
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
