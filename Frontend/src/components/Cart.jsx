@@ -1,4 +1,3 @@
-// src/components/Cart.jsx
 import React, { useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
@@ -47,40 +46,42 @@ export default function Cart() {
   );
 
   return (
-    <div className="container mt-4">
-      <h2>Carrinho de Compras</h2>
+    <div className="container my-4">
+      <h2 className="text-center mb-4">Carrinho de Compras</h2>
 
       {items.length === 0 ? (
-        <p>Seu carrinho está vazio.</p>
+        <p className="text-center">Seu carrinho está vazio.</p>
       ) : (
         items.map(item => (
-          <div key={item.id} className="card mb-3 p-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <div>
-                <h5>{item.name}</h5>
-                <p>Preço unitário: R$ {item.price.toFixed(2)}</p>
+          <div key={item.id} className="card mb-4 shadow-sm">
+            <div className="card-body">
+              <h5 className="mb-2">{item.name}</h5>
+              <p className="mb-2">Preço unitário: R$ {item.price.toFixed(2)}</p>
 
-                <div className="d-flex align-items-center gap-2">
-                  <Button label="-" onClick={() => handleQuantityChange(item.id, -1)} />
-                  <span>Quantidade: {item.quantity}</span>
-                  <Button label="+" onClick={() => handleQuantityChange(item.id, +1)} />
-                </div>
-
-                <div className="mt-2" style={{ maxWidth: '200px' }}>
-                  <Dropdown
-                    value={item.warranty}
-                    options={warrantyOptions}
-                    onChange={(e) => handleWarrantyChange(item.id, e.value)}
-                    placeholder="Selecionar garantia"
-                    optionLabel="label"
-                  />
-                </div>
+              {/* Quantidade */}
+              <div className="d-flex align-items-center gap-2 mb-3">
+                <Button label="−" onClick={() => handleQuantityChange(item.id, -1)} />
+                <span className="fw-bold">Quantidade: {item.quantity}</span>
+                <Button label="+" onClick={() => handleQuantityChange(item.id, +1)} />
               </div>
 
+              {/* Garantia */}
+              <div style={{ maxWidth: '250px' }} className="mb-3">
+                <Dropdown
+                  value={item.warranty}
+                  options={warrantyOptions}
+                  onChange={(e) => handleWarrantyChange(item.id, e.value)}
+                  placeholder="Selecionar garantia"
+                  optionLabel="label"
+                  className="w-100"
+                />
+              </div>
+
+              {/* Botão remover */}
               <div>
                 <Button
                   label="Remover"
-                  className="p-button-danger"
+                  className="p-button-danger w-100 w-md-auto"
                   onClick={() => handleRemove(item.id)}
                 />
               </div>
@@ -89,13 +90,18 @@ export default function Cart() {
         ))
       )}
 
-      <h4>Total: R$ {total.toFixed(2)}</h4>
-      <Button
-        label="Finalizar Compra"
-        className="p-button-success"
-        onClick={finalizarCompra}
-        disabled={items.length === 0}
-      />
+      {/* Total e Finalizar */}
+      <div className="row mt-4">
+        <div className="col-12 col-md-6 offset-md-3 text-center">
+          <h4 className="mb-3">Total: R$ {total.toFixed(2)}</h4>
+          <Button
+            label="Finalizar Compra"
+            className="p-button-success w-100 w-md-auto"
+            onClick={finalizarCompra}
+            disabled={items.length === 0}
+          />
+        </div>
+      </div>
     </div>
   );
 }
