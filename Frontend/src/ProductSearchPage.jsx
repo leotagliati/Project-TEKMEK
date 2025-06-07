@@ -4,11 +4,14 @@ import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
 import { Link, useParams } from 'react-router-dom'
+import Cart from './components/cart.jsx'
+
 
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
+    const [showCart, setShowCart] = useState(false)
     const { idlogin } = useParams()
     const username = localStorage.getItem("username")
 
@@ -27,11 +30,13 @@ export const ProductSearchPage = () => {
     const handleFiltersChange = (newFilters) => {
         setFilters(newFilters)
     }
+
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value)
     }
+
     const handleCartClick = () => {
-        console.log('Exibir carrinho')
+        setShowCart(prev => !prev)
     }
 
     return (
@@ -44,12 +49,14 @@ export const ProductSearchPage = () => {
                         <h2 className="ms-2">Tekmek</h2>
                     </Link>
 
-                    <div className=" flex-grow-1 d-flex justify-content-center">
-                        <div className="p-input-icon-left " style={{ width: '100%', maxWidth: '600px' }}>
+                    <div className="flex-grow-1 d-flex justify-content-center">
+                        <div className="p-input-icon-left" style={{ width: '100%', maxWidth: '600px' }}>
                             <i className="px-2 pi pi-search" />
-                            <InputText placeholder="Search"
+                            <InputText
+                                placeholder="Search"
                                 className="px-5 w-100"
-                                onChange={handleSearchChange} />
+                                onChange={handleSearchChange}
+                            />
                         </div>
                     </div>
 
@@ -58,49 +65,93 @@ export const ProductSearchPage = () => {
                             <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
                         </Link>
 
-                        {/* Aqui eu chamaria a funcao que exibe o cart.jsx */}
-                        <div onClick={handleCartClick} className="text-dark" style={{ cursor: 'pointer' }} title="Carrinho">
+                        {/* Ícone do carrinho que abre/fecha o overlay */}
+                        <div
+                            onClick={handleCartClick}
+                            className="text-dark"
+                            style={{ cursor: 'pointer' }}
+                            title="Carrinho"
+                        >
                             <i className="pi pi-shopping-cart" style={{ fontSize: '1.3rem' }} />
                         </div>
                     </div>
                 </header>
             </div>
-            
+
             {/* Mensagem personalizada */}
             <div className="text-center mt-4">
                 {username && <h4>Seja bem vindo,  {username}!</h4>}
             </div>
 
-            <div className='mt-4 d-flex '>
+            <div className='mt-4 d-flex'>
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
                     <div className='row row-gap-4'>
-                        {
-                            produtos.length > 0 ? (
-                                produtos.map((product) => (
-                                    <ProductCard
-                                        key={product.id}
-                                        id={product.id}
-                                        title={product.name}
-                                        description={product.description}
-                                        price={product.price}
-                                        image={product.image_url}
-                                    />
-                                ))
-                            ) : (
-                                <div className='col-12 text-center'>
-                                    <h3>Nenhum produto encontrado</h3>
-                                </div>
-                            )
-
-                        }
-
+                        {produtos.length > 0 ? (
+                            produtos.map((product) => (
+                                <ProductCard
+                                    key={product.id}
+                                    id={product.id}
+                                    title={product.name}
+                                    description={product.description}
+                                    price={product.price}
+                                    image={product.image_url}
+                                />
+                            ))
+                        ) : (
+                            <div className='col-12 text-center'>
+                                <h3>Nenhum produto encontrado</h3>
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>
+
+            {/* Overlay do Carrinho */}
+            {showCart && (
+                <>
+                    {/* Backdrop semitransparente */}
+                    <div
+                        onClick={handleCartClick}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100vw',
+                            height: '100vh',
+                            backgroundColor: 'rgba(0,0,0,0.4)',
+                            zIndex: 999,
+                        }}
+                    />
+
+                    {/* Container do carrinho fixo à direita */}
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            right: 0,
+                            height: '100vh',
+                            width: '350px',
+                            backgroundColor: 'white',
+                            boxShadow: '-2px 0 8px rgba(0,0,0,0.3)',
+                            zIndex: 1000,
+                            overflowY: 'auto',
+                            padding: '1rem',
+                        }}
+                    >
+                        <button
+                            onClick={handleCartClick}
+                            style={{ marginBottom: '1rem', cursor: 'pointer' }}
+                        >
+                            Fechar
+                        </button>
+                       <Cart/>
+                    </div>
+                </>
+            )}
         </>
     )
 }
