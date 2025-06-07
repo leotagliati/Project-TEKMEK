@@ -9,6 +9,7 @@ export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
+    const [showCart, setShowCart] = useState(false)
     const { idlogin } = useParams()
     const username = localStorage.getItem("username")
 
@@ -32,6 +33,7 @@ export const ProductSearchPage = () => {
     }
     const handleCartClick = () => {
         console.log('Exibir carrinho')
+        setShowCart(prev => !prev)
     }
 
     return (
@@ -61,11 +63,14 @@ export const ProductSearchPage = () => {
                         {/* Aqui eu chamaria a funcao que exibe o cart.jsx */}
                         <div onClick={handleCartClick} className="text-dark" style={{ cursor: 'pointer' }} title="Carrinho">
                             <i className="pi pi-shopping-cart" style={{ fontSize: '1.3rem' }} />
+                            {showCart && (
+                                <Cart />
+                            )}
                         </div>
                     </div>
                 </header>
             </div>
-            
+
             {/* Mensagem personalizada */}
             <div className="text-center mt-4">
                 {username && <h4>Seja bem vindo,  {username}!</h4>}
