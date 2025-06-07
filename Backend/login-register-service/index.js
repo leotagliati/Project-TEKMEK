@@ -130,7 +130,7 @@ app.post('/register', (req, res) => {
 
       })
         .then(() => {
-          console.log('Event sent successfully');
+          console.log('Evento `UserRegistered` enviado com sucesso');
         })
         .catch(err => {
           console.log('Error sending event:', err.message);
@@ -157,10 +157,11 @@ app.post('/login', (req, res) => {
         }
       })
         .then(() => {
-          console.log('Event sent successfully');
+          console.log('Evento `UserLogged` enviado com sucesso');
+
         })
         .catch(err => {
-          console.log('Error sending event:', err.message);
+          console.log('Erro ao enviar evento:', err.message);
         });
 
       // Retorna dados ao cliente 

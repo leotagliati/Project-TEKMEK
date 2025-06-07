@@ -15,8 +15,8 @@ const services = {
 const eventRoutes = {
     // Registrar os servicos que ouvem os eventos
 
-    UserRegistered: [{ service: 'userLoginService' }],
-    UserLogged: [{ service: 'userLoginService' }],
+    UserRegistered: [],
+    UserLogged: [],
 
     CartCheckoutInitiated: [{ service: 'orderGenerationService' }],
     OrderCreated: [],
