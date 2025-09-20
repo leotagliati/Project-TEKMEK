@@ -1,4 +1,4 @@
-# Project-DACTYLOS
+# Project-TEKMEK
 
 ## Descrição
 A Tekmek é uma empresa de e-commerce especializada na fabricação e venda de teclados mecânicos customizáveis.
