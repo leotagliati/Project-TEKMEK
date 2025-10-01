@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekmek-barramento-de-eventos-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barramento-de-eventos
+  template:
+    metadata:
+      labels:
+        app: barramento-de-eventos
+    spec:
+      containers:
+        - name: barramento-de-eventos
+          image: quazmo/tekmek-barramento-de-eventos
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 1
+            requests:
+              memory: 256Mi
+              cpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tekmek-barramento-de-eventos-service
+spec:
+  selector:
+    app: barramento-de-eventos
+  type: ClusterIP
+  ports:
+    - name: barramento-de-eventos
+      protocol: TCP
+      port: 5300
+      targetPort: 5300

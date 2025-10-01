@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekmek-login-register-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: login-register
+  template:
+    metadata:
+      labels:
+        app: login-register
+    spec:
+      containers:
+        - name: login-register
+          image: quazmo/tekmek-login-register
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 1
+            requests:
+              memory: 256Mi
+              cpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tekmek-login-register-clusterip-service
+spec:
+  selector:
+    app: login-register
+  ports:
+    - name: login-register
+      protocol: TCP
+      port: 5315
+      targetPort: 5315
