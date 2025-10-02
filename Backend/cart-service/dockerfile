@@ -1,0 +1,13 @@
+FROM dart:stable
+
+WORKDIR /app
+
+COPY pubspec.* ./
+
+RUN dart pub get
+
+COPY . .
+
+EXPOSE 5316
+
+CMD ["dart", "run", "index.dart"]
