@@ -1,0 +1,37 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: tekmek-delivery-deployment
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: delivery
+#   template:
+#     metadata:
+#       labels:
+#         app: delivery
+#     spec:
+#       containers:
+#         - name: delivery
+#           image: quazmo/tekmek-delivery
+#           resources:
+#             limits:
+#               memory: 256Mi
+#               cpu: 1
+#             requests:
+#               memory: 256Mi
+#               cpu: 1
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: tekmek-delivery-clusterip-service
+# spec:
+#   selector:
+#     app: delivery
+#   ports:
+#     - name: delivery
+#       protocol: TCP
+#       port: * #Serviço a ser implementado
+#       targetPort: * #Serviço a ser implementado
