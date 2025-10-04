@@ -1,13 +1,28 @@
 {
 	"version": "2.0.0",
 	"tasks": [
+		// // FRONT EM REACT (NAO ESTAMOS USANDO)
+		// {
+		// 	"type": "npm",
+		// 	"script": "dev",
+		// 	"path": "Frontend",
+		// 	"problemMatcher": [],
+		// 	"label": "Execute - Frontend" (React Web),
+		// 	"detail": "vite"
+		// },
 		{
-			"type": "npm",
-			"script": "dev",
-			"path": "Frontend",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"chrome"
+			],
+			"options": {
+				"cwd": "front_flutter"
+			},
 			"problemMatcher": [],
-			"label": "Execute - Frontend",
-			"detail": "vite"
+			"label": "Execute - Frontend (Flutter Web Chrome)",
 		},
 		{
 			"type": "npm",
@@ -54,7 +69,7 @@
 		{
 			"label": "Build Workspace",
 			"dependsOn": [
-				"Execute - Frontend",
+				"Execute - Frontend (Flutter Web Chrome)",
 				"Execute - barramento-de-eventos",
 				"Execute - admin-product-manager",
 				"Execute - search-products-service",
