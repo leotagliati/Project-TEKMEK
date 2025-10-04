@@ -1,0 +1,1 @@
+// Essa classe é apenas um dummy, não necessariamente precisa ser utilizado

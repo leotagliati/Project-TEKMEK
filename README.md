@@ -2,7 +2,7 @@
 
 ## Descrição
 A Tekmek é uma empresa de e-commerce especializada na fabricação e venda de teclados mecânicos customizáveis.
-Nosso sistema é projetado com base em uma infraestrutura robusta, com uma plataforma digital intuitiva, onde o cliente pode visualizar em tempo real as modificações feitas em seu teclado antes da compra.
+Nosso sistema é projetado com base em uma infraestrutura de microsserviços, com uma plataforma digital na web e mobile, onde o cliente pode analisar o teclado e suas modificações antes da compra.
 
 
 ## Sumário
