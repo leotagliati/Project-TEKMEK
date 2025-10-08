@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'pages/login/login.page.dart';
 
-void main() {
-  runApp(const App());
-}
+void main() => runApp(MaterialApp(home: LoginScreen()));
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -17,6 +16,11 @@ class App extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
+      home: const Scaffold(
+        body: Center(
+          child: Text('Hello, Tekmek!'),
         ),
       ),
     );
