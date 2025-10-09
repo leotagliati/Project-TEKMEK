@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/search_component.dart';
 
-class AppBarMobile extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarMobile({super.key});
+class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
+  const AppBarComponent({super.key});
 
   @override
   Widget build(BuildContext context) {

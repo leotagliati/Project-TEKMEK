@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/app_bar_mobile.dart';
+import 'package:front_flutter/common_components/app_bar_component.dart';
+import 'package:front_flutter/common_components/drawer_menu.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,35 +14,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              margin: EdgeInsets.all(8),
-              child: Image.asset(
-                'assets/images/tekmek-logo-clear.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Início"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.local_mall),
-              title: Text("Meus pedidos"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text("Minha conta"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
-      appBar: AppBarMobile(),
+      drawer: DrawerMenu(),
+      appBar: AppBarComponent(),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
