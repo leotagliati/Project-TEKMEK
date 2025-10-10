@@ -10,7 +10,7 @@ class DashboardScreen extends StatelessWidget {
         title: const Text('Dashboard'),
       ),
       body: const Center(
-        child: Text('Welcome! You are logged in.'),
+        child: Text('Seja Bem vindo!'),
       ),
     );
   }
