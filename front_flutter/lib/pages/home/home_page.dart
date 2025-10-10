@@ -1,7 +1,9 @@
+import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/drawer_menu.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
+import 'package:front_flutter/pages/home/_compose/product_component.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,8 +18,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: DrawerMenu(),
       appBar: AppBarComponent(),
-      body: Center(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               Row(
@@ -32,24 +35,29 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
+              SizedBox(height: 24),
               HomeFiltersComponent(),
-              Container(
-                constraints: BoxConstraints(maxWidth: 1200, maxHeight: 800),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  // child: Column(
-                  //   children: [
-                  //     Expanded(child: Image.asset('assets/images/keyboard.png')),
-                  //     Text("Nome do teclado"),
-                  //     Text("Descrição"),
-                  //   ],
-                  // ),
-                  child: Expanded(child: SizedBox()),
-                ),
+              SizedBox(height: 24),
+              FlexibleWrap(
+                isOneRowExpanded: true,
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                  ProductComponent(),
+                ],
               ),
             ],
           ),

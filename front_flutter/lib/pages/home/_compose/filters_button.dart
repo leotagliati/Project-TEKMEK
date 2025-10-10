@@ -123,7 +123,12 @@ class HomeFiltersComponent extends StatelessWidget {
           },
         );
       },
-      child: Row(children: [Text("Filtros")]),
+      child: Row(
+        children: [
+          Expanded(child: Text("Filtros")),
+          Icon(Icons.tune),
+        ],
+      ),
     );
   }
 }

@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  flexible_wrap:
+    dependency: "direct main"
+    description:
+      name: flexible_wrap
+      sha256: de2ead1df796ef377bdbba1554580336f85d3f551e2484f3be950ac80a218b2b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7"
   flutter:
     dependency: "direct main"
     description: flutter
