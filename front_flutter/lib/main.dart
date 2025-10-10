@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_flutter/pages/home/home_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class App extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
+      home: HomePage(),
     );
   }
 }
