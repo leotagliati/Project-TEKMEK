@@ -56,17 +56,18 @@ class LoginScreen extends StatelessWidget {
       // ========= INÍCIO DA PERSONALIZAÇÃO =========
       theme: LoginTheme(
         primaryColor: const Color.fromARGB(255, 83, 83, 83),
-        // Cor principal, usada nos botões e destaques
+       
         pageColorLight: const Color(0xFFF5F5F5),
         pageColorDark: const Color(0xFFF5F5F5),
 
-        // Estilo do título "Tekmek"
+        // Estilo do título "Seja bem-vindo!"
         titleStyle: const TextStyle(
           color: const Color.fromARGB(255, 83, 83, 83),
           fontSize: 28,
           height: 1.2,
         ),
 
+        //Estilo do texto esqueceu a senha
         bodyStyle: const TextStyle(
       
          color:const Color.fromARGB(255, 83, 83, 83),
@@ -81,7 +82,7 @@ class LoginScreen extends StatelessWidget {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
         ),
 
-        // Estilo do texto do botão
+        // Estilo do texto do botão acessar a plataforma
         buttonTheme: LoginButtonTheme(
           splashColor: const Color.fromARGB(255, 118, 205, 245),
           backgroundColor: const Color.fromARGB(255, 36, 100, 238),
