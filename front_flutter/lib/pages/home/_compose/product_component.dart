@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ProductComponent extends StatelessWidget {
-  const ProductComponent({super.key});
+  final String imagePath;
+  final String title;
+  final String description;
+
+  const ProductComponent({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +29,7 @@ class ProductComponent extends StatelessWidget {
             Expanded(
               child: Image.asset(
                 width: double.infinity,
-                'assets/images/keyboard.png',
+                imagePath,
                 fit: BoxFit.cover,
               ),
             ),
@@ -33,10 +42,10 @@ class ProductComponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Nome do teclado",
+                        title,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text("R\$999,99"),
+                      Text(description),
                     ],
                   ),
                 ],

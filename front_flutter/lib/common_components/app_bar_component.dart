@@ -13,7 +13,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
           SearchComponent(),
         ],
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[300],
     );
   }
 
