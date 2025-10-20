@@ -29,9 +29,9 @@ Terminais:
 Inicialize os microsserviços, o barramento e o front. 
 
 ## Contribuidores:
-[André R.A Abreu](https://github.com/andre-rabreu)<br>
+[André Renato Almeida Abreu](https://github.com/andre-rabreu)<br>
 [Arthur Jin Woo Lee](https://github.com/Tutzjwlee)<br>
-[Fernando M.A. Gimenez]( https://github.com/M3ngal)<br> 
-[Leonardo H.D.Moura](https://github.com/LeonardoHDMoura )<br>
+[Fernando Minharro Alves Gimenez]( https://github.com/M3ngal)<br> 
+[Leonardo Henrique Dias Moura](https://github.com/LeonardoHDMoura )<br>
 [Leonardo Tagliati da Silva](https://github.com/leotagliati)<br>
 [Michelle Mitie Hamazaki](https://github.com/Michelle-Hmzk)
