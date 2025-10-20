@@ -9,11 +9,31 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Row(
         children: [
+          SizedBox(width: 56),
           Expanded(child: Text("TEKMEK", textAlign: TextAlign.center)),
-          SearchComponent(),
         ],
       ),
       backgroundColor: Colors.grey[300],
+      actions: [
+        SearchComponent(),
+        Builder(
+          builder: (context) => ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 56,
+              maxWidth: 56,
+              minHeight: 56,
+              maxHeight: 56,
+            ),
+            child: Center(
+              child: IconButton(
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                icon: Icon(Icons.shopping_cart),
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

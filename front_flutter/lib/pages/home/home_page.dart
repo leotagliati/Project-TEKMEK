@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
+import 'package:front_flutter/common_components/cart_component.dart';
 import 'package:front_flutter/common_components/drawer_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: DrawerMenu(),
+      endDrawer: CartComponent(),
       appBar: AppBarComponent(),
       body: SingleChildScrollView(
         child: Padding(
