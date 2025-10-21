@@ -6,6 +6,11 @@ class HomeFiltersComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Color.fromARGB(255, 65, 72, 74),
+        backgroundColor: Colors.transparent,
+        side: BorderSide(color: Color.fromARGB(255, 65, 72, 74)),
+      ),
       onPressed: () {
         showModalBottomSheet(
           context: context,

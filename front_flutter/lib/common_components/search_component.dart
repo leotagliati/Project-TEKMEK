@@ -17,12 +17,17 @@ class _SearchComponentState extends State<SearchComponent> {
       searchController: controller,
       viewHintText: "Pesquise aqui...",
       viewTrailing: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.search),
+          tooltip: 'Buscar',
+        ),
         IconButton(
           onPressed: () {
             controller.clear();
           },
           icon: Icon(Icons.clear),
+          tooltip: 'Limpar',
         ),
       ],
       builder: (context, controller) {
@@ -31,6 +36,7 @@ class _SearchComponentState extends State<SearchComponent> {
             controller.openView();
           },
           icon: Icon(Icons.search),
+          tooltip: 'Buscar',
         );
       },
       suggestionsBuilder: (BuildContext context, SearchController controller) {

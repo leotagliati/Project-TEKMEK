@@ -3,7 +3,7 @@ import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/cart_component.dart';
-import 'package:front_flutter/common_components/drawer_menu.dart';
+import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerMenu(),
+      drawer: NavigationMenu(),
       endDrawer: CartComponent(),
       appBar: AppBarComponent(),
       body: SingleChildScrollView(

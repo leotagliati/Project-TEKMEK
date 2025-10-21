@@ -14,6 +14,25 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       backgroundColor: Colors.grey[300],
+      leading: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 56,
+          maxWidth: 56,
+          minHeight: 56,
+          maxHeight: 56
+        ),
+        child: Builder(
+          builder: (BuildContext context) {
+            return Center(
+              child: IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: Icon(Icons.menu),
+                tooltip: 'Menu',
+              ),
+            );
+          },
+        ),
+      ),
       actions: [
         SearchComponent(),
         Builder(
@@ -28,7 +47,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
               child: IconButton(
                 onPressed: () => Scaffold.of(context).openEndDrawer(),
                 icon: Icon(Icons.shopping_cart),
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                tooltip: 'Carrinho',
               ),
             ),
           ),
