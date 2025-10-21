@@ -130,9 +130,9 @@ class _HomePageState extends State<HomePage> {
                 runSpacing: 16,
                 children: List<Widget>.generate(16, (int index) {
                   return ProductComponent(
-                    imagePath: "assets/images/keyboard.png",
-                    title: "Nome do teclado",
-                    description: "R\$999,99",
+                    imagePath: 'assets/images/keyboard.png',
+                    title: 'Nome do teclado',
+                    description: 'R\$999,99',
                   );
                 }),
               ),

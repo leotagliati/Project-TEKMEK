@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/pages/home/_compose/product_component.dart';
+import 'package:front_flutter/common_components/cart_product_component.dart';
+import 'package:intl/intl.dart';
 
-class CartComponent extends StatelessWidget {
+class CartComponent extends StatefulWidget {
   const CartComponent({super.key});
+
+  @override
+  State<CartComponent> createState() => _CartComponentState();
+}
+
+class _CartComponentState extends State<CartComponent> {
+  double subtotal = 0;
+  var currency = NumberFormat('#,##0.00', 'pt_BR');
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +46,27 @@ class CartComponent extends StatelessWidget {
                       ],
                     ),
                     Container(color: Colors.grey[400], height: 2),
-                    ProductComponent(
-                      imagePath: "assets/images/keyboard.png",
-                      title: "Nome do teclado",
-                      description: "R\$999,99",
+                    CartProductComponent(
+                      productName: 'Keychron K3 Max',
+                      productType: 'Teclado',
+                      imagePath: 'assets/images/keyboard.png',
+                      price: 499.99,
+                    ),
+                    Column(
+                      children: List<Widget>.generate(6, (int index) {
+                        return CartProductComponent(
+                          productName: 'Keychron K3 Max',
+                          productType: 'Teclado',
+                          imagePath: 'assets/images/keyboard.png',
+                          price: 499.99,
+                        );
+                      }),
                     ),
                     Container(color: Colors.grey[400], height: 2),
                     Row(
                       children: [
-                        Expanded(child: Text("Subtotal")),
-                        Text("R\$999,99"),
+                        Expanded(child: Text('Subtotal')),
+                        Text('R\$${currency.format(subtotal)}'),
                       ],
                     ),
                     OutlinedButton(
@@ -58,13 +78,19 @@ class CartComponent extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Expanded(child: Text("Finalizar pedido", textAlign: TextAlign.center)),
+                          Expanded(
+                            child: Text(
+                              "Finalizar pedido",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
+              SizedBox(height: 8),
             ],
           ),
         ),
