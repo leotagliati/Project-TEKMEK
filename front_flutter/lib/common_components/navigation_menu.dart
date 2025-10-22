@@ -30,6 +30,13 @@ class NavigationMenu extends StatelessWidget {
             title: Text("Minha conta"),
             onTap: () {},
           ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              '*Imagens geradas por inteligência artificial.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
         ],
       ),
     );

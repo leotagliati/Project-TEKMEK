@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Keychron K3 Max",
+        "type": "Teclado",
+        "imagePath": "assets/images/keyboard.png",
+        "price": 499.99,
+        "amount": 1
+    },
+    {
+        "name": "Logitech MX Master 3S",
+        "type": "Mouse",
+        "imagePath": "assets/images/keyboard.png",
+        "price": 520.50,
+        "amount": 2
+    },
+    {
+        "name": "Monitor Dell UltraSharp 27",
+        "type": "Monitor",
+        "imagePath": "assets/images/keyboard.png",
+        "price": 2899.00,
+        "amount": 1
+    }
+]
