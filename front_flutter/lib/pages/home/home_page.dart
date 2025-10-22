@@ -2,7 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
-import 'package:front_flutter/common_components/drawer_menu.dart';
+import 'package:front_flutter/pages/cart/cart_component.dart';
+import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
@@ -42,7 +43,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerMenu(),
+      drawer: NavigationMenu(),
+      endDrawer: CartComponent(),
       appBar: AppBarComponent(),
       body: SingleChildScrollView(
         child: Padding(
@@ -128,9 +130,9 @@ class _HomePageState extends State<HomePage> {
                 runSpacing: 16,
                 children: List<Widget>.generate(16, (int index) {
                   return ProductComponent(
-                    imagePath: "assets/images/keyboard.png",
-                    title: "Nome do teclado",
-                    description: "R\$999,99",
+                    imagePath: 'assets/images/keyboard.png',
+                    title: 'Nome do teclado',
+                    description: 'R\$999,99',
                   );
                 }),
               ),

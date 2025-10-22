@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DrawerMenu extends StatelessWidget {
-  const DrawerMenu({super.key});
+class NavigationMenu extends StatelessWidget {
+  const NavigationMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +29,13 @@ class DrawerMenu extends StatelessWidget {
             leading: Icon(Icons.account_circle),
             title: Text("Minha conta"),
             onTap: () {},
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              '*Imagens geradas por inteligência artificial.',
+              style: TextStyle(color: Colors.grey),
+            ),
           ),
         ],
       ),
