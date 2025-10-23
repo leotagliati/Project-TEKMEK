@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:front_flutter/pages/cart/cart_product.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
 import 'package:intl/intl.dart';
 
@@ -17,7 +17,7 @@ class _CartComponentState extends State<CartComponent> {
   double subtotal = 0;
   var currency = NumberFormat('#,##0.00', 'pt_BR');
 
-  List<CartProduct> products = [];
+  List<Product> products = [];
 
   @override
   void initState() {
@@ -33,8 +33,8 @@ class _CartComponentState extends State<CartComponent> {
         'assets/data/products.json',
       );
       final List<dynamic> parsedList = jsonDecode(jsonString);
-      final List<CartProduct> items = parsedList
-          .map((item) => CartProduct.fromJson(item as Map<String, dynamic>))
+      final List<Product> items = parsedList
+          .map((item) => Product.fromJson(item as Map<String, dynamic>))
           .toList();
       setState(() {
         products = items;
@@ -53,14 +53,14 @@ class _CartComponentState extends State<CartComponent> {
     );
   }
 
-  void _removeProduct(CartProduct product) {
+  void _removeProduct(Product product) {
     setState(() {
       products.remove(product);
       _calculateSubtotal();
     });
   }
 
-  void _updateAmount(CartProduct product, int newAmount) {
+  void _updateAmount(Product product, int newAmount) {
     setState(() {
       if (newAmount > 0) {
         product.amount = newAmount;
