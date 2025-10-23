@@ -58,7 +58,7 @@ const registerUser = (username, password, token) => {
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      // <<< CORREÇÃO: Variável 'isAdmin' declarada com 'let'
+   
       let isAdmin;
 
       if (token === undefined || token === null || token === '') {
@@ -126,7 +126,7 @@ app.post('/register', (req, res) => {
 
   registerUser(username, password, token)
     .then(user => {
-      // Envia evento de usuário registrado (opcional)
+   
       axios.post('http://localhost:5300/event', {
         type: 'UserRegistered',
         data: { username: user.username }
@@ -151,7 +151,7 @@ app.post('/login', (req, res) => {
 
   validateLogin(username, password)
     .then(user => {
-      // Envia evento de login (opcional)
+    
       axios.post('http://localhost:5300/event', {
         type: 'UserLogged',
         data: {
