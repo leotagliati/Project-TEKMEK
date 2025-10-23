@@ -58,6 +58,9 @@ const registerUser = (username, password, token) => {
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+      // <<< CORREÇÃO: Variável 'isAdmin' declarada com 'let'
+      let isAdmin;
+
       if (token === undefined || token === null || token === '') {
         isAdmin = 'false';
       }
@@ -171,6 +174,37 @@ app.post('/login', (req, res) => {
       res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
     });
 });
+
+// <<< NOVO ENDPOINT: Para a função _recoverPassword do Flutter
+app.post('/recover-password', async (req, res) => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT idlogin FROM login_tb WHERE username = $1',
+      [username]
+    );
+
+    if (rows.length === 0) {
+      // Retorna 404 para o app Flutter saber que o usuário não existe
+      return res.status(404).json({ error: 'User not exists' });
+    }
+
+    // Se o usuário existir, a lógica real de enviar e-mail iria aqui.
+    // Por enquanto, apenas retornamos 200 OK para o app Flutter
+    // saber que o processo "iniciou com sucesso".
+    res.status(200).json({ message: 'Password recovery process initiated' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 const port = 5315;
 app.listen(port, () => {
