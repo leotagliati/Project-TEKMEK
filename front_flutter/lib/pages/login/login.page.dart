@@ -28,6 +28,38 @@ class LoginScreen extends StatelessWidget {
     return Provider.of<AuthService>(context, listen: false).recoverPassword(name);
   }
 
+  // ======================================================
+  // === NOVA FUNÇÃO DE LÓGICA COMBINADA ===
+  // (Esta função registra e, se der certo, faz o login)
+  // ======================================================
+  Future<String?> _handleSignup(BuildContext context, SignupData data) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    
+    // 1. Tenta registrar o usuário
+    final String? signupError = await authService.signupUser(
+      data.name ?? '',
+      data.password ?? '',
+    );
+
+    if (signupError != null) {
+      // Se deu erro no registro (ex: usuário já existe), 
+      // retorna a mensagem de erro.
+      return signupError;
+    }
+
+    // 2. Se o registro foi SUCESSO (signupError == null),
+    // tenta fazer o login automaticamente.
+    final String? loginError = await authService.login(
+      data.name ?? '',
+      data.password ?? '',
+    );
+    
+    // Retorna o resultado do login (que será 'null' se for sucesso)
+    return loginError;
+  }
+  // ======================================================
+
+
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
@@ -35,7 +67,14 @@ class LoginScreen extends StatelessWidget {
       title: 'Seja bem-vindo!',
       
       onLogin: (data) => _authUser(context, data),
-      onSignup: (data) => _signupUser(context, data),
+      
+      // ======================================================
+      // === MUDANÇA AQUI ===
+      // ======================================================
+      // Usamos a nova função que faz login após o registro
+      onSignup: (data) => _handleSignup(context, data),
+      // ======================================================
+
       onRecoverPassword: (name) => _recoverPassword(context, name),
       
       onSubmitAnimationCompleted: () {
