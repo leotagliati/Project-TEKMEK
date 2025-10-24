@@ -1,12 +1,66 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
+import 'package:intl/intl.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
   final int productId;
 
   const ProductPage({super.key, required this.productId});
+
+  @override
+  State<ProductPage> createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  var currency = NumberFormat('#,##0.00', 'pt_BR');
+  late final Future<Product> _productFuture;
+
+  final List<String> radioOptions = ['Cabo', 'Wireless'];
+  String? _selectedOption;
+
+  // Temporário para pegar os dados do JSON
+  Future<Product> _fetchProductDetails(int id) async {
+    try {
+      final String jsonString = await rootBundle.loadString(
+        'assets/data/products.json',
+      );
+      final List<dynamic> parsedList = jsonDecode(jsonString);
+      final Map<String, dynamic> productMap = parsedList.firstWhere(
+        (item) => item['id'] == id,
+        orElse: () => throw Exception('Produto com ID $id não encontrado!'),
+      );
+      return Product.fromJson(productMap);
+    } catch (e) {
+      print('Erro ao carregar o produto: $e');
+      throw Exception('Não foi possível carregar os detalhes do produto.');
+    }
+  }
+
+  // Temporário para formatar a saída do texto
+  String _formatSpecifications(Map<String, String> specifications) {
+    final formattedLines = specifications.entries.map((entry) {
+      final String key = entry.key;
+      final String value = entry.value;
+      if (key.isEmpty) return '';
+      final String capitalizedKey =
+          '${key[0].toUpperCase()}${key.substring(1)}';
+      return '$capitalizedKey: $value';
+    }).toList();
+    return formattedLines.join('\n');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _productFuture = _fetchProductDetails(widget.productId);
+    _selectedOption = radioOptions[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +68,184 @@ class ProductPage extends StatelessWidget {
       drawer: NavigationMenu(),
       endDrawer: CartComponent(),
       appBar: AppBarComponent(),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [Image.network('https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg')],
-          ),
-        ),
+      body: FutureBuilder<Product>(
+        future: _productFuture,
+        builder: (context, snapshot) {
+          // Carregando
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Erro
+          if (snapshot.hasError) {
+            return Center(child: Text('Erro: ${snapshot.error}'));
+          }
+
+          // Sucesso!
+          if (snapshot.hasData) {
+            final Product product = snapshot.data!;
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 960),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 512),
+                          child: Image.network(product.imageUrl),
+                        ),
+                        SizedBox(height: 24),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 8,
+                          children: [
+                            Text(product.name, style: TextStyle(fontSize: 24)),
+                            Row(
+                              spacing: 4,
+                              children: [
+                                Icon(Icons.star_border),
+                                Icon(Icons.star_border),
+                                Icon(Icons.star_border),
+                                Icon(Icons.star_border),
+                                Icon(Icons.star_border),
+                                Text('(0 avaliações)'),
+                              ],
+                            ),
+                            Text(
+                              'R\$${currency.format(product.price)}',
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            Container(color: Colors.grey[400], height: 2),
+                            Text('Tipo'),
+                            Row(
+                              spacing: 8,
+                              children: radioOptions.map((option) {
+                                final bool isSelected =
+                                    _selectedOption == option;
+                                return OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedOption = option;
+                                    });
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: isSelected
+                                        ? Colors.black
+                                        : Colors.grey,
+                                    side: BorderSide(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(128),
+                                    ),
+                                  ),
+                                  child: Text(option),
+                                );
+                              }).toList(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 40.0,
+                              ),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  // Adicionar ao carrinho
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Color.fromARGB(
+                                    255,
+                                    65,
+                                    72,
+                                    74,
+                                  ),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Colors.transparent),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0,
+                                        ),
+                                        child: Text(
+                                          "Adicionar ao carrinho",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                Container(height: 1, color: Colors.grey[400]),
+                                Theme(
+                                  data: ThemeData().copyWith(
+                                    dividerColor: Colors.transparent,
+                                  ),
+                                  child: ExpansionTile(
+                                    title: Text('Descrição'),
+                                    leading: Icon(Icons.help),
+                                    iconColor: Color.fromARGB(255, 65, 72, 74),
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Text(product.description),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(height: 1, color: Colors.grey[400]),
+                                Theme(
+                                  data: ThemeData().copyWith(
+                                    dividerColor: Colors.transparent,
+                                  ),
+                                  child: ExpansionTile(
+                                    title: Text('Características'),
+                                    leading: Icon(Icons.brush),
+                                    iconColor: Color.fromARGB(255, 65, 72, 74),
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              _formatSpecifications(
+                                                product.specifications,
+                                              ),
+                                              style: TextStyle(height: 1.5),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 256),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return const Center(child: Text('Iniciando...'));
+        },
       ),
     );
   }

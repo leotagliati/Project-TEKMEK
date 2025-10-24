@@ -56,15 +56,19 @@ class _ProductComponentState extends State<ProductComponent> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.product.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text('R\$${currency.format(widget.product.price)}'),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.product.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('R\$${currency.format(widget.product.price)}'),
+                          ],
+                        ),
                       ),
                     ],
                   ),
