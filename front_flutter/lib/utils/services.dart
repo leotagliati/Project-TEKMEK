@@ -1,4 +1,3 @@
-import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/utils/breakpoints.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 
