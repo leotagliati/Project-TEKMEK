@@ -86,6 +86,22 @@ app.get('/product/:title', async (req, res) => {
     }
 });
 
+app.get('/api/products', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products_tb'
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado.' });
+        }
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Erro ao buscar produto:', err.stack);
+        res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
+});
+
 app.post('/event', async (req, res) => {
     const { type, data } = req.body;
 

@@ -60,10 +60,10 @@ class _CartProductComponentState extends State<CartProductComponent> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.product.type,
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
+                      // Text(
+                      //   widget.product.type,
+                      //   style: TextStyle(color: Colors.grey[600]),
+                      // ),
                       Text(
                         widget.product.name,
                         overflow: TextOverflow.ellipsis,

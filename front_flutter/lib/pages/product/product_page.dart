@@ -220,12 +220,12 @@ class _ProductPageState extends State<ProductPage> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              _formatSpecifications(
-                                                product.specifications,
-                                              ),
-                                              style: TextStyle(height: 1.5),
-                                            ),
+                                            // Text(
+                                            //   _formatSpecifications(
+                                            //     product.specifications,
+                                            //   ),
+                                            //   style: TextStyle(height: 1.5),
+                                            // ),
                                           ],
                                         ),
                                       ),
