@@ -1,91 +1,48 @@
 // lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-// Imports corrigidos baseados na sua estrutura
-import '/auth_service.dart';
-import 'pages/login/login.page.dart';
-import 'pages/home/dashboard_screen.dart';
-import 'pages/admin/admin_dashboard_screen.dart';
-import 'common_components/user_app_shell.dart';
-import 'common_components/admin_app_shell.dart';
+// Importe o utilitário que contém o AuthService
+import 'utils/login_util.dart'; 
+import 'utils/routes_util.dart'; 
 
 void main() {
   runApp(
     ChangeNotifierProvider(
+      // O AuthService vem do login_util.dart
       create: (context) => AuthService(),
       child: const App(),
     ),
   );
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final AuthService _authService;
+  late final LoginRoutes _appRoutes;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pega o AuthService que o Provider criou
+    _authService = context.read<AuthService>();
+    //Cria a classe de rotas, passando o AuthService
+    _appRoutes = LoginRoutes(_authService);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-
-    final _router = GoRouter(
-      refreshListenable: authService,
-      
-      redirect: (BuildContext context, GoRouterState state) {
-        final isLoggedIn = authService.isLoggedIn;
-        final role = authService.role;
-        final goingTo = state.matchedLocation;
-
-        if (!isLoggedIn) {
-          return (goingTo == '/login') ? null : '/login';
-        }
-
-        if (goingTo == '/login' && isLoggedIn) {
-           return (role == UserRole.admin) ? '/admin' : '/';
-        }
-        
-        if (role == UserRole.user && goingTo.startsWith('/admin')) {
-          return '/';
-        }
-        
-         if (role == UserRole.admin && goingTo == '/') {
-          return '/admin';
-        }
-
-        return null;
-      },
-      
-      routes: [
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
-
-        ShellRoute(
-          builder: (context, state, child) => UserAppShell(child: child),
-          routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, state) => const DashboardScreen(),
-            ),
-          ],
-        ),
-
-        ShellRoute(
-          builder: (context, state, child) => AdminAppShell(child: child),
-          routes: [
-            GoRoute(
-              path: '/admin',
-              builder: (context, state) => const AdminDashboardScreen(),
-            ),
-          ],
-        ),
-      ],
-    );
-
     return MaterialApp.router(
-      routerConfig: _router,
+      // Usa o router do routes_util.dart
+      routerConfig: _appRoutes.router, 
+      
       debugShowCheckedModeBanner: false,
       title: "Tekmek",
       theme: ThemeData(

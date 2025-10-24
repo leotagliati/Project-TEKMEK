@@ -5,7 +5,7 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:provider/provider.dart';
 
 // Import corrigido (caminho relativo)
-import '../../auth_service.dart'; 
+import '../../utils/login_util.dart'; 
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

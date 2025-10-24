@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../auth_service.dart';
+import '../utils/login_util.dart'; // Importa seu AuthService
 
-class AdminAppShell extends StatelessWidget {
+class ClientBarComponent extends StatelessWidget {
   final Widget child;
-  const AdminAppShell({super.key, required this.child});
+  const ClientBarComponent({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tekmek - ADMIN'),
-        backgroundColor: Colors.red[100],
+        title: const Text('Tekmek'),
+        backgroundColor: Colors.blue[700],
+        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
             onPressed: () {
               // Chama o logout do AuthService
               context.read<AuthService>().logout();
             },
-          )
+          ),
         ],
       ),
-      body: child,
-      // Você pode adicionar um NavigationRail/Menu lateral de admin aqui
+      // A mágica do ShellRoute:
+      // A página (ClientDashboardPage) é inserida aqui
+      body: child, 
     );
   }
 }
