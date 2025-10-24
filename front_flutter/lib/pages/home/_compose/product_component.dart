@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class ProductComponent extends StatefulWidget {
-  final String imagePath;
-  final String title;
-  final String description;
+  final Product product;
 
-  const ProductComponent({
-    super.key,
-    required this.imagePath,
-    required this.title,
-    required this.description,
-  });
+  const ProductComponent({super.key, required this.product});
 
   @override
   State<ProductComponent> createState() => _ProductComponentState();
 }
 
 class _ProductComponentState extends State<ProductComponent> {
+  var currency = NumberFormat('#,##0.00', 'pt_BR');
   bool isHovering = false;
 
   @override
@@ -32,7 +28,7 @@ class _ProductComponentState extends State<ProductComponent> {
       }),
       child: GestureDetector(
         onTap: () {
-          context.go('/product/1');
+          context.go('/product/${widget.product.id}');
         },
         child: Container(
           width: MediaQuery.of(context).size.width < 600 ? 160 : 192,
@@ -49,9 +45,9 @@ class _ProductComponentState extends State<ProductComponent> {
             child: Column(
               children: [
                 Expanded(
-                  child: Image.asset(
+                  child: Image.network(
+                    widget.product.imageUrl,
                     width: double.infinity,
-                    widget.imagePath,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -64,10 +60,10 @@ class _ProductComponentState extends State<ProductComponent> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.title,
+                            widget.product.name,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text(widget.description),
+                          Text('R\$${currency.format(widget.product.price)}'),
                         ],
                       ),
                     ],

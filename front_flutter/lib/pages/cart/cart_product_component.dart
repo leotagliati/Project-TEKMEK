@@ -49,8 +49,8 @@ class _CartProductComponentState extends State<CartProductComponent> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    widget.product.imagePath,
+                  child: Image.network(
+                    widget.product.imageUrl,
                     fit: BoxFit.fitWidth,
                     width: 80,
                   ),
