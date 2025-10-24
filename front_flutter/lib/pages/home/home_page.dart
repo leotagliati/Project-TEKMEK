@@ -11,6 +11,8 @@ import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
+import 'package:front_flutter/utils/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +23,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final carouselController = CarouselSliderController();
-  int current = 0;
 
+  ApiService apiService = ApiService();
+
+  int current = 0;
   List<Product> products = [];
 
   final List<Widget> banners = [
@@ -46,40 +50,33 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
-  // Temporário
-  void _loadDataFromJson() async {
+  Future<void> _loadProducts() async {
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/products.json',
-      );
-      final List<dynamic> parsedList = jsonDecode(jsonString);
-      final List<Product> items = parsedList
+      final List<dynamic> data = await apiService.getProducts();
+
+      final List<Product> productsList = data
           .map((item) => Product.fromJson(item as Map<String, dynamic>))
           .toList();
+
       setState(() {
-        products = items;
+        products = productsList;
       });
     } catch (e) {
-      // ignore: avoid_print
-      print('Erro ao carregar o data.json: $e');
+      print('Erro ao carregar produtos: $e');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _loadDataFromJson();
+    _loadProducts();
   }
 
   @override
   Widget build(BuildContext context) {
-        List<Widget> productComponents = [];
+    List<Widget> productComponents = [];
     for (var product in products) {
-      productComponents.add(
-        ProductComponent(
-          product: product,
-        ),
-      );
+      productComponents.add(ProductComponent(product: product));
     }
 
     return Scaffold(

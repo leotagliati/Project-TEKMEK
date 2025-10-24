@@ -39,6 +39,8 @@ dependencies:
   carousel_slider: ^5.1.1
   intl: ^0.20.2
   go_router: ^16.3.0
+  flutter_dotenv: ^6.0.0
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,7 @@ flutter:
   assets:
     - assets/images/
     - assets/data/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
