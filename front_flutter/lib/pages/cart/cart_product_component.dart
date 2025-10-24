@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/pages/cart/cart_product.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:intl/intl.dart';
 
 class CartProductComponent extends StatefulWidget {
-  final CartProduct product;
+  final Product product;
   final VoidCallback onDelete;
   final ValueChanged<int> onAmountChanged;
 
@@ -49,8 +49,8 @@ class _CartProductComponentState extends State<CartProductComponent> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    widget.product.imagePath,
+                  child: Image.network(
+                    widget.product.imageUrl,
                     fit: BoxFit.fitWidth,
                     width: 80,
                   ),

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
@@ -18,6 +22,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final carouselController = CarouselSliderController();
   int current = 0;
+
+  List<Product> products = [];
 
   final List<Widget> banners = [
     BannerComponent(
@@ -40,8 +46,42 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
+  // Temporário
+  void _loadDataFromJson() async {
+    try {
+      final String jsonString = await rootBundle.loadString(
+        'assets/data/products.json',
+      );
+      final List<dynamic> parsedList = jsonDecode(jsonString);
+      final List<Product> items = parsedList
+          .map((item) => Product.fromJson(item as Map<String, dynamic>))
+          .toList();
+      setState(() {
+        products = items;
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print('Erro ao carregar o data.json: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDataFromJson();
+  }
+
   @override
   Widget build(BuildContext context) {
+        List<Widget> productComponents = [];
+    for (var product in products) {
+      productComponents.add(
+        ProductComponent(
+          product: product,
+        ),
+      );
+    }
+
     return Scaffold(
       drawer: NavigationMenu(),
       endDrawer: CartComponent(),
@@ -128,13 +168,7 @@ class _HomePageState extends State<HomePage> {
                 isOneRowExpanded: true,
                 spacing: 16,
                 runSpacing: 16,
-                children: List<Widget>.generate(16, (int index) {
-                  return ProductComponent(
-                    imagePath: 'assets/images/keyboard.png',
-                    title: 'Nome do teclado',
-                    description: 'R\$999,99',
-                  );
-                }),
+                children: productComponents,
               ),
             ],
           ),

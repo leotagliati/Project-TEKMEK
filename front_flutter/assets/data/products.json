@@ -1,23 +1,67 @@
 [
     {
+        "id": 1,
         "name": "Keychron K3 Max",
         "type": "Teclado",
-        "imagePath": "assets/images/keyboard.png",
         "price": 499.99,
-        "amount": 1
+        "imageUrl": "https://i.imgur.com/1bBhl4O.png",
+        "description": "O K3 Max é um teclado mecânico sem fio discreto com layout de 75%. Ele suporta conexões de 2,4 GHz, Bluetooth e com fio. Com suporte ao QMK/VIA, oferece infinitas possibilidades e maior produtividade no seu trabalho e jogos!",
+        "specifications": {
+            "tamanho do layout": "75%",
+            "tipo de keycap": "Perfil Baixo (Low Profile) ABS",
+            "tipo de produto": "Teclado Mecânico Sem Fio"
+        }
     },
     {
-        "name": "Logitech MX Master 3S",
-        "type": "Mouse",
-        "imagePath": "assets/images/keyboard.png",
-        "price": 520.50,
-        "amount": 2
+        "id": 2,
+        "name": "AKKO 3068B Plus",
+        "type": "Teclado",
+        "price": 389.00,
+        "imageUrl": "https://i.imgur.com/T00Aprh.png",
+        "description": "Um teclado mecânico 65% compacto e cheio de estilo. Possui 3 modos de conexão e switches lineares AKKO CS Jelly Pink para uma digitação suave.",
+        "specifications": {
+            "tamanho do layout": "65%",
+            "tipo de keycap": "PBT Double-Shot (Perfil ASA)",
+            "tipo de produto": "Teclado Mecânico Sem Fio"
+        }
     },
     {
-        "name": "Monitor Dell UltraSharp 27",
-        "type": "Monitor",
-        "imagePath": "assets/images/keyboard.png",
-        "price": 2899.00,
-        "amount": 1
+        "id": 3,
+        "name": "Razer Huntsman V3 Pro",
+        "type": "Teclado",
+        "price": 1399.90,
+        "imageUrl": "https://i.imgur.com/GKijw9R.png",
+        "description": "Teclado óptico para e-sports com switches analógicos Razer de 2ª geração. Oferece atuação ajustável e Modo de Disparo Rápido para uma resposta inigualável em jogos.",
+        "specifications": {
+            "tamanho do layout": "TKL (Tenkeyless)",
+            "tipo de keycap": "PBT Double-Shot",
+            "tipo de produto": "Teclado Gamer Óptico"
+        }
+    },
+    {
+        "id": 4,
+        "name": "Logitech MX Keys S",
+        "type": "Teclado",
+        "price": 649.90,
+        "imageUrl": "https://i.imgur.com/p0pbkXG.png",
+        "description": "Um teclado de membrana avançado, projetado para conforto, precisão e produtividade. Possui teclas côncavas silenciosas e retroiluminação inteligente.",
+        "specifications": {
+            "tamanho do layout": "100% (Full-size)",
+            "tipo de keycap": "Perfil Baixo (Membrana)",
+            "tipo de produto": "Teclado de Produtividade Sem Fio"
+        }
+    },
+    {
+        "id": 5,
+        "name": "NuPhy Air75 V2",
+        "type": "Teclado",
+        "price": 720.00,
+        "imageUrl": "https://i.imgur.com/acOz7HN.png",
+        "description": "Teclado mecânico 75% low-profile ultracompacto, focado em design e portabilidade para usuários de Mac e Windows. Conectividade tripla e switches Gateron Low Profile 2.0.",
+        "specifications": {
+            "tamanho do layout": "75%",
+            "tipo de keycap": "PBT (Perfil nSA Low-Profile)",
+            "tipo de produto": "Teclado Mecânico Sem Fio"
+        }
     }
 ]

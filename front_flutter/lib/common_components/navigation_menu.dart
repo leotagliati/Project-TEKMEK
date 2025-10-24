@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -18,7 +19,7 @@ class NavigationMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text("Início"),
-            onTap: () {},
+            onTap: () => context.go('/'),
           ),
           ListTile(
             leading: Icon(Icons.local_mall),
