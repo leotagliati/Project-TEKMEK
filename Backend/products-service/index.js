@@ -26,10 +26,10 @@ pool.connect((err, client, release) => {
 });
 
 app.get('/api/products/search', async (req, res) => {
-    const { q } = req.query; // <--- pega o valor de ?q=blablabla
+    const { q } = req.query;
 
     try {
-        const result = await pool.query('SELECT * FROM products_tb');
+        const result = await pool.query('SELECT * FROM products_tb'); // pego todos os produtos pra evitar sql injec :)
         let filtered = result.rows;
 
         if (q) {

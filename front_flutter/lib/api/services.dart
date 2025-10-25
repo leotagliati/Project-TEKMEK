@@ -19,6 +19,15 @@ class ProductsService {
     }
   }
 
+  Future<List<dynamic>> searchProducts(String term) async {
+    final response = await _requestHandler.get(ApiEndpoints.searchProductsByTerm(term));
+    if (response is List) {
+      return response;
+    } else {
+      throw Exception('Resposta inesperada do servidor');
+    }
+  }
+
   // adicionar os outros metodos de acesso...
 }
 

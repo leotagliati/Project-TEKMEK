@@ -9,6 +9,8 @@ class ApiEndpoints {
 
   static String get products => '$productsMSBaseUrl/api/products';
   static String productById(String id) => '$productsMSBaseUrl/api/products/$id';
+  static String searchProductsByTerm(String term) => '$productsMSBaseUrl/api/products/search?q=$term';
+  
 
   static String get login => '$loginMSBaseUrl/api/login';
 }
