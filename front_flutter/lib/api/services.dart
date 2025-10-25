@@ -1,10 +1,10 @@
-import 'package:front_flutter/utils/breakpoints.dart';
+import 'package:front_flutter/api/breakpoints.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 
-class ApiService {
-  static final ApiService _instance = ApiService._internal();
-  ApiService._internal();
-  factory ApiService() {
+class ProductsService {
+  static final ProductsService _instance = ProductsService._internal();
+  ProductsService._internal();
+  factory ProductsService() {
     return _instance;
   }
 
@@ -18,4 +18,5 @@ class ApiService {
       throw Exception('Resposta inesperada do servidor');
     }
   }
+  // adicionar os outros serviços...
 }

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
@@ -11,8 +10,7 @@ import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
-import 'package:front_flutter/utils/breakpoints.dart';
-import 'package:front_flutter/utils/services.dart';
+import 'package:front_flutter/api/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,7 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final carouselController = CarouselSliderController();
 
-  ApiService apiService = ApiService();
+  ProductsService apiService = ProductsService();
 
   int current = 0;
   List<Product> products = [];
