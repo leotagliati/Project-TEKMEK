@@ -1,4 +1,4 @@
-import 'package:front_flutter/api/breakpoints.dart';
+import 'package:front_flutter/api/endpoints.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 
 class ProductsService {
