@@ -18,5 +18,8 @@ class ProductsService {
       throw Exception('Resposta inesperada do servidor');
     }
   }
-  // adicionar os outros serviços...
+
+  // adicionar os outros metodos de acesso...
 }
+
+// adicionar os outros serviços...
