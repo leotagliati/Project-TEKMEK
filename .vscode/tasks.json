@@ -41,9 +41,9 @@
 		{
 			"type": "npm",
 			"script": "start:dev",
-			"path": "Backend/search-products-service",
+			"path": "Backend/products-service",
 			"problemMatcher": [],
-			"label": "Execute - search-products-service"
+			"label": "Execute - products-service"
 		},
 		{
 			"type": "npm",

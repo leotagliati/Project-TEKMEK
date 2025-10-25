@@ -25,33 +25,15 @@ pool.connect((err, client, release) => {
     release();
 });
 
-// Rota de busca com filtros
-app.post('/search', async (req, res) => {
-    const { filters, searchTerm } = req.body;
-
-    const layoutSizes = filters.layoutSizes || [];
-    const connectivities = filters.connectivities || [];
-    const productTypes = filters.productTypes || [];
-    const keycapsTypes = filters.keycapsTypes || [];
+app.get('/api/products/search', async (req, res) => {
+    const { q } = req.query; // <--- pega o valor de ?q=blablabla
 
     try {
         const result = await pool.query('SELECT * FROM products_tb');
         let filtered = result.rows;
 
-        if (layoutSizes.length > 0) {
-            filtered = filtered.filter(p => layoutSizes.includes(p.layout_size));
-        }
-        if (connectivities.length > 0) {
-            filtered = filtered.filter(p => connectivities.includes(p.connectivity));
-        }
-        if (productTypes.length > 0) {
-            filtered = filtered.filter(p => productTypes.includes(p.product_type));
-        }
-        if (keycapsTypes.length > 0) {
-            filtered = filtered.filter(p => keycapsTypes.includes(p.keycaps_type));
-        }
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
+        if (q) {
+            const term = q.toLowerCase();
             filtered = filtered.filter(p =>
                 p.name.toLowerCase().includes(term) ||
                 (p.description && p.description.toLowerCase().includes(term))
@@ -65,8 +47,9 @@ app.post('/search', async (req, res) => {
     }
 });
 
+
 // Rota para buscar produto por título
-app.get('/product/:title', async (req, res) => {
+app.get('/products/search', async (req, res) => {
     const title = req.params.title;
 
     try {
