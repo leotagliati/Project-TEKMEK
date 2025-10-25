@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front_flutter/api/services.dart';
+import 'package:front_flutter/common_components/product.dart';
 
 class SearchComponent extends StatefulWidget {
   const SearchComponent({super.key});
@@ -9,6 +11,25 @@ class SearchComponent extends StatefulWidget {
 
 class _SearchComponentState extends State<SearchComponent> {
   final SearchController controller = SearchController();
+
+  ProductsService productsService = ProductsService();
+  List<Product> products = [];
+
+  Future<void> _searchProducts(String term) async {
+    final List<dynamic> data = await productsService.searchProducts(term);
+    try {
+      final List<Product> productsList = data
+          .map((item) => Product.fromJson(item as Map<String, dynamic>))
+          .toList();
+
+      setState(() {
+        products = productsList;
+      });
+      
+    } catch (e) {
+      print('Erro ao procurar produtos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +73,7 @@ class _SearchComponentState extends State<SearchComponent> {
           );
         });
       },
+      viewOnSubmitted: (value) => _searchProducts(value),
     );
   }
 }

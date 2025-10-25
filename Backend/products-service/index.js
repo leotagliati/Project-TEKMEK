@@ -25,11 +25,13 @@ pool.connect((err, client, release) => {
     release();
 });
 
-app.get('/api/products/search', async (req, res) => {
-    const { q } = req.query;
+// uso POST em vez de GET pq prefiro usar body pra passar os filtros do que query (rota ficaria gigante, acredite)
+app.post('/api/products/search', async (req, res) => {
+    const { q } = req.query; // termo de busca na URL: ?q=blabla
+    const { layoutSize, connectionType, keycapsType } = req.body; // filtros no body
 
     try {
-        const result = await pool.query('SELECT * FROM products_tb'); // pego todos os produtos pra evitar sql injec :)
+        const result = await pool.query('SELECT * FROM products_tb');
         let filtered = result.rows;
 
         if (q) {
@@ -40,31 +42,21 @@ app.get('/api/products/search', async (req, res) => {
             );
         }
 
+        if (layoutSize && layoutSize.length > 0) {
+            filtered = filtered.filter(p => layoutSize.includes(p.layout_size));
+        }
+
+        if (connectionType && connectionType.length > 0) {
+            filtered = filtered.filter(p => connectionType.includes(p.connectivity));
+        }
+
+        if (keycapsType && keycapsType.length > 0) {
+            filtered = filtered.filter(p => keycapsType.includes(p.keycaps_type));
+        }
+
         res.json(filtered);
     } catch (err) {
         console.error('Erro na busca:', err.stack);
-        res.status(500).json({ error: 'Erro interno do servidor.' });
-    }
-});
-
-
-// Rota para buscar produto por título
-app.get('/products/search', async (req, res) => {
-    const title = req.params.title;
-
-    try {
-        const result = await pool.query(
-            'SELECT * FROM products_tb WHERE name = $1',
-            [title]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Produto não encontrado.' });
-        }
-
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error('Erro ao buscar produto:', err.stack);
         res.status(500).json({ error: 'Erro interno do servidor.' });
     }
 });
@@ -81,6 +73,23 @@ app.get('/api/products', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Erro ao buscar produto:', err.stack);
+        res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
+});
+
+app.get('/api/products/:id', async (req, res) => {
+    const productId = req.params.id
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products_tb WHERE id = $1', [productId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: `Produto de id#${productId} não existe.` });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(`Erro ao buscar produto de id#${productId} :`, err.stack);
         res.status(500).json({ error: 'Erro interno do servidor.' });
     }
 });

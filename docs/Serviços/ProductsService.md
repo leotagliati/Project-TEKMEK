@@ -17,6 +17,7 @@ Talvez possa manter essa feature, mas não sei a eficiencia disso, então acho m
 Basicamente os endpoints serão:
    * '/products', GET/ POST (POST somente feito com autenticação de admin)
    * '/products/:id' , GET/ PUT/ DELETE (PUT e DELETE somente feitos com autenticação de admin)
+   * '/products/search', GET 
 
 ## 4. Navegando pelo cógido
 Bom, essa é a parte que deve gerar mais dúvida, então vamos com calma:

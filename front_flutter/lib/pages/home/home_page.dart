@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final carouselController = CarouselSliderController();
 
-  ProductsService apiService = ProductsService();
+  ProductsService productsService = ProductsService();
 
   int current = 0;
   List<Product> products = [];
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadProducts() async {
     try {
-      final List<dynamic> data = await apiService.getProducts();
+      final List<dynamic> data = await productsService.getProducts();
 
       final List<Product> productsList = data
           .map((item) => Product.fromJson(item as Map<String, dynamic>))
