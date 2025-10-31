@@ -183,7 +183,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// <<< NOVO ENDPOINT: Para a função _recoverPassword do Flutter
+// Para a função _recoverPassword do Flutter
 app.post('/recover-password', async (req, res) => {
   const { username } = req.body;
 
