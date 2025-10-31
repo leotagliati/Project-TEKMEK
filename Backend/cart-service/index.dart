@@ -24,6 +24,7 @@ void main() async {
 
   final router = Router();
 
+  // GET carrinho por userid
   router.get('/api/checkout', (Request req) async {
     final userId = req.url.queryParameters['userId'];
 
@@ -42,8 +43,84 @@ void main() async {
     }
   });
 
-  final handler =
-      const Pipeline().addHandler(router);
+  // POST item carrinho
+  router.post('/api/checkout', (Request req) async {
+    final body = await req.readAsString();
+    final data = jsonDecode(body);
+
+    final userId = data['userId'];
+    final productId = data['productId'];
+    final quantity = data['quantity'] ?? 1;
+    final price = data['price'];
+
+    if (userId == null || productId == null || price == null) {
+      return Response(400,
+          body: jsonEncode(
+              {'error': 'userId, productId e price são obrigatórios'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      await conn.execute(
+        Sql.named('''
+        INSERT INTO carts_tb (user_id, product_id, quantity, price)
+        VALUES (@userId, @productId, @quantity, @price)
+        '''),
+        parameters: {
+          'userId': userId,
+          'productId': productId,
+          'quantity': quantity,
+          'price': price,
+        },
+      );
+
+      return Response.ok(jsonEncode({'message': 'Item adicionado ao carrinho'}),
+          headers: {'Content-Type': 'application/json'});
+    } catch (e) {
+      return Response(500,
+          body: jsonEncode({'error': 'Erro ao adicionar item: $e'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+  });
+
+  // DELETE item carrinho
+  router.delete('/api/checkout', (Request req) async {
+    final body = await req.readAsString();
+    final data = jsonDecode(body);
+
+    final userId = data['userId'];
+    final productId = data['productId'];
+
+    if (userId == null || productId == null) {
+      return Response(400,
+          body: jsonEncode({'error': 'userId e productId são obrigatórios'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      var result = await conn.execute(
+        Sql.named('''
+        DELETE FROM carts_tb WHERE user_id = @userId AND product_id = @productId RETURNING id
+        '''),
+        parameters: {
+          'userId': userId,
+          'productId': productId,
+        },
+      );
+      if (result.isEmpty)
+        return Response.ok(jsonEncode({'message': 'Item removido do carrinho'}),
+            headers: {'Content-Type': 'application/json'});
+    } catch (e) {
+      return Response(500,
+          body: jsonEncode({'error': 'Erro ao remover item: $e'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+  });
+
+  // PUT item carrinho
+  router.put('/api/checkout', (Request req) async {});
+
+  final handler = const Pipeline().addHandler(router);
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
   print('Servidor rodando na porta ${server.port}');
