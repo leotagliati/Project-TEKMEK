@@ -60,10 +60,10 @@ const registerUser = (username, password, token) => {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     
-      // let isAdmin; // << Linha original comentada
+      // let isAdmin; 
 
       /*
-      // << INÍCIO DA MODIFICAÇÃO: Lógica de token de admin comentada
+      //Lógica de token de admin comentada
       if (token === undefined || token === null || token === '') {
         isAdmin = 'false';
       }
@@ -73,10 +73,9 @@ const registerUser = (username, password, token) => {
       else {
         return reject({ code: 401, error: 'Invalid token' });
       }
-      // << FIM DA MODIFICAÇÃO
       */
 
-      // << MODIFICAÇÃO: Novo usuário é sempre 'false' (cliente normal) por padrão
+      // Novo usuário é sempre 'false' é cliente normal por padrão
       const isAdmin = 'false';
 
 
