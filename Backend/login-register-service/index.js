@@ -38,6 +38,7 @@ pool.connect((err, client, release) => {
   });
 });
 
+// MODIFICAÇÃO: A função agora ignora o 'token' e sempre registra como usuário normal.
 const registerUser = (username, password, token) => {
   return new Promise(async (resolve, reject) => {
     if (!username || !password) {
@@ -58,6 +59,11 @@ const registerUser = (username, password, token) => {
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    
+      // let isAdmin; // << Linha original comentada
+
+      /*
+      // << INÍCIO DA MODIFICAÇÃO: Lógica de token de admin comentada
       if (token === undefined || token === null || token === '') {
         isAdmin = 'false';
       }
@@ -67,6 +73,11 @@ const registerUser = (username, password, token) => {
       else {
         return reject({ code: 401, error: 'Invalid token' });
       }
+      // << FIM DA MODIFICAÇÃO
+      */
+
+      // << MODIFICAÇÃO: Novo usuário é sempre 'false' (cliente normal) por padrão
+      const isAdmin = 'false';
 
 
       await pool.query(
@@ -74,7 +85,7 @@ const registerUser = (username, password, token) => {
         [username, hashedPassword, isAdmin]
       );
 
-      resolve({ username, isAdmin });
+      resolve({ username, isAdmin }); // Retorna o usuário com isAdmin = 'false'
     } catch (err) {
       console.error(err);
       reject({ code: 500, error: 'Erro ao registrar usuário' });
@@ -119,11 +130,12 @@ const validateLogin = (username, password) => {
 };
 
 app.post('/register', (req, res) => {
+  // O token ainda pode ser recebido no body, mas será ignorado pela função registerUser
   const { username, password, token } = req.body;
 
   registerUser(username, password, token)
     .then(user => {
-      // Envia evento de usuário registrado (opcional)
+    
       axios.post('http://localhost:5300/event', {
         type: 'UserRegistered',
         data: { username: user.username }
@@ -148,7 +160,7 @@ app.post('/login', (req, res) => {
 
   validateLogin(username, password)
     .then(user => {
-      // Envia evento de login (opcional)
+    
       axios.post('http://localhost:5300/event', {
         type: 'UserLogged',
         data: {
@@ -171,6 +183,37 @@ app.post('/login', (req, res) => {
       res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
     });
 });
+
+// <<< NOVO ENDPOINT: Para a função _recoverPassword do Flutter
+app.post('/recover-password', async (req, res) => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT idlogin FROM login_tb WHERE username = $1',
+      [username]
+    );
+
+    if (rows.length === 0) {
+      // Retorna 404 para o app Flutter saber que o usuário não existe
+      return res.status(404).json({ error: 'User not exists' });
+    }
+
+    // Se o usuário existir, a lógica real de enviar e-mail iria aqui.
+    // Por enquanto, apenas retornamos 200 OK para o app Flutter
+    // saber que o processo "iniciou com sucesso".
+    res.status(200).json({ message: 'Password recovery process initiated' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 const port = 5315;
 app.listen(port, () => {
