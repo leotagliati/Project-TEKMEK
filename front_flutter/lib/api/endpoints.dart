@@ -7,10 +7,14 @@ class ApiEndpoints {
   static final String loginMSBaseUrl =
       dotenv.env['LOGIN_MS_BASE_URL'] ?? 'UNDEFINED_URL';
 
+  // --- Produtos ---
   static String get products => '$productsMSBaseUrl/api/products';
   static String productById(String id) => '$productsMSBaseUrl/api/products/$id';
   static String searchProductsByTerm(String term) => '$productsMSBaseUrl/api/products/search?q=$term';
   
 
-  static String get login => '$loginMSBaseUrl/api/login';
+  // --- Login ---
+  static String get login => '$loginMSBaseUrl/login'; // SEM /api/
+  static String get register => '$loginMSBaseUrl/register'; // NOVO
+  static String get recoverPassword => '$loginMSBaseUrl/recover-password'; // NOVO
 }
