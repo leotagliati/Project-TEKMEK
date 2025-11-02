@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:front_flutter/pages/home/home_page.dart';
 import 'package:front_flutter/pages/product/product_page.dart';
 import 'package:go_router/go_router.dart';
+import '../pages/login/login_page.dart';
 
 class AppRouter {
-  // Torna o router estático ou um singleton simples
+
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -27,6 +28,10 @@ class AppRouter {
           final productId = int.parse(state.pathParameters['id']!);
           return ProductPage(productId: productId);
         },
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
       ),
       // Adicione suas outras rotas aqui (ex: /login, /profile, /cart)
     ],
