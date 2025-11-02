@@ -1,4 +1,5 @@
 
+import 'endpoints.dart'; 
 import 'package:front_flutter/utils/request_handler.dart';
 import 'package:front_flutter/utils/token_handler.dart'; 
 
@@ -13,53 +14,52 @@ class AuthService {
   final RequestHandler _requestHandler = RequestHandler();
   final TokenHandler _tokenHandler = TokenHandler();
 
-  /// Tenta fazer login. Se der certo, salva o token.
+  // Tenta fazer login se okk salva token
+  
   Future<Map<String, dynamic>> login(String email, String password) async {
     
-   
+      // faz a requisição de login
     final response = await _requestHandler.post(
-      '/auth/login', // Endpoint de login (exemplo)
-      {'email': email, 'password': password},
+      ApiEndpoints.login, 
+      {'username': email, 'password': password}, // Conforme API Node.js
     );
 
-    
+    //Processa a resposta do back-end (que contém 'token' e 'user')
     if (response is Map<String, dynamic> && response.containsKey('token')) {
       final String token = response['token'];
       
-      // SALVA o token
+      // Salva o token
       await _tokenHandler.saveToken(token);
       
-      return response; 
+      // Retorna só os dados do usuário
+      return response['user'] as Map<String, dynamic>; 
     } else {
       throw Exception('Resposta de login inválida do servidor.');
     }
   }
 
-  // Registra um novo usuário.
-  Future<Map<String, dynamic>> register(String name, String email, String password) async {
+  /// Tenta registrar um novo usuário.
+  Future<dynamic> register(String email, String password) async {
      final response = await _requestHandler.post(
-      '/auth/register', // Endpoint de registro (exemplo)
-      {'name': name, 'email': email, 'password': password},
+      ApiEndpoints.register, // Passa a URL COMPLETA
+      {'username': email, 'password': password},
     );
-
-    // Oregistro já faz login e retornar um token -> ele agora salva o token
-    if (response is Map<String, dynamic> && response.containsKey('token')) {
-      await _tokenHandler.saveToken(response['token']);
-    }
     
+    // retorna 201 e dados do user
     return response;
   }
 
 
-  ///limpa o token local
+  /// Inicia a recuperação de senha - faz nada 
+  Future<dynamic> recoverPassword(String email) async {
+   
+    return null; 
+  }
+
+
+  // Desloga o usuário -> apaga token local
   Future<void> logout() async {
-    // Avisar a API que estamos deslogando
-    try {
-      await _requestHandler.post('/auth/logout', {});
-    } catch (e) {
-      // Ignora erros aqui
-    }
-    
+
     // DELETA o token local
     await _tokenHandler.deleteToken();
   }
