@@ -20,7 +20,9 @@ class ProductsService {
   }
 
   Future<List<dynamic>> searchProducts(String term) async {
-    final response = await _requestHandler.get(ApiEndpoints.searchProductsByTerm(term));
+    final response = await _requestHandler.get(
+      ApiEndpoints.searchProductsByTerm(term),
+    );
     if (response is List) {
       return response;
     } else {
@@ -29,6 +31,40 @@ class ProductsService {
   }
 
   // adicionar os outros metodos de acesso...
+}
+
+class CartService {
+  static final CartService _instance = CartService._internal();
+  CartService._internal();
+  factory CartService() {
+    return _instance;
+  }
+
+  final RequestHandler _requestHandler = RequestHandler();
+
+  Future<List<dynamic>> getUserItems(String userId) async {
+    final response = await _requestHandler.get(
+      ApiEndpoints.cartUserItems,
+      queryParams: {'userId': userId},
+    );
+    if (response is List) {
+      return response;
+    } else {
+      throw Exception('Resposta inesperada do servidor');
+    }
+  }
+
+  Future<void> addItemToCart(Map<String, dynamic> body) async {
+    await _requestHandler.post(ApiEndpoints.cartUserItems, body);
+  }
+
+  Future<void> updateCartItem(Map<String, dynamic> body) async {
+    await _requestHandler.put(ApiEndpoints.cartUserItems, body);
+  }
+
+  Future<void> removeCartItem(Map<String, dynamic> body) async {
+    await _requestHandler.delete(ApiEndpoints.cartUserItems, body: body);
+  }
 }
 
 // adicionar os outros serviços...

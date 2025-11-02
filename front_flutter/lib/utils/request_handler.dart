@@ -1,46 +1,62 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 
 class RequestHandler {
   static final RequestHandler _instance = RequestHandler._internal();
-
   RequestHandler._internal();
-
-  factory RequestHandler() {
-    return _instance;
-  }
+  factory RequestHandler() => _instance;
 
   final Map<String, String> _headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
 
-  Future<dynamic> get(String url) async {
-    final response = await http.get(Uri.parse(url), headers: _headers);
+  /// Monta a URI com query params, se existirem
+  Uri _buildUri(String url, [Map<String, dynamic>? queryParams]) {
+    final uri = Uri.parse(url);
+    if (queryParams == null || queryParams.isEmpty) return uri;
+    return uri.replace(queryParameters: {
+      ...uri.queryParameters,
+      ...queryParams.map((k, v) => MapEntry(k, v.toString())),
+    });
+  }
+
+  Future<dynamic> get(String url, {Map<String, dynamic>? queryParams}) async {
+    final uri = _buildUri(url, queryParams);
+    final response = await http.get(uri, headers: _headers);
     return _handleResponse(response);
   }
 
-  Future<dynamic> post(String url, Map<String, dynamic> body) async {
+  Future<dynamic> post(String url, Map<String, dynamic> body,
+      {Map<String, dynamic>? queryParams}) async {
+    final uri = _buildUri(url, queryParams);
     final response = await http.post(
-      Uri.parse(url),
+      uri,
       headers: _headers,
       body: jsonEncode(body),
     );
     return _handleResponse(response);
   }
 
-  Future<dynamic> put(String url, Map<String, dynamic> body) async {
+  Future<dynamic> put(String url, Map<String, dynamic> body,
+      {Map<String, dynamic>? queryParams}) async {
+    final uri = _buildUri(url, queryParams);
     final response = await http.put(
-      Uri.parse(url),
+      uri,
       headers: _headers,
       body: jsonEncode(body),
     );
     return _handleResponse(response);
   }
 
-  Future<dynamic> delete(String url) async {
-    final response = await http.delete(Uri.parse(url), headers: _headers);
+  Future<dynamic> delete(String url,
+      {Map<String, dynamic>? queryParams, Map<String, dynamic>? body}) async {
+    final uri = _buildUri(url, queryParams);
+    final response = await http.delete(
+      uri,
+      headers: _headers,
+      body: body != null ? jsonEncode(body) : null,
+    );
     return _handleResponse(response);
   }
 
