@@ -6,13 +6,13 @@ const axios = require('axios');
 const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 const saltRounds = 10;
 
-// 2) Configuração do PostgreSQL usando variáveis de ambiente
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -21,7 +21,7 @@ const pool = new Pool({
   port: process.env.DB_PORT
 });
 
-// 3) Teste de conexão + SELECT simples
+
 pool.connect((err, client, release) => {
   if (err) {
     return console.error('Erro ao conectar:', err.stack);
@@ -38,7 +38,6 @@ pool.connect((err, client, release) => {
   });
 });
 
-// MODIFICAÇÃO: A função agora ignora o 'token' e sempre registra como usuário normal.
 const registerUser = (username, password, token) => {
   return new Promise(async (resolve, reject) => {
     if (!username || !password) {
@@ -59,7 +58,7 @@ const registerUser = (username, password, token) => {
       // Criptografa a senha
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    
+
       // let isAdmin; 
 
       /*
@@ -134,7 +133,7 @@ app.post('/register', (req, res) => {
 
   registerUser(username, password, token)
     .then(user => {
-    
+
       axios.post('http://localhost:5300/event', {
         type: 'UserRegistered',
         data: { username: user.username }
@@ -159,7 +158,7 @@ app.post('/login', (req, res) => {
 
   validateLogin(username, password)
     .then(user => {
-    
+
       axios.post('http://localhost:5300/event', {
         type: 'UserLogged',
         data: {
@@ -177,12 +176,18 @@ app.post('/login', (req, res) => {
 
       // Retorna dados ao cliente 
       res.status(200).json(user);
+      const token = jwt.sign({ idlogin: user.idlogin, username: user.username, isAdmin: user.isAdmin }, process.env.JWT_SECRET,
+        { expiresIn: '1h' });// tempo de expiração do token de login
+      res.status(200).json({
+        message: "Login successful",
+        token: token,
+        user: user // Retorna o objeto do usuário (idlogin, username, isAdmin)
+      });
     })
     .catch(err => {
       res.status(err.code || 500).json({ error: err.error || 'Unknown error' });
     });
 });
-
 // Para a função _recoverPassword do Flutter
 app.post('/recover-password', async (req, res) => {
   const { username } = req.body;
@@ -202,9 +207,8 @@ app.post('/recover-password', async (req, res) => {
       return res.status(404).json({ error: 'User not exists' });
     }
 
-    // Se o usuário existir, a lógica real de enviar e-mail iria aqui.
-    // Por enquanto, apenas retornamos 200 OK para o app Flutter
-    // saber que o processo "iniciou com sucesso".
+    // Se o usuário existir, a lógica de enviar e-mail iria aqui (n existe e n vai exitir pq sim :) ).
+    
     res.status(200).json({ message: 'Password recovery process initiated' });
 
   } catch (err) {
