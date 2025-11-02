@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io'; 
+import 'dart:io'; // Para SocketException (sem internet)
 
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart'; 
-
 import 'token_handler.dart'; 
 
-//Exceptions 
+// Exceções personalizadas 
 
 class ApiException implements Exception {
   final String message;
@@ -26,6 +24,8 @@ class NetworkException implements Exception {
   String toString() => 'Sem conexão com a internet. Verifique sua rede.';
 }
 
+
+
 class RequestHandler {
   static final RequestHandler _instance = RequestHandler._internal();
   RequestHandler._internal();
@@ -33,10 +33,7 @@ class RequestHandler {
     return _instance;
   }
 
-
-  final String _baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000';
   
- 
   final TokenHandler _tokenHandler = TokenHandler();
 
  
@@ -54,18 +51,13 @@ class RequestHandler {
   }
 
 
-  Uri _buildUri(String endpoint) {
-    if (!endpoint.startsWith('/')) {
-      endpoint = '/$endpoint';
-    }
-    return Uri.parse('$_baseUrl$endpoint');
-  }
 
-  Future<dynamic> get(String endpoint) async {
+  //  Agora aceita 'urlCompleta' em vez de 'endpoint'
+  Future<dynamic> get(String urlCompleta) async {
     try {
       final headers = await _getHeaders();
       final response = await http
-          .get(_buildUri(endpoint), headers: headers);
+          .get(Uri.parse(urlCompleta), headers: headers); // Usa a URL completa
       return _handleResponse(response);
     } on SocketException {
       throw NetworkException();
@@ -74,12 +66,13 @@ class RequestHandler {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
+
+  Future<dynamic> post(String urlCompleta, Map<String, dynamic> body) async {
     try {
       final headers = await _getHeaders();
       final response = await http
           .post(
-            _buildUri(endpoint),
+            Uri.parse(urlCompleta),
             headers: headers,
             body: jsonEncode(body),
           );
@@ -91,12 +84,13 @@ class RequestHandler {
     }
   }
 
-  Future<dynamic> put(String endpoint, Map<String, dynamic> body) async {
+
+  Future<dynamic> put(String urlCompleta, Map<String, dynamic> body) async {
     try {
       final headers = await _getHeaders();
       final response = await http
           .put(
-            _buildUri(endpoint),
+            Uri.parse(urlCompleta), 
             headers: headers,
             body: jsonEncode(body),
           );
@@ -108,11 +102,12 @@ class RequestHandler {
     }
   }
 
-  Future<dynamic> delete(String endpoint) async {
+ 
+  Future<dynamic> delete(String urlCompleta) async {
     try {
       final headers = await _getHeaders();
       final response = await http
-          .delete(_buildUri(endpoint), headers: headers);
+          .delete(Uri.parse(urlCompleta), headers: headers);
       return _handleResponse(response);
     } on SocketException {
       throw NetworkException();
@@ -132,10 +127,13 @@ class RequestHandler {
 
     final errorMessage = (body is Map && body.containsKey('message'))
         ? body['message']
-        : response.reasonPhrase ?? 'Erro desconhecido';
+        // O back-end manda 'error' em vez de 'message' às vezes
+        : (body is Map && body.containsKey('error')) 
+            ? body['error']
+            : response.reasonPhrase ?? 'Erro desconhecido';
     
     if (statusCode == 401) {
-      // Limpa o token local se a API nos rejeitar
+      // Limpa o token local se a API rejeitar
       await _tokenHandler.deleteToken(); 
       throw UnauthorizedException(errorMessage);
     }
