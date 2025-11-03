@@ -1,4 +1,5 @@
 import 'package:front_flutter/api/endpoints.dart';
+import 'package:front_flutter/common_components/product.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 
 class ProductsService {
@@ -19,8 +20,19 @@ class ProductsService {
     }
   }
 
+  Future<Product> getProductById(String id) async {
+    final response = await _requestHandler.get(ApiEndpoints.productById(id));
+    if (response is Map<String, dynamic>) {
+      return Product.fromJson(response);
+    } else {
+      throw Exception('Resposta inesperada do servidor');
+    }
+  }
+
   Future<List<dynamic>> searchProducts(String term) async {
-    final response = await _requestHandler.get(ApiEndpoints.searchProductsByTerm(term));
+    final response = await _requestHandler.get(
+      ApiEndpoints.searchProductsByTerm(term),
+    );
     if (response is List) {
       return response;
     } else {
