@@ -8,24 +8,15 @@ const services = {
     userLoginService: { port: process.env.USER_LOGIN_SERVICE_PORT },
     cartService: { port: process.env.CART_SERVICE_PORT },
     orderGenerationService: { port: process.env.ORDER_GENERATION_SERVICE_PORT },
-    searchProductsService: { port: process.env.SEARCH_PRODUCTS_SERVICE_PORT },
+    productsService: { port: process.env.PRODUCTS_SERVICE_PORT },
     adminProductManager: { port: process.env.ADMIN_PRODUCTS_MANAGER_PORT }
 };
 
 const eventRoutes = {
     // Registrar os servicos que ouvem os eventos
-
-    UserRegistered: [],
-    UserLogged: [],
-
+    // nome_evento : [{ service: nome_servico }]
+    
     CartCheckoutInitiated: [{ service: 'orderGenerationService' }],
-    OrderCreated: [],
-
-    ProductSearched: [{ service: 'searchProductsService' }],
-
-    ProductCreated: [{ service: 'searchProductsService' }],
-    ProductDeleted: [{ service: 'searchProductsService' }],
-    ProductsFetched: [],
 };
 
 app.post('/event', async (req, res) => {
@@ -33,7 +24,7 @@ app.post('/event', async (req, res) => {
     const eventType = event.type;
 
     if (eventRoutes[eventType]) {
-        console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
+        // console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
         try {
             const promises = eventRoutes[eventType].map(({ service }) => {
                 const { port } = services[service];

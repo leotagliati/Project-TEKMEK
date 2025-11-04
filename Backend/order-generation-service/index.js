@@ -25,6 +25,37 @@ pool.connect((err, client, release) => {
     release();
 });
 
+app.get('/orders/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Busca o pedido pendente do usuário
+        const orderResult = await pool.query(
+            'SELECT * FROM orders WHERE user_id = $1',
+            [userId]
+        );
+
+        if (orderResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Nenhum pedido pendente encontrado.' });
+        }
+
+        const order = orderResult.rows[0];
+
+        // Busca os itens do pedido
+        const itemsResult = await pool.query(
+            'SELECT * FROM order_items WHERE order_id = $1',
+            [order.id]
+        );
+
+        order.items = itemsResult.rows;
+
+        return res.status(200).json(order);
+    } catch (error) {
+        console.error('Erro ao buscar pedido:', error);
+        return res.status(500).json({ error: 'Erro interno ao buscar pedido.' });
+    }
+});
+
 app.post('/event', async (req, res) => {
     try {
         const eventType = req.body.type;

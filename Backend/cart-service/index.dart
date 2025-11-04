@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dotenv/dotenv.dart';
@@ -122,59 +121,139 @@ void main() async {
   });
 
 // PUT item carrinho
-router.put('/api/checkout', (Request req) async {
-  final body = await req.readAsString();
-  final data = jsonDecode(body);
+  router.put('/api/checkout', (Request req) async {
+    final body = await req.readAsString();
+    final data = jsonDecode(body);
 
-  final userId = data['userId'];
-  final productId = data['productId'];
-  final newQuantity = data['quantity'];
+    final userId = data['userId'];
+    final productId = data['productId'];
+    final newQuantity = data['quantity'];
 
-  if (userId == null || productId == null || newQuantity == null) {
-    return Response(
-      400,
-      body: jsonEncode({
-        'error': 'userId, productId e quantity inválidos'
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
-  }
+    if (userId == null || productId == null || newQuantity == null) {
+      return Response(
+        400,
+        body: jsonEncode({'error': 'userId, productId e quantity inválidos'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
-  try {
-    final result = await conn.execute(
-      Sql.named('''
+    try {
+      final result = await conn.execute(
+        Sql.named('''
         UPDATE carts_tb
         SET quantity = @newQuantity
         WHERE user_id = @userId AND product_id = @productId
         RETURNING id
       '''),
-      parameters: {
-        'newQuantity': newQuantity,
-        'userId': userId,
-        'productId': productId,
-      },
-    );
+        parameters: {
+          'newQuantity': newQuantity,
+          'userId': userId,
+          'productId': productId,
+        },
+      );
 
-    if (result.isEmpty) {
+      if (result.isEmpty) {
+        return Response.ok(
+          jsonEncode({'message': 'Item não encontrado no carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
+
       return Response.ok(
-        jsonEncode({'message': 'Item não encontrado no carrinho'}),
+        jsonEncode({'message': 'Quantidade atualizada com sucesso'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao atualizar quantidade: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  });
+
+  // POST evento checkout para barramento
+  router.post('/event', (Request req) async {
+    final body = await req.readAsString();
+    final data = jsonDecode(body);
+
+    final userId = data['userId'];
+    if (userId == null) {
+      return Response(
+        400,
+        body: jsonEncode({'error': 'userId é obrigatório'}),
         headers: {'Content-Type': 'application/json'},
       );
     }
 
-    return Response.ok(
-      jsonEncode({'message': 'Quantidade atualizada com sucesso'}),
-      headers: {'Content-Type': 'application/json'},
-    );
-  } catch (e) {
-    return Response(
-      500,
-      body: jsonEncode({'error': 'Erro ao atualizar quantidade: $e'}),
-      headers: {'Content-Type': 'application/json'},
-    );
-  }
-});
+    try {
+      // Busca os itens do carrinho do usuário
+      final result = await conn.execute(
+        Sql.named('SELECT * FROM carts_tb WHERE user_id = @userId'),
+        parameters: {'userId': userId},
+      );
 
+      if (result.isEmpty) {
+        return Response(
+          404,
+          body: jsonEncode({'error': 'Carrinho vazio ou não encontrado'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
+
+      // Monta a lista de itens
+      final items = result.map((row) {
+        return {
+          'productId': row[2], // product_id
+          'quantity': row[3], // quantity
+          'price': double.parse(row[4].toString()), // price
+        };
+      }).toList();
+
+      // Monta o evento
+      final event = {
+        'type': 'CartCheckoutInitiated',
+        'data': {
+          'userId': userId,
+          'items': items,
+        },
+      };
+
+      final eventBusUrl = env['EVENT_BUS_URL'] ?? 'http://localhost:5300/event';
+
+      final httpClient = HttpClient();
+      final request = await httpClient.postUrl(Uri.parse(eventBusUrl));
+      request.headers.contentType = ContentType.json;
+      request.write(jsonEncode(event));
+      final response = await request.close();
+
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      if (response.statusCode == 200) {
+        print('Evento enviado ao Barramento com sucesso.');
+        return Response.ok(
+          responseBody,
+          headers: {'Content-Type': 'application/json'},
+        );
+      } else {
+        print('Falha ao enviar evento: $responseBody');
+        return Response.internalServerError(
+          body: jsonEncode({
+            'error': 'Falha ao enviar evento para o Order Service',
+            'response': responseBody
+          }),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
+    } catch (e) {
+      print('Erro ao enviar evento: $e');
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao processar evento: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  });
 
   final handler = const Pipeline().addHandler(router);
 
