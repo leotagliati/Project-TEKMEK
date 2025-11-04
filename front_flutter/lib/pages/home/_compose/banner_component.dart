@@ -28,21 +28,50 @@ class BannerComponent extends StatelessWidget {
               width: double.infinity,
               height: double.infinity,
             ),
-            Container(color: const Color.fromARGB(84, 0, 0, 0)),
+            Container(color: const Color.fromARGB(125, 0, 0, 0)),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width > 600
+                          ? 32
+                          : 24,
+                      fontWeight: FontWeight.bold,
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(5.0, 5.0),
+                          blurRadius: 10.0,
+                          color: const Color.fromARGB(125, 0, 0, 0),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Text(
-                  description,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: MediaQuery.of(context).size.width > 600
+                          ? 20
+                          : 16,
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(5.0, 5.0),
+                          blurRadius: 10.0,
+                          color: const Color.fromARGB(125, 0, 0, 0),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -28,21 +28,21 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> banners = [
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg",
-      title: "Nome do teclado 1",
-      description: "Descrição 1",
+          'https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg',
+      title: 'Seu setup, suas regras',
+      description: 'Switches, keycaps e bases para um teclado único',
     ),
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/17479950/pexels-photo-17479950.jpeg",
-      title: "Nome do teclado 2",
-      description: "Descrição 2",
+          'https://images.pexels.com/photos/17479950/pexels-photo-17479950.jpeg',
+      title: 'Monte. Modifique. Domine.',
+      description: 'Liberdade total com teclados hot-swappable',
     ),
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/6782533/pexels-photo-6782533.jpeg",
-      title: "Nome do teclado 3",
-      description: "Descrição 3",
+          'https://images.pexels.com/photos/6782533/pexels-photo-6782533.jpeg',
+      title: 'Design que Inspira',
+      description: 'A peça central que faltava na sua mesa',
     ),
   ];
 
@@ -91,9 +91,11 @@ class _HomePageState extends State<HomePage> {
                     items: banners,
                     carouselController: carouselController,
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.width < 600
+                      height: MediaQuery.of(context).size.width > 600
+                          ? 320
+                          : MediaQuery.of(context).size.width > 460
                           ? 200
-                          : 320,
+                          : 240,
                       autoPlay: true,
                       autoPlayInterval: Duration(seconds: 5),
                       autoPlayAnimationDuration: Duration(milliseconds: 1200),
@@ -146,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Seja bem vindo, {nome}!",
+                    'Seja bem vindo, {nome}!',
                     style: TextStyle(
                       fontSize: 20,
                       // fontWeight: FontWeight.bold
