@@ -17,6 +17,23 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   ProductsService productsService = ProductsService();
+  CartService cartService = CartService();
+
+  Future<void> _addCartItem(Product product) async {
+    try {
+      final Map<String, dynamic> body = {
+        'userId': 1,
+        'productId': product.id,
+        'quantity': 1,
+        'price': product.price,
+      };
+
+      final response = await cartService.addItemToCart(body);
+      print(response);
+    } catch (e) {
+      print('Erro ao adicionar produto ao carrinho: $e');
+    }
+  }
 
   var currency = NumberFormat('#,##0.00', 'pt_BR');
   late final Future<Product> _productFuture;
@@ -136,9 +153,7 @@ class _ProductPageState extends State<ProductPage> {
                                 vertical: 40.0,
                               ),
                               child: OutlinedButton(
-                                onPressed: () {
-                                  // Adicionar ao carrinho
-                                },
+                                onPressed: () => _addCartItem(product),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Color.fromARGB(
                                     255,

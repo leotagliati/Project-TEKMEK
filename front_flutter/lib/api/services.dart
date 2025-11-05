@@ -64,8 +64,12 @@ class CartService {
     }
   }
 
-  Future<void> addItemToCart(Map<String, dynamic> body) async {
-    await _requestHandler.post(ApiEndpoints.cartUserItems, body);
+  Future<dynamic> addItemToCart(Map<String, dynamic> body) async {
+    final response = await _requestHandler.post(
+      ApiEndpoints.cartUserItems,
+      body,
+    );
+    return response;
   }
 
   Future<void> updateCartItem(Map<String, dynamic> body) async {
