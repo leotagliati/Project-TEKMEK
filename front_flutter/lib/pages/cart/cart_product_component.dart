@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/cart_item.dart';
 import 'package:intl/intl.dart';
 
 class CartProductComponent extends StatefulWidget {
-  final Product product;
+  final CartItem carItem;
   final VoidCallback onDelete;
   final ValueChanged<int> onAmountChanged;
 
   const CartProductComponent({
     super.key,
-    required this.product,
+    required this.carItem,
     required this.onDelete,
     required this.onAmountChanged,
   });
@@ -50,7 +50,7 @@ class _CartProductComponentState extends State<CartProductComponent> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    widget.product.imageUrl,
+                    widget.carItem.imageUrl,
                     fit: BoxFit.fitWidth,
                     width: 80,
                   ),
@@ -65,7 +65,7 @@ class _CartProductComponentState extends State<CartProductComponent> {
                       //   style: TextStyle(color: Colors.grey[600]),
                       // ),
                       Text(
-                        widget.product.name,
+                        widget.carItem.name,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -74,7 +74,7 @@ class _CartProductComponentState extends State<CartProductComponent> {
                         children: [
                           IconButton(
                             onPressed: () => widget.onAmountChanged(
-                              widget.product.amount - 1,
+                              widget.carItem.amount - 1,
                             ),
                             icon: Icon(Icons.remove),
                             iconSize: 12,
@@ -88,11 +88,11 @@ class _CartProductComponentState extends State<CartProductComponent> {
                           Container(
                             constraints: BoxConstraints(minWidth: 24),
                             alignment: Alignment.center,
-                            child: Text('${widget.product.amount}'),
+                            child: Text('${widget.carItem.amount}'),
                           ),
                           IconButton(
                             onPressed: () => widget.onAmountChanged(
-                              widget.product.amount + 1,
+                              widget.carItem.amount + 1,
                             ),
                             icon: Icon(Icons.add),
                             iconSize: 12,
@@ -134,7 +134,7 @@ class _CartProductComponentState extends State<CartProductComponent> {
                   ),
                 ),
                 Text(
-                  'R\$${currency.format(widget.product.price * widget.product.amount)}',
+                  'R\$${currency.format(widget.carItem.price * widget.carItem.amount)}',
                 ),
               ],
             ),

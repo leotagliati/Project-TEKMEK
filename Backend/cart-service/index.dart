@@ -57,7 +57,7 @@ void main() async {
       final result = await conn.execute(
         Sql.named('''
         SELECT 
-          c.id,
+          c.product_id,
           c.quantity,
           p.name,
           p.price,
@@ -104,32 +104,72 @@ void main() async {
     final price = data['price'];
 
     if (userId == null || productId == null || price == null) {
-      return Response(400,
-          body: jsonEncode(
-              {'error': 'userId, productId e price são obrigatórios'}),
-          headers: {'Content-Type': 'application/json'});
+      return Response(
+        400,
+        body:
+            jsonEncode({'error': 'userId, productId e price são obrigatórios'}),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
 
     try {
-      await conn.execute(
+      // Verifica se já existe o produto no carrinho
+      final result = await conn.execute(
         Sql.named('''
-        INSERT INTO carts_tb (user_id, product_id, quantity, price)
-        VALUES (@userId, @productId, @quantity, @price)
-        '''),
+        SELECT quantity FROM carts_tb
+        WHERE user_id = @userId AND product_id = @productId
+      '''),
         parameters: {
           'userId': userId,
           'productId': productId,
-          'quantity': quantity,
-          'price': price,
         },
       );
 
-      return Response.ok(jsonEncode({'message': 'Item adicionado ao carrinho'}),
-          headers: {'Content-Type': 'application/json'});
+      if (result.isNotEmpty) {
+        // Produto já existe — incrementa a quantidade
+        await conn.execute(
+          Sql.named('''
+          UPDATE carts_tb
+          SET quantity = quantity + @quantity
+          WHERE user_id = @userId AND product_id = @productId
+        '''),
+          parameters: {
+            'quantity': quantity,
+            'userId': userId,
+            'productId': productId,
+          },
+        );
+
+        return Response.ok(
+          jsonEncode({'message': 'Quantidade atualizada no carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      } else {
+        // Produto não existe — insere novo registro
+        await conn.execute(
+          Sql.named('''
+          INSERT INTO carts_tb (user_id, product_id, quantity, price)
+          VALUES (@userId, @productId, @quantity, @price)
+        '''),
+          parameters: {
+            'userId': userId,
+            'productId': productId,
+            'quantity': quantity,
+            'price': price,
+          },
+        );
+
+        return Response.ok(
+          jsonEncode({'message': 'Item adicionado ao carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
     } catch (e) {
-      return Response(500,
-          body: jsonEncode({'error': 'Erro ao adicionar item: $e'}),
-          headers: {'Content-Type': 'application/json'});
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao adicionar item: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
   });
 
