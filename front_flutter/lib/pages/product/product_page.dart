@@ -153,7 +153,10 @@ class _ProductPageState extends State<ProductPage> {
                                 vertical: 40.0,
                               ),
                               child: OutlinedButton(
-                                onPressed: () => _addCartItem(product),
+                                onPressed: () => {
+                                  _addCartItem(product),
+                                  Scaffold.of(context).openEndDrawer(),
+                                },
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Color.fromARGB(
                                     255,
