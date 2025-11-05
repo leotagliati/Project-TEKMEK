@@ -3,6 +3,7 @@ import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/common_components/search_component.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
@@ -85,6 +86,19 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Seja bem vindo, {nome}!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      // fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
               Stack(
                 fit: StackFit.loose,
                 children: [
@@ -92,7 +106,8 @@ class _HomePageState extends State<HomePage> {
                     items: banners,
                     carouselController: carouselController,
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.width > breakpointMobile
+                      height:
+                          MediaQuery.of(context).size.width > breakpointMobile
                           ? 320
                           : MediaQuery.of(context).size.width > 460
                           ? 200
@@ -144,20 +159,19 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Seja bem vindo, {nome}!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      // fontWeight: FontWeight.bold
+                  Expanded(
+                    child: Text(
+                      'Produtos',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
+                  SearchComponent()
                 ],
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 16),
               HomeFiltersComponent(),
               SizedBox(height: 24),
               FlexibleWrap(
