@@ -14,5 +14,6 @@ class ApiEndpoints {
   static String searchProductsByTerm(String term) =>
       '$productsMSBaseUrl/api/products/search?q=$term';
 
-  static String cartUserItems = '$cartMSBaseUrl/api/checkout';
+  static String cartUser = '$cartMSBaseUrl/api/checkout';
+  static String cartUserItems = '$cartMSBaseUrl/api/checkout/products';
 }

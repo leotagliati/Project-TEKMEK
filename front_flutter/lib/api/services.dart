@@ -1,5 +1,6 @@
 import 'package:front_flutter/api/endpoints.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/cart_item.dart';
+import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 
 class ProductsService {
@@ -64,16 +65,20 @@ class CartService {
     }
   }
 
-  Future<void> addItemToCart(Map<String, dynamic> body) async {
-    await _requestHandler.post(ApiEndpoints.cartUserItems, body);
+  Future<dynamic> addItemToCart(Map<String, dynamic> body) async {
+    final response = await _requestHandler.post(
+      ApiEndpoints.cartUser,
+      body,
+    );
+    return response;
   }
 
   Future<void> updateCartItem(Map<String, dynamic> body) async {
-    await _requestHandler.put(ApiEndpoints.cartUserItems, body);
+    await _requestHandler.put(ApiEndpoints.cartUser, body);
   }
 
   Future<void> removeCartItem(Map<String, dynamic> body) async {
-    await _requestHandler.delete(ApiEndpoints.cartUserItems, body: body);
+    await _requestHandler.delete(ApiEndpoints.cartUser, body: body);
   }
 }
 

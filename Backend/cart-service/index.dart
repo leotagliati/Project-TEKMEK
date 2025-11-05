@@ -6,6 +6,7 @@ import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
 void main() async {
   var env = DotEnv(includePlatformEnvironment: true)..load();
@@ -42,6 +43,56 @@ void main() async {
     }
   });
 
+  // GET produtos do carrinho por userid
+  router.get('/api/checkout/products', (Request req) async {
+    final userId = req.url.queryParameters['userId'];
+
+    if (userId == null || userId.isEmpty) {
+      return Response(400,
+          body: jsonEncode({'error': ' userId é obrigatório'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      final result = await conn.execute(
+        Sql.named('''
+        SELECT 
+          c.product_id,
+          c.quantity,
+          p.name,
+          p.price,
+          p.image_url
+        FROM carts_tb c
+        JOIN cart_products_tb p ON c.product_id = p.id
+        WHERE c.user_id = @userId
+      '''),
+        parameters: {'userId': userId},
+      );
+
+      final items = result
+          .map((row) => {
+                'product_id': row[0],
+                'quantity': row[1],
+                'name': row[2],
+                'price': row[3],
+                'image_url': row[4],
+              })
+          .toList();
+
+      return Response.ok(
+        jsonEncode(items),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      print('Erro ao buscar produtos do carrinho: $e');
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao buscar produtos do carrinho: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  });
+
   // POST item carrinho
   router.post('/api/checkout', (Request req) async {
     final body = await req.readAsString();
@@ -53,32 +104,72 @@ void main() async {
     final price = data['price'];
 
     if (userId == null || productId == null || price == null) {
-      return Response(400,
-          body: jsonEncode(
-              {'error': 'userId, productId e price são obrigatórios'}),
-          headers: {'Content-Type': 'application/json'});
+      return Response(
+        400,
+        body:
+            jsonEncode({'error': 'userId, productId e price são obrigatórios'}),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
 
     try {
-      await conn.execute(
+      // Verifica se já existe o produto no carrinho
+      final result = await conn.execute(
         Sql.named('''
-        INSERT INTO carts_tb (user_id, product_id, quantity, price)
-        VALUES (@userId, @productId, @quantity, @price)
-        '''),
+        SELECT quantity FROM carts_tb
+        WHERE user_id = @userId AND product_id = @productId
+      '''),
         parameters: {
           'userId': userId,
           'productId': productId,
-          'quantity': quantity,
-          'price': price,
         },
       );
 
-      return Response.ok(jsonEncode({'message': 'Item adicionado ao carrinho'}),
-          headers: {'Content-Type': 'application/json'});
+      if (result.isNotEmpty) {
+        // Produto já existe — incrementa a quantidade
+        await conn.execute(
+          Sql.named('''
+          UPDATE carts_tb
+          SET quantity = quantity + @quantity
+          WHERE user_id = @userId AND product_id = @productId
+        '''),
+          parameters: {
+            'quantity': quantity,
+            'userId': userId,
+            'productId': productId,
+          },
+        );
+
+        return Response.ok(
+          jsonEncode({'message': 'Quantidade atualizada no carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      } else {
+        // Produto não existe — insere novo registro
+        await conn.execute(
+          Sql.named('''
+          INSERT INTO carts_tb (user_id, product_id, quantity, price)
+          VALUES (@userId, @productId, @quantity, @price)
+        '''),
+          parameters: {
+            'userId': userId,
+            'productId': productId,
+            'quantity': quantity,
+            'price': price,
+          },
+        );
+
+        return Response.ok(
+          jsonEncode({'message': 'Item adicionado ao carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
     } catch (e) {
-      return Response(500,
-          body: jsonEncode({'error': 'Erro ao adicionar item: $e'}),
-          headers: {'Content-Type': 'application/json'});
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao adicionar item: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
   });
 
@@ -122,55 +213,61 @@ void main() async {
 
 // PUT item carrinho
   router.put('/api/checkout', (Request req) async {
-    final body = await req.readAsString();
-    final data = jsonDecode(body);
+  final body = await req.readAsString();
+  final data = jsonDecode(body);
 
-    final userId = data['userId'];
-    final productId = data['productId'];
-    final newQuantity = data['quantity'];
+  final userId = data['userId'];
+  final productId = data['productId'];
+  final newQuantity = data['quantity'];
+  final newPrice = data['price'];
 
-    if (userId == null || productId == null || newQuantity == null) {
-      return Response(
-        400,
-        body: jsonEncode({'error': 'userId, productId e quantity inválidos'}),
-        headers: {'Content-Type': 'application/json'},
-      );
-    }
+  if (userId == null || productId == null || newQuantity == null || newPrice == null) {
+    return Response(
+      400,
+      body: jsonEncode({
+        'error': 'userId, productId, quantity e price são obrigatórios'
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
 
-    try {
-      final result = await conn.execute(
-        Sql.named('''
+  try {
+    final result = await conn.execute(
+      Sql.named('''
         UPDATE carts_tb
-        SET quantity = @newQuantity
+        SET quantity = @newQuantity,
+            price = @newPrice
         WHERE user_id = @userId AND product_id = @productId
         RETURNING id
       '''),
-        parameters: {
-          'newQuantity': newQuantity,
-          'userId': userId,
-          'productId': productId,
-        },
-      );
+      parameters: {
+        'newQuantity': newQuantity,
+        'newPrice': newPrice,
+        'userId': userId,
+        'productId': productId,
+      },
+    );
 
-      if (result.isEmpty) {
-        return Response.ok(
-          jsonEncode({'message': 'Item não encontrado no carrinho'}),
-          headers: {'Content-Type': 'application/json'},
-        );
-      }
-
+    if (result.isEmpty) {
       return Response.ok(
-        jsonEncode({'message': 'Quantidade atualizada com sucesso'}),
-        headers: {'Content-Type': 'application/json'},
-      );
-    } catch (e) {
-      return Response(
-        500,
-        body: jsonEncode({'error': 'Erro ao atualizar quantidade: $e'}),
+        jsonEncode({'message': 'Item não encontrado no carrinho'}),
         headers: {'Content-Type': 'application/json'},
       );
     }
-  });
+
+    return Response.ok(
+      jsonEncode({'message': 'Item atualizado com sucesso'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  } catch (e) {
+    return Response(
+      500,
+      body: jsonEncode({'error': 'Erro ao atualizar item: $e'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+});
+
 
   // POST evento checkout para barramento
   router.post('/event', (Request req) async {
@@ -255,7 +352,11 @@ void main() async {
     }
   });
 
-  final handler = const Pipeline().addHandler(router);
+  final handler = const Pipeline()
+      .addMiddleware(logRequests())
+      .addMiddleware(corsHeaders())
+      .addHandler(router);
+  ;
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
   print('Servidor rodando na porta ${server.port}');

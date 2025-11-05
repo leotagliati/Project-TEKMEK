@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/api/services.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
 
 class SearchComponent extends StatefulWidget {
   const SearchComponent({super.key});
