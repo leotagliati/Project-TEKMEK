@@ -76,7 +76,7 @@ class _CartComponentState extends State<CartComponent> {
     for (var product in products) {
       productComponents.add(
         CartProductComponent(
-          carItem: product,
+          cartItem: product,
           onDelete: () => _removeProduct(product),
           onAmountChanged: (newAmount) => _updateAmount(product, newAmount),
         ),
