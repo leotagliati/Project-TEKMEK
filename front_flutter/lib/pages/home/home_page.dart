@@ -9,6 +9,7 @@ import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                     items: banners,
                     carouselController: carouselController,
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.width > 600
+                      height: MediaQuery.of(context).size.width > breakpointMobile
                           ? 320
                           : MediaQuery.of(context).size.width > 460
                           ? 200

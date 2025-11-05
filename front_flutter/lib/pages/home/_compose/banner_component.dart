@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
 
 class BannerComponent extends StatelessWidget {
   final String imageUrl;
@@ -39,7 +40,8 @@ class BannerComponent extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width > 600
+                      fontSize:
+                          MediaQuery.of(context).size.width > breakpointMobile
                           ? 32
                           : 24,
                       fontWeight: FontWeight.bold,
@@ -60,7 +62,8 @@ class BannerComponent extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: MediaQuery.of(context).size.width > 600
+                      fontSize:
+                          MediaQuery.of(context).size.width > breakpointMobile
                           ? 20
                           : 16,
                       shadows: <Shadow>[
