@@ -19,24 +19,17 @@ class NavigationMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text("Início"),
-            onTap: () => context.go('/'),
+            onTap: () => context.go('/home'),
           ),
           ListTile(
             leading: Icon(Icons.local_mall),
             title: Text("Meus pedidos"),
-            onTap: () {},
+            onTap: () => context.go('/orders'),
           ),
           ListTile(
             leading: Icon(Icons.account_circle),
             title: Text("Minha conta"),
-            onTap: () {},
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '*Imagens geradas por inteligência artificial.',
-              style: TextStyle(color: Colors.grey),
-            ),
+            onTap: () => {}
           ),
         ],
       ),
