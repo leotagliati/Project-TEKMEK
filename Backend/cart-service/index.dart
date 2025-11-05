@@ -43,6 +43,56 @@ void main() async {
     }
   });
 
+  // GET produtos do carrinho por userid
+  router.get('/api/checkout/products', (Request req) async {
+    final userId = req.url.queryParameters['userId'];
+
+    if (userId == null || userId.isEmpty) {
+      return Response(400,
+          body: jsonEncode({'error': ' userId é obrigatório'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      final result = await conn.execute(
+        Sql.named('''
+        SELECT 
+          c.id,
+          c.quantity,
+          p.name,
+          p.price,
+          p.image_url
+        FROM carts_tb c
+        JOIN cart_products_tb p ON c.product_id = p.id
+        WHERE c.user_id = @userId
+      '''),
+        parameters: {'userId': userId},
+      );
+
+      final items = result
+          .map((row) => {
+                'product_id': row[0],
+                'quantity': row[1],
+                'name': row[2],
+                'price': row[3],
+                'image_url': row[4],
+              })
+          .toList();
+
+      return Response.ok(
+        jsonEncode(items),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      print('Erro ao buscar produtos do carrinho: $e');
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao buscar produtos do carrinho: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  });
+
   // POST item carrinho
   router.post('/api/checkout', (Request req) async {
     final body = await req.readAsString();
@@ -256,9 +306,11 @@ void main() async {
     }
   });
 
-  final handler = const Pipeline().addMiddleware(logRequests())
+  final handler = const Pipeline()
+      .addMiddleware(logRequests())
       .addMiddleware(corsHeaders())
-      .addHandler(router);;
+      .addHandler(router);
+  ;
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
   print('Servidor rodando na porta ${server.port}');
