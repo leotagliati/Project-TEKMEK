@@ -52,9 +52,13 @@ class AuthService {
 
   /// Inicia a recuperação de senha - faz nada 
   Future<dynamic> recoverPassword(String email) async {
-   
-    return null; 
+    final response = await _requestHandler.post(
+      ApiEndpoints.recoverPassword,
+      {'username': email},
+    );
+    return response; 
   }
+  
 
 
   // Desloga o usuário -> apaga token local
