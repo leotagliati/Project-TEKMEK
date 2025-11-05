@@ -6,6 +6,7 @@ import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
 void main() async {
   var env = DotEnv(includePlatformEnvironment: true)..load();
@@ -255,7 +256,9 @@ void main() async {
     }
   });
 
-  final handler = const Pipeline().addHandler(router);
+  final handler = const Pipeline().addMiddleware(logRequests())
+      .addMiddleware(corsHeaders())
+      .addHandler(router);;
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
   print('Servidor rodando na porta ${server.port}');
