@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/search_component.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   const AppBarComponent({super.key});
@@ -9,7 +8,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Row(
         children: [
-          SizedBox(width: 56),
           Expanded(child: Text("TEKMEK", textAlign: TextAlign.center)),
         ],
       ),
@@ -34,7 +32,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        SearchComponent(),
         Builder(
           builder: (context) => ConstrainedBox(
             constraints: BoxConstraints(

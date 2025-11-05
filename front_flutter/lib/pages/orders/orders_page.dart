@@ -30,7 +30,13 @@ class OrdersPage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('Meus pedidos', style: TextStyle(fontSize: 24)),
+                          Text(
+                            'Meus pedidos',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                       OrderComponent(),
