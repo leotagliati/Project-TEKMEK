@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/pages/home/home_page.dart';
+import 'package:front_flutter/pages/orders/orders_page.dart';
 import 'package:front_flutter/pages/product/product_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,9 +20,9 @@ class App extends StatelessWidget {
   App({super.key});
 
   final _router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/home',
     routes: [
-      GoRoute(path: '/', builder: (context, state) => HomePage()),
+      GoRoute(path: '/home', builder: (context, state) => HomePage()),
       GoRoute(
         path: '/product/:id',
         redirect: (context, state) {
@@ -35,6 +36,7 @@ class App extends StatelessWidget {
           return ProductPage(productId: int.parse(state.pathParameters['id']!));
         },
       ),
+      GoRoute(path: '/orders', builder: (context, state) => OrdersPage()),
     ],
   );
 
