@@ -35,7 +35,19 @@ class _CartProductComponentState extends State<CartProductComponent> {
       };
       await cartService.updateCartItem(body);
     } catch (e) {
-      print('Erro ao adicionar produto ao carrinho: $e');
+      print('Erro ao modificar produto do carrinho: $e');
+    }
+  }
+
+  Future<void> _deleteCartItem() async {
+    try {
+      final Map<String, dynamic> body = {
+        'userId': 1, // CHUMBADO, REMOVER QUANDO TIVER O LOGIN SERVICE
+        'productId': widget.cartItem.id,
+      };
+      await cartService.removeCartItem(body);
+    } catch (e) {
+      print('Erro ao remover produto do carrinho: $e');
     }
   }
 
@@ -146,7 +158,7 @@ class _CartProductComponentState extends State<CartProductComponent> {
                     isHoveringDelete = false;
                   }),
                   child: GestureDetector(
-                    onTap: () => widget.onDelete(),
+                    onTap: () => {widget.onDelete(), _deleteCartItem()},
                     child: Icon(
                       Icons.delete,
                       color: isHoveringDelete
