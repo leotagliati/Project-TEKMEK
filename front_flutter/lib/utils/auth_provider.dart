@@ -1,60 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/api/auth_service.dart';
-import 'package:front_flutter/utils/token_handler.dart'; 
+import 'package:front_flutter/utils/token_handler.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
-  final TokenHandler _tokenHandler = TokenHandler(); 
-
+  final TokenHandler _tokenHandler = TokenHandler();
 
   bool _isLoggedIn = false;
   Map<String, dynamic>? _user;
-
+  bool _isLoading = true;
 
   bool get isLoggedIn => _isLoggedIn;
   Map<String, dynamic>? get user => _user;
-  bool get isAdmin => _user?['isAdmin'] ?? false; 
+  bool get isAdmin => _user?['isAdmin'] ?? false;
+  bool get isLoading => _isLoading;
 
   AuthProvider() {
-    _tryAutoLogin(); // Tenta logar automaticamente ao iniciar
+    _tryAutoLogin();
   }
 
-  // Checa se já existe um token válido ao abrir o app
   Future<void> _tryAutoLogin() async {
+    _isLoading = true;
+    notifyListeners();
+
     final token = await _tokenHandler.getToken();
     if (token != null) {
-     //adiconar logica para buscar dados do usuario com o token
-      _isLoggedIn = true;
-      notifyListeners();
+      try {
+        final userData = await _authService.getMe();
+        _user = userData;
+        _isLoggedIn = true;
+      } catch (e) {
+        // Token é inválido ou expirou, limpa
+        await _tokenHandler.deleteToken();
+        _isLoggedIn = false;
+        _user = null;
+      }
+    } else {
+      _isLoggedIn = false;
+      _user = null;
     }
+    _isLoading = false;
+    notifyListeners();
   }
 
-  // Função de Login
   Future<void> login(String email, String password) async {
- 
     final userData = await _authService.login(email, password);
-
     _user = userData;
     _isLoggedIn = true;
-
-    // Notifica a UI e o GoRouter
+    _isLoading = false;
     notifyListeners();
   }
 
-  // Função de Logout
   Future<void> logout() async {
-
-    await _authService.logout(); 
-    // Deleta o token
-
-    //  Limpa o ESTADO
+    await _authService.logout();
     _user = null;
     _isLoggedIn = false;
-
-    // Notifica a UI e o GoRouter
+    _isLoading = false;
     notifyListeners();
   }
-
-  // A função de registro não loga o usuário,
-  // apenas o `AuthService.register` é chamado pela LoginScreen
 }

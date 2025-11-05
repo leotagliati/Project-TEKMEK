@@ -21,10 +21,10 @@ class AuthService {
       // faz a requisição de login
     final response = await _requestHandler.post(
       ApiEndpoints.login, 
-      {'username': email, 'password': password}, // Conforme API Node.js
+      {'username': email, 'password': password}, 
     );
 
-    //Processa a resposta do back-end (que contém 'token' e 'user')
+    
     if (response is Map<String, dynamic> && response.containsKey('token')) {
       final String token = response['token'];
       
@@ -41,7 +41,7 @@ class AuthService {
   /// Tenta registrar um novo usuário.
   Future<dynamic> register(String email, String password) async {
      final response = await _requestHandler.post(
-      ApiEndpoints.register, // Passa a URL COMPLETA
+      ApiEndpoints.register, 
       {'username': email, 'password': password},
     );
     
@@ -50,7 +50,7 @@ class AuthService {
   }
 
 
-  /// Inicia a recuperação de senha - faz nada 
+  /// Inicia a recuperação de senha - faz nada :(
   Future<dynamic> recoverPassword(String email) async {
     final response = await _requestHandler.post(
       ApiEndpoints.recoverPassword,
@@ -66,5 +66,14 @@ class AuthService {
 
     // DELETA o token local
     await _tokenHandler.deleteToken();
+  }
+
+  Future<Map<String, dynamic>> getMe() async {
+    final response = await _requestHandler.get(ApiEndpoints.getMe);
+    if (response is Map<String, dynamic>) {
+      return response;
+    } else {
+      throw Exception('Resposta de dados do usuário inválida.');
+    }
   }
 }

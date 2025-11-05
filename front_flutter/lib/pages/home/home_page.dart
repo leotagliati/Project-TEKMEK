@@ -11,6 +11,9 @@ import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
+import 'package:front_flutter/utils/auth_provider.dart';
+import 'package:provider/provider.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -72,6 +75,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     List<Widget> productComponents = [];
     for (var product in products) {
       productComponents.add(ProductComponent(product: product));
@@ -148,7 +152,9 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Seja bem vindo, {nome}!",
+                    authProvider.isLoggedIn
+                    ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                    : "Seja bem vindo!",
                     style: TextStyle(
                       fontSize: 20,
                       // fontWeight: FontWeight.bold
