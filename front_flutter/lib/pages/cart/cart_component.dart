@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:front_flutter/api/services.dart';
 import 'package:front_flutter/models/cart_item.dart';
-import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
 import 'package:intl/intl.dart';
 

@@ -1,5 +1,4 @@
 import 'package:front_flutter/api/endpoints.dart';
-import 'package:front_flutter/models/cart_item.dart';
 import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/utils/request_handler.dart';
 

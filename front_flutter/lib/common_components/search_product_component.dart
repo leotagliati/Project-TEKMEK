@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
 
 class SearchProductComponent extends StatelessWidget {
   final Product product;
