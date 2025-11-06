@@ -106,17 +106,26 @@ class _SearchComponentState extends State<SearchComponent> {
         );
       },
       suggestionsBuilder: (BuildContext context, SearchController controller) {
-        return List<ListTile>.generate(products.length, (int index) {
-          return ListTile(
-            title: SearchProductComponent(product: products[index]),
-            onTap: () {
-              setState(() {
-                controller.closeView('');
-                context.go('/product/${products[index].id}');
-              });
-            },
-          );
-        });
+        if (products.isNotEmpty) {
+          return List<ListTile>.generate(products.length, (int index) {
+            return ListTile(
+              title: SearchProductComponent(product: products[index]),
+              onTap: () {
+                setState(() {
+                  controller.closeView('');
+                  context.go('/product/${products[index].id}');
+                });
+              },
+            );
+          });
+        } else {
+          return [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Text('Nenhum resultado.'),
+            ),
+          ];
+        }
       },
       viewOnSubmitted: (value) => _searchProducts(value),
     );
