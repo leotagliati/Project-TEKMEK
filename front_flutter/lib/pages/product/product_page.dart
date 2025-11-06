@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:front_flutter/api/services.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:intl/intl.dart';
 
@@ -18,47 +16,47 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  ProductsService productsService = ProductsService();
+  CartService cartService = CartService();
+
+  Future<void> _addCartItem(Product product) async {
+    try {
+      final Map<String, dynamic> body = {
+        'userId': 1,
+        'productId': product.id,
+        'quantity': 1,
+        'price': product.price,
+      };
+
+      final response = await cartService.addItemToCart(body);
+      print(response);
+    } catch (e) {
+      print('Erro ao adicionar produto ao carrinho: $e');
+    }
+  }
+
   var currency = NumberFormat('#,##0.00', 'pt_BR');
   late final Future<Product> _productFuture;
 
   final List<String> radioOptions = ['Cabo', 'Wireless'];
   String? _selectedOption;
 
-  // Temporário para pegar os dados do JSON
-  Future<Product> _fetchProductDetails(int id) async {
+  Future<Product> _loadProduct(int id) async {
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/products.json',
+      final Product fetchedProduct = await productsService.getProductById(
+        '$id',
       );
-      final List<dynamic> parsedList = jsonDecode(jsonString);
-      final Map<String, dynamic> productMap = parsedList.firstWhere(
-        (item) => item['id'] == id,
-        orElse: () => throw Exception('Produto com ID $id não encontrado!'),
-      );
-      return Product.fromJson(productMap);
+      return fetchedProduct;
     } catch (e) {
-      print('Erro ao carregar o produto: $e');
-      throw Exception('Não foi possível carregar os detalhes do produto.');
+      print('Erro ao carregar produto pelo ID: $e');
+      rethrow;
     }
-  }
-
-  // Temporário para formatar a saída do texto
-  String _formatSpecifications(Map<String, String> specifications) {
-    final formattedLines = specifications.entries.map((entry) {
-      final String key = entry.key;
-      final String value = entry.value;
-      if (key.isEmpty) return '';
-      final String capitalizedKey =
-          '${key[0].toUpperCase()}${key.substring(1)}';
-      return '$capitalizedKey: $value';
-    }).toList();
-    return formattedLines.join('\n');
   }
 
   @override
   void initState() {
     super.initState();
-    _productFuture = _fetchProductDetails(widget.productId);
+    _productFuture = _loadProduct(widget.productId);
     _selectedOption = radioOptions[0];
   }
 
@@ -155,8 +153,9 @@ class _ProductPageState extends State<ProductPage> {
                                 vertical: 40.0,
                               ),
                               child: OutlinedButton(
-                                onPressed: () {
-                                  // Adicionar ao carrinho
+                                onPressed: () => {
+                                  _addCartItem(product),
+                                  Scaffold.of(context).openEndDrawer(),
                                 },
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Color.fromARGB(
@@ -218,14 +217,13 @@ class _ProductPageState extends State<ProductPage> {
                                       Padding(
                                         padding: const EdgeInsets.all(12.0),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            // Text(
-                                            //   _formatSpecifications(
-                                            //     product.specifications,
-                                            //   ),
-                                            //   style: TextStyle(height: 1.5),
-                                            // ),
+                                            Text(
+                                              'Conectividade: ${product.connectivity} \nLayout: ${product.layoutSize} \nTipo de keycap: ${product.keycapType}',
+                                              style: TextStyle(height: 1.5),
+                                            ),
                                           ],
                                         ),
                                       ),

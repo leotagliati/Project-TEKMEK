@@ -1,19 +1,21 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
+import 'package:front_flutter/common_components/search_component.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
+
 import 'package:front_flutter/utils/auth_provider.dart';
 import 'package:provider/provider.dart';
 
+
+import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,21 +35,21 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> banners = [
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg",
-      title: "Nome do teclado 1",
-      description: "Descrição 1",
+          'https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg',
+      title: 'Seu setup, suas regras',
+      description: 'Switches, keycaps e bases para um teclado único',
     ),
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/17479950/pexels-photo-17479950.jpeg",
-      title: "Nome do teclado 2",
-      description: "Descrição 2",
+          'https://images.pexels.com/photos/17479950/pexels-photo-17479950.jpeg',
+      title: 'Monte. Modifique. Domine.',
+      description: 'Liberdade total com teclados hot-swappable',
     ),
     BannerComponent(
       imageUrl:
-          "https://images.pexels.com/photos/6782533/pexels-photo-6782533.jpeg",
-      title: "Nome do teclado 3",
-      description: "Descrição 3",
+          'https://images.pexels.com/photos/6782533/pexels-photo-6782533.jpeg',
+      title: 'Design que Inspira',
+      description: 'A peça central que faltava na sua mesa',
     ),
   ];
 
@@ -90,6 +92,19 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Seja bem vindo, {nome}!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      // fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
               Stack(
                 fit: StackFit.loose,
                 children: [
@@ -97,9 +112,12 @@ class _HomePageState extends State<HomePage> {
                     items: banners,
                     carouselController: carouselController,
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.width < 600
+                      height:
+                          MediaQuery.of(context).size.width > breakpointMobile
+                          ? 320
+                          : MediaQuery.of(context).size.width > 460
                           ? 200
-                          : 320,
+                          : 240,
                       autoPlay: true,
                       autoPlayInterval: Duration(seconds: 5),
                       autoPlayAnimationDuration: Duration(milliseconds: 1200),
@@ -147,22 +165,24 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+
                   Text(
                     authProvider.isLoggedIn
                     ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
                     : "Seja bem vindo!",
-                    style: TextStyle(
-                      fontSize: 20,
+                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       // fontWeight: FontWeight.bold
-                    ),
+
+                  Expanded(
+                
                   ),
+                  SearchComponent()
                 ],
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 16),
               HomeFiltersComponent(),
               SizedBox(height: 24),
               FlexibleWrap(

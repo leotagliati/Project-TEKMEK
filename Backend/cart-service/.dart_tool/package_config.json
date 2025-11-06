@@ -2,10 +2,28 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "args",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/55119/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.13.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "buffer",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/buffer-1.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "charcode",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/charcode-1.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "collection",
@@ -14,10 +32,23 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "http",
-      "rootUri": "file:///C:/Users/55119/AppData/Local/Pub/Cache/hosted/pub.dev/http-0.13.6",
+      "name": "crypto",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "dotenv",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/dotenv-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "http",
+
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "http_methods",
@@ -44,10 +75,28 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "pool",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/pool-1.5.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "postgres",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/postgres-3.5.9",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
       "name": "shelf",
       "rootUri": "file:///C:/Users/55119/AppData/Local/Pub/Cache/hosted/pub.dev/shelf-1.4.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "shelf_cors_headers",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/shelf_cors_headers-0.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "shelf_router",
@@ -90,6 +139,12 @@
       "rootUri": "file:///C:/Users/55119/AppData/Local/Pub/Cache/hosted/pub.dev/typed_data-1.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "web",
+      "rootUri": "file:///C:/Users/Leonardo%20Tagliati/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "cart_service",

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'dart:async';
 import 'dart:io'; // Para SocketException
 
@@ -29,13 +30,13 @@ class NetworkException implements Exception {
 class RequestHandler {
   static final RequestHandler _instance = RequestHandler._internal();
   RequestHandler._internal();
-  factory RequestHandler() {
-    return _instance;
-  }
+  factory RequestHandler() => _instance;
 
   final TokenHandler _tokenHandler = TokenHandler();
 
-  /// Monta a URI com query params
+
+  /// Monta a URI com query params, se existirem
+
   Uri _buildUri(String url, [Map<String, dynamic>? queryParams]) {
     final uri = Uri.parse(url);
     if (queryParams == null || queryParams.isEmpty) return uri;
@@ -43,6 +44,7 @@ class RequestHandler {
       ...uri.queryParameters,
       ...queryParams.map((k, v) => MapEntry(k, v.toString())),
     });
+
   }
 
   /// Adiciona headers padrões e o token de autenticação
@@ -88,7 +90,7 @@ class RequestHandler {
     } catch (e) {
       rethrow;
     }
-  }
+
 
   Future<dynamic> put(String url, Map<String, dynamic> body,
       {Map<String, dynamic>? queryParams}) async {

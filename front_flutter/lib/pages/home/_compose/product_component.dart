@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -31,8 +32,8 @@ class _ProductComponentState extends State<ProductComponent> {
           context.go('/product/${widget.product.id}');
         },
         child: Container(
-          width: MediaQuery.of(context).size.width < 600 ? 160 : 192,
-          height: MediaQuery.of(context).size.width < 600 ? 192 : 256,
+          width: MediaQuery.of(context).size.width < breakpointMobile ? 160 : 192,
+          height: MediaQuery.of(context).size.width < breakpointMobile ? 192 : 256,
           decoration: BoxDecoration(
             color: Colors.white,
             border: isHovering

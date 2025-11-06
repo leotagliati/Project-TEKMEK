@@ -73,7 +73,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-
+.env
 .env.development.local
 .env.test.local
 .env.production.local
@@ -134,3 +134,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+front_flutter/linux/flutter/generated_plugin_registrant.cc
+front_flutter/linux/flutter/generated_plugin_registrant.cc
+front_flutter/linux/flutter/generated_plugins.cmake
+front_flutter/macos/Flutter/GeneratedPluginRegistrant.swift
+front_flutter/windows/flutter/generated_plugin_registrant.cc
+front_flutter/windows/flutter/generated_plugins.cmake

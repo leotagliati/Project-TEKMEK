@@ -28,7 +28,7 @@ pool.connect((err, client, release) => {
 // uso POST em vez de GET pq prefiro usar body pra passar os filtros do que query (rota ficaria gigante, acredite)
 app.post('/api/products/search', async (req, res) => {
     const { q } = req.query; // termo de busca na URL: ?q=blabla
-    const { layoutSize, connectionType, keycapsType } = req.body; // filtros no body
+    const { layoutSize, connectionType } = req.body; // filtros no body
 
     try {
         const result = await pool.query('SELECT * FROM products_tb');
@@ -48,10 +48,6 @@ app.post('/api/products/search', async (req, res) => {
 
         if (connectionType && connectionType.length > 0) {
             filtered = filtered.filter(p => connectionType.includes(p.connectivity));
-        }
-
-        if (keycapsType && keycapsType.length > 0) {
-            filtered = filtered.filter(p => keycapsType.includes(p.keycaps_type));
         }
 
         res.json(filtered);
@@ -153,6 +149,6 @@ const port = process.env.MS_PORT
 app.listen(port, () => {
     console.clear();
     console.log('----------------------------------------------------');
-    console.log(`'search products service' running at port ${port}.`);
+    console.log(`'products service' running at port ${port}.`);
     console.log('----------------------------------------------------');
 });

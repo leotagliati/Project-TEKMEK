@@ -4,6 +4,9 @@ environment:
   sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  shelf: ^1.4.0
-  shelf_router: ^1.0.0
-  http: ^0.13.6
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  http: ^1.5.0
+  postgres: ^3.5.9
+  shelf_cors_headers: ^0.1.5
+  dotenv: ^4.2.0

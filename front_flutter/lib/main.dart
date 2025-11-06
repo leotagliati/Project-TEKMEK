@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/pages/home/home_page.dart';
+import 'package:front_flutter/pages/orders/orders_page.dart';
 import 'package:front_flutter/pages/product/product_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,8 +25,10 @@ class App extends StatelessWidget {
  
   const App({super.key, required this.authProvider, required this.router});
 
+
   final AuthProvider authProvider;
   final GoRouter router;
+
 
   @override
   Widget build(BuildContext context) {

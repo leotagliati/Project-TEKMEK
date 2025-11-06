@@ -25,6 +25,7 @@ class NavigationMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text("Início"),
+
             onTap: () {
               Navigator.pop(context);
               context.go('/');
@@ -77,6 +78,13 @@ class NavigationMenu extends StatelessWidget {
               },
             ),
           ],
+       
+          ListTile(
+            leading: Icon(Icons.local_mall),
+            title: Text("Meus pedidos"),
+            onTap: () => context.go('/orders'),
+          ),
+       
         ],
       ),
     );

@@ -1,0 +1,1 @@
+int breakpointMobile = 600;
