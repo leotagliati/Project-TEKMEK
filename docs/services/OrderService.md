@@ -18,42 +18,43 @@ Ele recebe eventos do **Cart Service** e mantém o estado dos pedidos, incluindo
 
 ## Estrutura do Banco de Dados
 
-### **Tabela `orders_tb`**
-| Campo           | Tipo                                            | Descrição                     |
-| --------------- | ----------------------------------------------- | ----------------------------- |
-| **id**          | UUID                                            | Identificador único do pedido |
-| **user_id**     | UUID                                            | Identificador do usuário      |
-| **status**      | ENUM(`PENDING`, `PAID`, `CANCELLED`, `SHIPPED`) | Estado atual do pedido        |
-| **valor_total** | DECIMAL(10,2)                                   | Valor total do pedido         |
-| **created_at**  | TIMESTAMP                                       | Data/hora de criação          |
-| **updated_at**  | TIMESTAMP                                       | Última modificação            |
+> Observação: o projeto usa `INTEGER`/`SERIAL` para identificadores (não UUIDs).
 
----
+### **Tabela `orders_tb`**
+| Campo           | Tipo                      | Descrição                             |
+| --------------- | ------------------------- | ------------------------------------- |
+| **id**          | `SERIAL` PRIMARY KEY      | Identificador do pedido               |
+| **user_id**     | `INT`                     | Referência ao usuário (`login_tb.idLogin`) |
+| **status**      | `VARCHAR(50)`             | Estado atual do pedido (`pendente`, `pago`, `cancelado`, `enviado`, etc.) |
+| **valor_total** | `NUMERIC(10,2)`           | Valor total do pedido                 |
+| **created_at**  | `TIMESTAMP`               | Data/hora de criação                  |
+| **updated_at**  | `TIMESTAMP`               | Última modificação                    |
 
 ### **Tabela `order_items_tb`**
-| Campo               | Tipo          | Descrição                             |
-| ------------------- | ------------- | ------------------------------------- |
-| **id**              | UUID          | Identificador único do item           |
-| **order_id**        | UUID          | Referência ao pedido (`orders_tb.id`) |
-| **product_id**      | UUID          | Produto associado                     |
-| **quantity**        | INT           | Quantidade do produto                 |
-| **price_at_moment** | DECIMAL(10,2) | Preço do produto no momento da compra |
+| Campo     | Tipo            | Descrição                                           |
+| --------- | --------------- | --------------------------------------------------- |
+| **id**    | `SERIAL`        | Identificador do item                               |
+| **order_id** | `INT`         | FK para `orders_tb.id`                              |
+| **product_id** | `INT`      | FK para `products_tb.id`                            |
+| **quantity** | `INT`         | Quantidade do produto                               |
+| **price**  | `NUMERIC(10,2)` | Preço do produto no momento da compra (unitário)    |
 
-> O campo `price_at_moment` vai manter a consistência histórica do valor, mesmo que o preço do produto mude posteriormente.
+> O campo `price` em `order_items_tb` guarda o preço unitário no momento do checkout, garantindo consistência histórica mesmo que o preço do `products_tb` mude depois.
 
 ---
 
 ## Fluxo de Eventos
 
-1. **Cart Service** envia o evento `CartCheckoutInitiated` contendo:
-   ```json
-   {
-     "type": "CartCheckoutInitiated",
-     "data": {
-       "userId": "id-do-usuario",
-       "items": [
-         { "productId": "id-produto", "quantity": 2 },
-         { "productId": "id-produto2", "quantity": 1 }
-       ]
-     }
-   }
+1. **Cart Service** envia o evento `CartCheckoutInitiated` contendo, por exemplo:
+
+```json
+{
+  "type": "CartCheckoutInitiated",
+  "data": {
+    "userId": 12,
+    "items": [
+      { "productId": 3, "quantity": 2 },
+      { "productId": 8, "quantity": 1 }
+    ]
+  }
+}
