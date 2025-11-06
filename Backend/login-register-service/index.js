@@ -36,6 +36,15 @@ const pool = new Pool({
   port: process.env.DB_PORT
 });
 
+// Teste de conexão
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('Erro ao conectar ao PostgreSQL:', err.stack);
+  }
+  console.log('Conectado ao PostgreSQL com sucesso');
+  release();
+});
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];

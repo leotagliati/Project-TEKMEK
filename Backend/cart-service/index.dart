@@ -359,7 +359,9 @@ void main() async {
   ;
 
   final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
+  print('----------------------------------------------------');
   print('Servidor rodando na porta ${server.port}');
+  print('----------------------------------------------------');
 }
 
 class CartItemDto {

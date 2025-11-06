@@ -31,7 +31,7 @@ app.get('/orders/:userId', async (req, res) => {
 
         // Busca o pedido pendente do usuário
         const orderResult = await pool.query(
-            'SELECT * FROM orders WHERE user_id = $1',
+            'SELECT * FROM orders_tb WHERE user_id = $1',
             [userId]
         );
 
@@ -43,7 +43,7 @@ app.get('/orders/:userId', async (req, res) => {
 
         // Busca os itens do pedido
         const itemsResult = await pool.query(
-            'SELECT * FROM order_items WHERE order_id = $1',
+            'SELECT * FROM order_items_tb WHERE order_id = $1',
             [order.id]
         );
 
@@ -66,7 +66,7 @@ app.post('/event', async (req, res) => {
 
             // Verifica se já existe pedido pendente do usuário
             const existingOrder = await pool.query(
-                'SELECT * FROM orders WHERE user_id = $1 AND status = $2',
+                'SELECT * FROM orders_tb WHERE user_id = $1 AND status = $2',
                 [userId, 'PENDING']
             );
 
@@ -86,7 +86,7 @@ app.post('/event', async (req, res) => {
 
                 // Atualiza valor total
                 await pool.query(
-                    'UPDATE orders SET valor_total = $1, updated_at = NOW() WHERE id = $2',
+                    'UPDATE orders_tb SET valor_total = $1, updated_at = NOW() WHERE id = $2',
                     [totalPrice, orderId]
                 );
 
@@ -105,7 +105,7 @@ app.post('/event', async (req, res) => {
             } else {
                 // Cria novo pedido
                 const newOrder = await pool.query(
-                    'INSERT INTO orders (user_id, status, valor_total) VALUES ($1, $2, $3) RETURNING id',
+                    'INSERT INTO orders_tb (user_id, status, valor_total) VALUES ($1, $2, $3) RETURNING id',
                     [userId, 'PENDING', totalPrice]
                 );
 
@@ -115,7 +115,7 @@ app.post('/event', async (req, res) => {
 
                 for (const item of items) {
                     await pool.query(
-                        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
+                        'INSERT INTO order_items_tb (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
                         [orderId, item.productId, item.quantity, item.price]
                     );
                 }
