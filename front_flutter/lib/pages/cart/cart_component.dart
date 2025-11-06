@@ -7,6 +7,9 @@ import 'package:front_flutter/models/cart_item.dart';
 import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:front_flutter/utils/auth_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class CartComponent extends StatefulWidget {
   const CartComponent({super.key});
@@ -22,50 +25,87 @@ class _CartComponentState extends State<CartComponent> {
   var currency = NumberFormat('#,##0.00', 'pt_BR');
 
   List<CartItem> products = [];
+  bool _isLoading = true;
+  bool _isInit = true;
+
+  late AuthProvider authProvider;
+  int? get _userId => authProvider.user?['idlogin'];
 
   @override
-  void initState() {
-    super.initState();
-    _loadUserCartItens();
-    _calculateSubtotal();
+  void didChangeDependencies() {
+    if (_isInit) {
+      authProvider = Provider.of<AuthProvider>(context);
+      if (authProvider.isLoggedIn && _userId != null) {
+        _loadUserCartItens(_userId.toString());
+      } else {
+        setState(() {
+          _isLoading = false;
+          products = [];
+        });
+      }
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
-  void _loadUserCartItens() async {
-    final List<dynamic> data = await cartService.getUserItems(
-      '1',
-    ); // usuario chumbado, preciso do servico de login
+  void _loadUserCartItens(String userId) async {
+    if (!mounted) return;
+    setState(() { _isLoading = true; });
+
     try {
+      final List<dynamic> data = await cartService.getUserItems(userId);
+      if (!mounted) return;
+
       final List<CartItem> cartItemList = data
           .map((item) => CartItem.fromJson(item as Map<String, dynamic>))
           .toList();
 
       setState(() {
         products = cartItemList;
+        _calculateSubtotal();
+        _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao carregar itens do carrinho'),
           backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
         ),
       );
       print('Erro ao carregar itens do carrinho: $e');
+      setState(() { _isLoading = false; });
     }
   }
 
   Future<void> _checkoutCart() async {
+    if (_userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Você precisa estar logado para finalizar o pedido.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     try {
-      final Map<String, dynamic> body = {'userId': 1};
+      final Map<String, dynamic> body = {'userId': _userId};
       await cartService.checkoutItems(body);
+
+      setState(() {
+        products = [];
+        _calculateSubtotal();
+      });
+      if (mounted) {
+        Scaffold.of(context).closeEndDrawer();
+        context.go('/orders');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao finalizar carrinho'),
           backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
         ),
       );
       print('Erro ao finalizar carrinho: $e');
@@ -91,12 +131,26 @@ class _CartComponentState extends State<CartComponent> {
       if (newAmount > 0) {
         product.amount = newAmount;
         _calculateSubtotal();
+      } else {
+        products.remove(product);
+        _calculateSubtotal();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    if (auth.isLoading) {
+      return Drawer(child: Center(child: CircularProgressIndicator()));
+    }
+
+    if (!auth.isLoading && (auth.isLoggedIn != (authProvider.user != null))) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() { _isInit = true; });
+      });
+    }
+
     List<Widget> productComponents = [];
     for (var product in products) {
       productComponents.add(
@@ -139,17 +193,35 @@ class _CartComponentState extends State<CartComponent> {
                       ],
                     ),
                     Container(color: Colors.grey[400], height: 2),
-                    Column(
-                      spacing: 16,
-                      children: products.isNotEmpty
-                          ? productComponents
-                          : [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [Text('O carrinho está vazio.')],
+                    _isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : !auth.isLoggedIn
+                            ? Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text('Faça login para ver seu carrinho.')
+                                  ],
+                                ),
+                              )
+                            : Column(
+                                spacing: 16,
+                                children: products.isNotEmpty
+                                    ? productComponents
+                                    : [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text('O carrinho está vazio.')
+                                          ],
+                                        ),
+                                      ],
                               ),
-                            ],
-                    ),
                     Container(color: Colors.grey[400], height: 2),
                     Row(
                       children: [
@@ -158,12 +230,15 @@ class _CartComponentState extends State<CartComponent> {
                       ],
                     ),
                     OutlinedButton(
-                      onPressed: () {
-                        // jogar na rota da pagina de pedidos CODE:01
-                        _checkoutCart();
-                      },
+                      onPressed: (!auth.isLoggedIn || products.isEmpty)
+                          ? null
+                          : () {
+                              _checkoutCart();
+                            },
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 65, 72, 74),
+                        backgroundColor: (!auth.isLoggedIn || products.isEmpty)
+                            ? Colors.grey[400]
+                            : Color.fromARGB(255, 65, 72, 74),
                         foregroundColor: Colors.white,
                         side: BorderSide(color: Colors.transparent),
                       ),
