@@ -3,7 +3,6 @@ import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
 import 'package:front_flutter/models/product.dart';
-import 'package:front_flutter/common_components/search_component.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';

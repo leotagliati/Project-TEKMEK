@@ -213,64 +213,65 @@ void main() async {
 
 // PUT item carrinho
   router.put('/api/checkout', (Request req) async {
-  final body = await req.readAsString();
-  final data = jsonDecode(body);
+    final body = await req.readAsString();
+    final data = jsonDecode(body);
 
-  final userId = data['userId'];
-  final productId = data['productId'];
-  final newQuantity = data['quantity'];
-  final newPrice = data['price'];
+    final userId = data['userId'];
+    final productId = data['productId'];
+    final newQuantity = data['quantity'];
+    final newPrice = data['price'];
 
-  if (userId == null || productId == null || newQuantity == null || newPrice == null) {
-    return Response(
-      400,
-      body: jsonEncode({
-        'error': 'userId, productId, quantity e price são obrigatórios'
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
-  }
+    if (userId == null ||
+        productId == null ||
+        newQuantity == null ||
+        newPrice == null) {
+      return Response(
+        400,
+        body: jsonEncode(
+            {'error': 'userId, productId, quantity e price são obrigatórios'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
-  try {
-    final result = await conn.execute(
-      Sql.named('''
+    try {
+      final result = await conn.execute(
+        Sql.named('''
         UPDATE carts_tb
         SET quantity = @newQuantity,
             price = @newPrice
         WHERE user_id = @userId AND product_id = @productId
         RETURNING id
       '''),
-      parameters: {
-        'newQuantity': newQuantity,
-        'newPrice': newPrice,
-        'userId': userId,
-        'productId': productId,
-      },
-    );
+        parameters: {
+          'newQuantity': newQuantity,
+          'newPrice': newPrice,
+          'userId': userId,
+          'productId': productId,
+        },
+      );
 
-    if (result.isEmpty) {
+      if (result.isEmpty) {
+        return Response.ok(
+          jsonEncode({'message': 'Item não encontrado no carrinho'}),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
+
       return Response.ok(
-        jsonEncode({'message': 'Item não encontrado no carrinho'}),
+        jsonEncode({'message': 'Item atualizado com sucesso'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      return Response(
+        500,
+        body: jsonEncode({'error': 'Erro ao atualizar item: $e'}),
         headers: {'Content-Type': 'application/json'},
       );
     }
-
-    return Response.ok(
-      jsonEncode({'message': 'Item atualizado com sucesso'}),
-      headers: {'Content-Type': 'application/json'},
-    );
-  } catch (e) {
-    return Response(
-      500,
-      body: jsonEncode({'error': 'Erro ao atualizar item: $e'}),
-      headers: {'Content-Type': 'application/json'},
-    );
-  }
-});
-
+  });
 
   // POST evento checkout para barramento
-  router.post('/event', (Request req) async {
+  router.post('/api/req-order', (Request req) async {
     final body = await req.readAsString();
     final data = jsonDecode(body);
 
@@ -328,8 +329,19 @@ void main() async {
 
       if (response.statusCode == 200) {
         print('Evento enviado ao Barramento com sucesso.');
+
+        // Limpa o carrinho após envio bem-sucedido
+        await conn.execute(
+          Sql.named('DELETE FROM carts_tb WHERE user_id = @userId'),
+          parameters: {'userId': userId},
+        );
+        print('Carrinho do usuário #$userId foi limpo após o checkout.');
+
         return Response.ok(
-          responseBody,
+          jsonEncode({
+            'message': 'Pedido enviado e carrinho limpo com sucesso.',
+            'eventBusResponse': jsonDecode(responseBody),
+          }),
           headers: {'Content-Type': 'application/json'},
         );
       } else {

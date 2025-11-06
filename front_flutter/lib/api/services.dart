@@ -66,10 +66,7 @@ class CartService {
   }
 
   Future<dynamic> addItemToCart(Map<String, dynamic> body) async {
-    final response = await _requestHandler.post(
-      ApiEndpoints.cartUser,
-      body,
-    );
+    final response = await _requestHandler.post(ApiEndpoints.cartUser, body);
     return response;
   }
 
@@ -79,6 +76,11 @@ class CartService {
 
   Future<void> removeCartItem(Map<String, dynamic> body) async {
     await _requestHandler.delete(ApiEndpoints.cartUser, body: body);
+  }
+
+  Future<void> checkoutItems(Map<String, dynamic> body) async {
+    final response = await _requestHandler.post(ApiEndpoints.cartCheckout, body);
+    return response;
   }
 }
 

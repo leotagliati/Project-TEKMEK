@@ -29,5 +29,7 @@ class ApiEndpoints {
 
   static String cartUser = '$cartMSBaseUrl/api/checkout';
   static String cartUserItems = '$cartMSBaseUrl/api/checkout/products';
+  static String cartCheckout = '$cartMSBaseUrl/api/req-order';
+  
 }
 

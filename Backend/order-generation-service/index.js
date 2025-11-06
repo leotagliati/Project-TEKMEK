@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
-const { v4: uuidv4 } = require('uuid');
-const axios = require('axios');
 
 const app = express();
 app.use(express.json());
@@ -25,113 +23,52 @@ pool.connect((err, client, release) => {
     release();
 });
 
-app.get('/orders/:userId', async (req, res) => {
-    try {
-        const { userId } = req.params;
-
-        // Busca o pedido pendente do usuário
-        const orderResult = await pool.query(
-            'SELECT * FROM orders_tb WHERE user_id = $1',
-            [userId]
-        );
-
-        if (orderResult.rows.length === 0) {
-            return res.status(404).json({ message: 'Nenhum pedido pendente encontrado.' });
-        }
-
-        const order = orderResult.rows[0];
-
-        // Busca os itens do pedido
-        const itemsResult = await pool.query(
-            'SELECT * FROM order_items_tb WHERE order_id = $1',
-            [order.id]
-        );
-
-        order.items = itemsResult.rows;
-
-        return res.status(200).json(order);
-    } catch (error) {
-        console.error('Erro ao buscar pedido:', error);
-        return res.status(500).json({ error: 'Erro interno ao buscar pedido.' });
-    }
-});
-
+// ✅ Rota que escuta eventos do barramento
 app.post('/event', async (req, res) => {
     try {
-        const eventType = req.body.type;
+        const { type, data } = req.body;
 
-        // Apenas tratamos eventos de checkout do carrinho
-        if (eventType === 'CartCheckoutInitiated') {
-            const { userId, items } = req.body.data;
+        // Escuta apenas eventos de checkout
+        if (type === 'CartCheckoutInitiated') {
+            const { userId, items } = data;
 
-            // Verifica se já existe pedido pendente do usuário
-            const existingOrder = await pool.query(
-                'SELECT * FROM orders_tb WHERE user_id = $1 AND status = $2',
-                [userId, 'PENDING']
+            if (!userId || !items || items.length === 0) {
+                return res.status(400).json({ error: 'Dados inválidos no evento.' });
+            }
+
+            // Calcula o valor total do pedido
+            const totalValue = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+            // Cria novo pedido
+            const newOrder = await pool.query(
+                `INSERT INTO orders_tb (user_id, status, valor_total, created_at, updated_at)
+                 VALUES ($1, $2, $3, NOW(), NOW())
+                 RETURNING id`,
+                [userId, 'PENDING', totalValue]
             );
 
-            let orderId;
-            let totalPrice = 0;
+            const orderId = newOrder.rows[0].id;
+            console.log(`🧾 Pedido #${orderId} criado para o usuário ${userId}`);
 
-            // Calcula o preço total dos itens recebidos
+            // Insere os itens do pedido
             for (const item of items) {
-                totalPrice += item.price * item.quantity;
-            }
-
-            if (existingOrder.rows.length > 0) {
-                // Atualiza o pedido existente
-                orderId = existingOrder.rows[0].id;
-
-                console.log(`Pedido existente #${orderId} encontrado para o usuário ${userId}. Atualizando itens.`);
-
-                // Atualiza valor total
                 await pool.query(
-                    'UPDATE orders_tb SET valor_total = $1, updated_at = NOW() WHERE id = $2',
-                    [totalPrice, orderId]
+                    `INSERT INTO order_items_tb (order_id, product_id, quantity, price)
+                     VALUES ($1, $2, $3, $4)`,
+                    [orderId, item.productId, item.quantity, item.price]
                 );
-
-                // Remove itens antigos e insere os novos
-                await pool.query('DELETE FROM order_items WHERE order_id = $1', [orderId]);
-
-                for (const item of items) {
-                    await pool.query(
-                        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
-                        [orderId, item.productId, item.quantity, item.price]
-                    );
-                }
-
-                console.log(`Pedido #${orderId} atualizado com sucesso.`);
-
-            } else {
-                // Cria novo pedido
-                const newOrder = await pool.query(
-                    'INSERT INTO orders_tb (user_id, status, valor_total) VALUES ($1, $2, $3) RETURNING id',
-                    [userId, 'PENDING', totalPrice]
-                );
-
-                orderId = newOrder.rows[0].id;
-
-                console.log(`Criando novo pedido #${orderId} para o usuário ${userId}.`);
-
-                for (const item of items) {
-                    await pool.query(
-                        'INSERT INTO order_items_tb (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
-                        [orderId, item.productId, item.quantity, item.price]
-                    );
-                }
-
-                console.log(`Pedido #${orderId} criado com sucesso.`);
             }
 
-            return res.status(200).send({ message: `Pedido #${orderId} processado com sucesso.` });
+            console.log(`📦 Itens adicionados ao pedido #${orderId}.`);
+            return res.status(200).json({ message: `Pedido #${orderId} criado com sucesso.` });
         }
 
-        // Evento não tratado
-        return res.status(200).send({ message: `Evento ${eventType} ignorado.` });
+        // Ignora outros tipos de evento
+        return res.status(200).json({ message: `Evento '${type}' ignorado.` });
 
     } catch (error) {
         console.error('Erro ao processar evento:', error);
-        return res.status(500).send({ error: 'Erro interno ao processar o evento.' });
+        return res.status(500).json({ error: 'Erro interno ao processar evento.' });
     }
 });
 

@@ -47,6 +47,15 @@ class _CartComponentState extends State<CartComponent> {
     }
   }
 
+  Future<void> _checkoutCart() async {
+    try {
+      final Map<String, dynamic> body = {'userId': 1};
+      await cartService.checkoutItems(body);
+    } catch (e) {
+      print('Erro ao finalizar carrinho: $e');
+    }
+  }
+
   void _calculateSubtotal() {
     subtotal = products.fold(
       0,
@@ -133,7 +142,10 @@ class _CartComponentState extends State<CartComponent> {
                       ],
                     ),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // jogar na rota da pagina de pedidos CODE:01
+                        _checkoutCart();
+                      },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 65, 72, 74),
                         foregroundColor: Colors.white,
