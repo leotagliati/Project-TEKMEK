@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/orders/_compose/order_product_component.dart';
 import 'package:intl/intl.dart';
 

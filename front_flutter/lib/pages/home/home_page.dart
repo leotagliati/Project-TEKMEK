@@ -2,14 +2,17 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
-import 'package:front_flutter/common_components/product.dart';
-import 'package:front_flutter/common_components/search_component.dart';
+import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
+
+import 'package:front_flutter/utils/auth_provider.dart';
+import 'package:provider/provider.dart';
+
 import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,6 +63,14 @@ class _HomePageState extends State<HomePage> {
         products = productsList;
       });
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar produtos'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao carregar produtos: $e');
     }
   }
@@ -72,6 +83,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     List<Widget> productComponents = [];
     for (var product in products) {
       productComponents.add(ProductComponent(product: product));
@@ -90,11 +102,12 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Seja bem vindo, {nome}!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      // fontWeight: FontWeight.bold
-                    ),
+                    authProvider.isLoggedIn
+                        ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                        : "Seja bem vindo!",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+
+                    // fontWeight: FontWeight.bold
                   ),
                 ],
               ),
@@ -162,13 +175,14 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 24),
               Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      'Produtos',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SearchComponent()
+                  //Text(
+                  //  authProvider.isLoggedIn
+                  //  ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                  //  : "Seja bem vindo!",
+                  // style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // fontWeight: FontWeight.bold
+
+                  //),
                 ],
               ),
               SizedBox(height: 16),

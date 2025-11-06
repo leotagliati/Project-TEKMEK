@@ -9,14 +9,23 @@ const services = {
     cartService: { port: process.env.CART_SERVICE_PORT },
     orderGenerationService: { port: process.env.ORDER_GENERATION_SERVICE_PORT },
     productsService: { port: process.env.PRODUCTS_SERVICE_PORT },
-    adminProductManager: { port: process.env.ADMIN_PRODUCTS_MANAGER_PORT }
 };
 
 const eventRoutes = {
     // Registrar os servicos que ouvem os eventos
     // nome_evento : [{ service: nome_servico }]
-    
-    CartCheckoutInitiated: [{ service: 'orderGenerationService' }],
+
+    CartCheckoutInitiated: [
+        { service: 'orderGenerationService' }
+    ],
+
+    ProductCreated: [
+        { service: 'cartService' }
+    ],
+
+    ProductUpdated: [
+        { service: 'cartService' }
+    ],
 };
 
 app.post('/event', async (req, res) => {

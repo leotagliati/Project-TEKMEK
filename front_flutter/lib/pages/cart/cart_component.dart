@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:front_flutter/common_components/product.dart';
+import 'package:front_flutter/api/services.dart';
+import 'package:front_flutter/models/cart_item.dart';
+import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
 import 'package:intl/intl.dart';
 
@@ -14,35 +16,59 @@ class CartComponent extends StatefulWidget {
 }
 
 class _CartComponentState extends State<CartComponent> {
+  CartService cartService = CartService();
+
   double subtotal = 0;
   var currency = NumberFormat('#,##0.00', 'pt_BR');
 
-  List<Product> products = [];
+  List<CartItem> products = [];
 
   @override
   void initState() {
     super.initState();
-    _loadDataFromJson();
+    _loadUserCartItens();
     _calculateSubtotal();
   }
 
-  // Temporário
-  void _loadDataFromJson() async {
+  void _loadUserCartItens() async {
+    final List<dynamic> data = await cartService.getUserItems(
+      '1',
+    ); // usuario chumbado, preciso do servico de login
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/data/products.json',
-      );
-      final List<dynamic> parsedList = jsonDecode(jsonString);
-      final List<Product> items = parsedList
-          .map((item) => Product.fromJson(item as Map<String, dynamic>))
+      final List<CartItem> cartItemList = data
+          .map((item) => CartItem.fromJson(item as Map<String, dynamic>))
           .toList();
+
       setState(() {
-        products = items;
-        _calculateSubtotal();
+        products = cartItemList;
       });
     } catch (e) {
-      // ignore: avoid_print
-      print('Erro ao carregar o data.json: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar itens do carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      print('Erro ao carregar itens do carrinho: $e');
+    }
+  }
+
+  Future<void> _checkoutCart() async {
+    try {
+      final Map<String, dynamic> body = {'userId': 1};
+      await cartService.checkoutItems(body);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao finalizar carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      print('Erro ao finalizar carrinho: $e');
     }
   }
 
@@ -53,14 +79,14 @@ class _CartComponentState extends State<CartComponent> {
     );
   }
 
-  void _removeProduct(Product product) {
+  void _removeProduct(CartItem product) {
     setState(() {
       products.remove(product);
       _calculateSubtotal();
     });
   }
 
-  void _updateAmount(Product product, int newAmount) {
+  void _updateAmount(CartItem product, int newAmount) {
     setState(() {
       if (newAmount > 0) {
         product.amount = newAmount;
@@ -75,7 +101,7 @@ class _CartComponentState extends State<CartComponent> {
     for (var product in products) {
       productComponents.add(
         CartProductComponent(
-          product: product,
+          cartItem: product,
           onDelete: () => _removeProduct(product),
           onAmountChanged: (newAmount) => _updateAmount(product, newAmount),
         ),
@@ -132,7 +158,10 @@ class _CartComponentState extends State<CartComponent> {
                       ],
                     ),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // jogar na rota da pagina de pedidos CODE:01
+                        _checkoutCart();
+                      },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 65, 72, 74),
                         foregroundColor: Colors.white,
