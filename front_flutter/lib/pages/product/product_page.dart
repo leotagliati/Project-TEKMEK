@@ -5,6 +5,8 @@ import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:front_flutter/utils/auth_provider.dart';
 
 class ProductPage extends StatefulWidget {
   final int productId;
@@ -19,10 +21,24 @@ class _ProductPageState extends State<ProductPage> {
   ProductsService productsService = ProductsService();
   CartService cartService = CartService();
 
-  Future<void> _addCartItem(Product product) async {
+  Future<bool> _addCartItem(Product product) async {
+    final authProvider = context.read<AuthProvider>();
+    final userId = authProvider.user?['idlogin'];
+
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Você precisa estar logado para adicionar itens.'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return false;
+    }
+
     try {
       final Map<String, dynamic> body = {
-        'userId': 1,
+        'userId': userId,
         'productId': product.id,
         'quantity': 1,
         'price': product.price,
@@ -30,8 +46,17 @@ class _ProductPageState extends State<ProductPage> {
 
       final response = await cartService.addItemToCart(body);
       print(response);
+      return true;
     } catch (e) {
       print('Erro ao adicionar produto ao carrinho: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao adicionar produto: $e'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return false;
     }
   }
 
@@ -69,17 +94,14 @@ class _ProductPageState extends State<ProductPage> {
       body: FutureBuilder<Product>(
         future: _productFuture,
         builder: (context, snapshot) {
-          // Carregando
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // Erro
           if (snapshot.hasError) {
             return Center(child: Text('Erro: ${snapshot.error}'));
           }
 
-          // Sucesso!
           if (snapshot.hasData) {
             final Product product = snapshot.data!;
             return SingleChildScrollView(
@@ -152,37 +174,46 @@ class _ProductPageState extends State<ProductPage> {
                               padding: const EdgeInsets.symmetric(
                                 vertical: 40.0,
                               ),
-                              child: OutlinedButton(
-                                onPressed: () => {
-                                  _addCartItem(product),
-                                  Scaffold.of(context).openEndDrawer(),
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Color.fromARGB(
-                                    255,
-                                    65,
-                                    72,
-                                    74,
-                                  ),
-                                  foregroundColor: Colors.white,
-                                  side: BorderSide(color: Colors.transparent),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0,
-                                        ),
-                                        child: Text(
-                                          "Adicionar ao carrinho",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(fontSize: 20),
-                                        ),
+                              child: Builder(
+                                builder: (BuildContext innerContext) {
+                                  return OutlinedButton(
+                                    onPressed: () {
+                                      _addCartItem(product).then((success) {
+                                        if (success && mounted) {
+                                          Scaffold.of(innerContext)
+                                              .openEndDrawer();
+                                        }
+                                      });
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Color.fromARGB(
+                                        255,
+                                        65,
+                                        72,
+                                        74,
                                       ),
+                                      foregroundColor: Colors.white,
+                                      side:
+                                          BorderSide(color: Colors.transparent),
                                     ),
-                                  ],
-                                ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0,
+                                            ),
+                                            child: Text(
+                                              "Adicionar ao carrinho",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             Column(
