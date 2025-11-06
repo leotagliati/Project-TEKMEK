@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-build-keyboard-deployment
+  name: tekmek-order-generation-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: build-keyboard
+      app: order-generation
   template:
     metadata:
       labels:
-        app: build-keyboard
+        app: order-generation
     spec:
       containers:
-        - name: build-keyboard
-          image: quazmo/tekmek-build-keyboard
+        - name: order-generation
+          image: quazmo/tekmek-order-generation
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-build-keyboard-clusterip-service
+  name: tekmek-order-generation-clusterip-service
 spec:
   selector:
-    app: build-keyboard
+    app: order-generation
   ports:
-    - name: build-keyboard
+    - name: order-generation
       protocol: TCP
       port: 5310
       targetPort: 5310

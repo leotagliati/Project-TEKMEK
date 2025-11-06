@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-search-products-deployment
+  name: tekmek-products-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: search-products
+      app: products
   template:
     metadata:
       labels:
-        app: search-products
+        app: products
     spec:
       containers:
-        - name: search-products
-          image: quazmo/tekmek-search-products
+        - name: products
+          image: quazmo/tekmek-products
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-search-products-clusterip-service
+  name: tekmek-products-clusterip-service
 spec:
   selector:
-    app: search-products
+    app: products
   ports:
-    - name: search-products
+    - name: products
       protocol: TCP
       port: 5240
       targetPort: 5240

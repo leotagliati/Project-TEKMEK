@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-admin-product-manager-deployment
+  name: tekmek-cart-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: admin-product-manager
+      app: cart
   template:
     metadata:
       labels:
-        app: admin-product-manager
+        app: cart
     spec:
       containers:
-        - name: admin-product-manager
-          image: quazmo/tekmek-admin-product-manager
+        - name: cart
+          image: quazmo/tekmek-cart
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-admin-product-manager-clusterip-service
+  name: tekmek-cart-clusterip-service
 spec:
   selector:
-    app: admin-product-manager
+    app: cart
   ports:
-    - name: admin-product-manager
+    - name: cart
       protocol: TCP
       port: 3000
       targetPort: 3000
