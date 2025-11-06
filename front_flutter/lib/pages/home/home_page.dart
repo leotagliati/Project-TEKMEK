@@ -13,7 +13,6 @@ import 'package:front_flutter/api/services.dart';
 import 'package:front_flutter/utils/auth_provider.dart';
 import 'package:provider/provider.dart';
 
-
 import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
@@ -64,6 +63,14 @@ class _HomePageState extends State<HomePage> {
         products = productsList;
       });
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar produtos'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao carregar produtos: $e');
     }
   }
@@ -94,13 +101,13 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 Text(
+                  Text(
                     authProvider.isLoggedIn
-                    ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
-                    : "Seja bem vindo!",
-                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      // fontWeight: FontWeight.bold
+                        ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                        : "Seja bem vindo!",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
 
+                    // fontWeight: FontWeight.bold
                   ),
                 ],
               ),
@@ -168,13 +175,12 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 24),
               Row(
                 children: [
-
                   //Text(
                   //  authProvider.isLoggedIn
                   //  ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
                   //  : "Seja bem vindo!",
                   // style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      // fontWeight: FontWeight.bold
+                  // fontWeight: FontWeight.bold
 
                   //),
                 ],

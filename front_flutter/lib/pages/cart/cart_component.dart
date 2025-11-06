@@ -43,6 +43,14 @@ class _CartComponentState extends State<CartComponent> {
         products = cartItemList;
       });
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar itens do carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao carregar itens do carrinho: $e');
     }
   }
@@ -52,6 +60,14 @@ class _CartComponentState extends State<CartComponent> {
       final Map<String, dynamic> body = {'userId': 1};
       await cartService.checkoutItems(body);
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao finalizar carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao finalizar carrinho: $e');
     }
   }

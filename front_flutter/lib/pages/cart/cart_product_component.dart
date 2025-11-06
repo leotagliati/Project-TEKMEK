@@ -35,6 +35,14 @@ class _CartProductComponentState extends State<CartProductComponent> {
       };
       await cartService.updateCartItem(body);
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao alterar quantidade do produto do carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao modificar produto do carrinho: $e');
     }
   }
@@ -47,6 +55,14 @@ class _CartProductComponentState extends State<CartProductComponent> {
       };
       await cartService.removeCartItem(body);
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao remover produto do carrinho'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
       print('Erro ao remover produto do carrinho: $e');
     }
   }
