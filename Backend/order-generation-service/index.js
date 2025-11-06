@@ -1,9 +1,12 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+
 const { Pool } = require('pg');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Conexão com PostgreSQL
 const pool = new Pool({
@@ -23,7 +26,73 @@ pool.connect((err, client, release) => {
     release();
 });
 
-// ✅ Rota que escuta eventos do barramento
+// GET listar todos os pedidos de um usuário
+app.get('/api/user/orders', async (req, res) => {
+    try {
+        const userId = req.query.userId
+
+        if (!userId) {
+            return res.status(400).json({ error: 'userId é obrigatório.' });
+        }
+
+        // Busca os pedidos e seus itens, com informações dos produtos locais
+        const result = await pool.query(
+            `SELECT 
+                o.id AS order_id,
+                o.status,
+                o.valor_total,
+                o.created_at,
+                oi.product_id,
+                oi.quantity,
+                oi.price,
+                op.name AS product_name,
+                op.image_url AS product_image
+             FROM orders_tb o
+             JOIN order_items_tb oi ON o.id = oi.order_id
+             JOIN order_products_tb op ON oi.product_id = op.product_id
+             WHERE o.user_id = $1
+             ORDER BY o.created_at DESC`,
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Nenhum pedido encontrado para este usuário.' });
+        }
+
+        // Agrupa os itens por pedido
+        const ordersMap = {};
+
+        result.rows.forEach(row => {
+            if (!ordersMap[row.order_id]) {
+                ordersMap[row.order_id] = {
+                    id: row.order_id,
+                    status: row.status,
+                    totalPrice: parseFloat(row.valor_total),
+                    createdAt: row.created_at,
+                    items: []
+                };
+            }
+
+            ordersMap[row.order_id].items.push({
+                productId: row.product_id,
+                name: row.product_name,
+                imageUrl: row.product_image,
+                quantity: row.quantity,
+                price: parseFloat(row.price)
+            });
+        });
+
+        const orders = Object.values(ordersMap);
+
+        return res.status(200).json(orders);
+    } catch (error) {
+        console.error('Erro ao buscar pedidos:', error);
+        return res.status(500).json({ error: 'Erro interno ao buscar pedidos.' });
+    }
+});
+
+
+// Rota que escuta eventos do barramento
 app.post('/event', async (req, res) => {
     try {
         const { type, data } = req.body;

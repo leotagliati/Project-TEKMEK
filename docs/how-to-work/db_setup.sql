@@ -1,6 +1,7 @@
 -- =======================================
 -- DROP TABLES (para recriar do zero)
 -- =======================================
+DROP TABLE IF EXISTS order_products_tb CASCADE;
 DROP TABLE IF EXISTS order_items_tb CASCADE;
 DROP TABLE IF EXISTS orders_tb CASCADE;
 DROP TABLE IF EXISTS carts_tb CASCADE;
@@ -87,6 +88,15 @@ CREATE TABLE order_items_tb (
     FOREIGN KEY (product_id) REFERENCES products_tb(id) ON DELETE CASCADE
 );
 
+CREATE TABLE order_products_tb (
+    id SERIAL PRIMARY KEY,
+    product_id INT UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    price NUMERIC(10,2) NOT NULL,
+    image_url TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products_tb(id) ON DELETE CASCADE
+);
 
 
 -- =======================================
@@ -175,3 +185,16 @@ VALUES
 (4, 'Logitech MX Keys S', 649.90, 'https://i.imgur.com/p0pbkXG.png', NOW()),
 (5, 'NuPhy Air75 V2', 720.00, 'https://i.imgur.com/acOz7HN.png', NOW())
 ON CONFLICT (product_id) DO NOTHING;
+
+-- ========================
+-- POPULAÇÃO DE ORDER_PRODUCTS_TB
+-- ========================
+INSERT INTO order_products_tb (product_id, name, price, image_url, created_at)
+VALUES
+(1, 'Keychron K3 Max', 499.99, 'https://i.imgur.com/1bBhl4O.png', NOW()),
+(2, 'AKKO 3068B Plus', 389.00, 'https://i.imgur.com/T00Aprh.png', NOW()),
+(3, 'Razer Huntsman V3 Pro', 1399.90, 'https://i.imgur.com/GKijw9R.png', NOW()),
+(4, 'Logitech MX Keys S', 649.90, 'https://i.imgur.com/p0pbkXG.png', NOW()),
+(5, 'NuPhy Air75 V2', 720.00, 'https://i.imgur.com/acOz7HN.png', NOW())
+ON CONFLICT (product_id) DO NOTHING;
+
