@@ -34,17 +34,39 @@ class RequestHandler {
 
   final TokenHandler _tokenHandler = TokenHandler();
 
-
   /// Monta a URI com query params, se existirem
 
   Uri _buildUri(String url, [Map<String, dynamic>? queryParams]) {
     final uri = Uri.parse(url);
     if (queryParams == null || queryParams.isEmpty) return uri;
-    return uri.replace(queryParameters: {
-      ...uri.queryParameters,
-      ...queryParams.map((k, v) => MapEntry(k, v.toString())),
-    });
+    return uri.replace(
+      queryParameters: {
+        ...uri.queryParameters,
+        ...queryParams.map((k, v) => MapEntry(k, v.toString())),
+      },
+    );
+  }
 
+  Future<dynamic> _handleResponse(http.Response response) async {
+    final statusCode = response.statusCode;
+    final body = response.body.isNotEmpty ? jsonDecode(response.body) : null;
+
+    if (statusCode >= 200 && statusCode < 300) {
+      return body; // Sucesso
+    }
+
+    final errorMessage = (body is Map && body.containsKey('message'))
+        ? body['message']
+        : (body is Map && body.containsKey('error'))
+        ? body['error']
+        : response.reasonPhrase ?? 'Erro desconhecido';
+
+    if (statusCode == 401) {
+      await _tokenHandler.deleteToken();
+      throw UnauthorizedException(errorMessage);
+    }
+
+    throw ApiException(errorMessage, statusCode);
   }
 
   /// Adiciona headers padrões e o token de autenticação
@@ -74,8 +96,11 @@ class RequestHandler {
     }
   }
 
-  Future<dynamic> post(String url, Map<String, dynamic> body,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> post(
+    String url,
+    Map<String, dynamic> body, {
+    Map<String, dynamic>? queryParams,
+  }) async {
     final uri = _buildUri(url, queryParams);
     try {
       final headers = await _getHeaders();
@@ -90,10 +115,13 @@ class RequestHandler {
     } catch (e) {
       rethrow;
     }
+  }
 
-
-  Future<dynamic> put(String url, Map<String, dynamic> body,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> put(
+    String url,
+    Map<String, dynamic> body, {
+    Map<String, dynamic>? queryParams,
+  }) async {
     final uri = _buildUri(url, queryParams);
     try {
       final headers = await _getHeaders();
@@ -110,8 +138,11 @@ class RequestHandler {
     }
   }
 
-  Future<dynamic> delete(String url,
-      {Map<String, dynamic>? queryParams, Map<String, dynamic>? body}) async {
+  Future<dynamic> delete(
+    String url, {
+    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? body,
+  }) async {
     final uri = _buildUri(url, queryParams);
     try {
       final headers = await _getHeaders();
@@ -126,27 +157,5 @@ class RequestHandler {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Future<dynamic> _handleResponse(http.Response response) async {
-    final statusCode = response.statusCode;
-    final body = response.body.isNotEmpty ? jsonDecode(response.body) : null;
-
-    if (statusCode >= 200 && statusCode < 300) {
-      return body; // Sucesso
-    }
-
-    final errorMessage = (body is Map && body.containsKey('message'))
-        ? body['message']
-        : (body is Map && body.containsKey('error'))
-            ? body['error']
-            : response.reasonPhrase ?? 'Erro desconhecido';
-
-    if (statusCode == 401) {
-      await _tokenHandler.deleteToken();
-      throw UnauthorizedException(errorMessage);
-    }
-
-    throw ApiException(errorMessage, statusCode);
   }
 }

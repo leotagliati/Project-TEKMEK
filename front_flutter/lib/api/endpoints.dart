@@ -9,6 +9,8 @@ class ApiEndpoints {
       dotenv.env['PRODUCTS_MS_BASE_URL'] ?? undefinedUrl;
   static final String cartMSBaseUrl =
       dotenv.env['CART_MS_BASE_URL'] ?? undefinedUrl;
+  static final String loginMSBaseUrl =
+      dotenv.env['LOGIN_MS_BASE_URL'] ?? undefinedUrl;
 
   // Produtos
   static String get products => '$productsMSBaseUrl/api/products';

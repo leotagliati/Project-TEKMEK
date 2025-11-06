@@ -176,10 +176,7 @@ class _HomePageState extends State<HomePage> {
                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       // fontWeight: FontWeight.bold
 
-                  Expanded(
-                
                   ),
-                  SearchComponent()
                 ],
               ),
               SizedBox(height: 16),
