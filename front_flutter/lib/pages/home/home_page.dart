@@ -95,12 +95,13 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Seja bem vindo, {nome}!',
-                    style: TextStyle(
-                      fontSize: 20,
+                 Text(
+                    authProvider.isLoggedIn
+                    ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                    : "Seja bem vindo!",
+                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       // fontWeight: FontWeight.bold
-                    ),
+
                   ),
                 ],
               ),
@@ -169,14 +170,14 @@ class _HomePageState extends State<HomePage> {
               Row(
                 children: [
 
-                  Text(
-                    authProvider.isLoggedIn
-                    ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
-                    : "Seja bem vindo!",
-                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  //Text(
+                  //  authProvider.isLoggedIn
+                  //  ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
+                  //  : "Seja bem vindo!",
+                  // style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       // fontWeight: FontWeight.bold
 
-                  ),
+                  //),
                 ],
               ),
               SizedBox(height: 16),
