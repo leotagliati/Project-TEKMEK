@@ -65,7 +65,7 @@ const authenticateToken = (req, res, next) => {
 const dispatchEvent = (type, data) => {
   (async () => {
     try {
-      await axios.post('http://localhost:5300/event', { type, data });
+      await axios.post('http://tekmek-barramento-de-eventos-service:5300/event', { type, data });
       console.log(`Evento '${type}' enviado com sucesso.`);
     } catch (err) {
       console.error(`Erro ao enviar evento '${type}':`, err.message);

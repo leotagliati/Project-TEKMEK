@@ -317,7 +317,7 @@ void main() async {
         },
       };
 
-      final eventBusUrl = env['EVENT_BUS_URL'] ?? 'http://localhost:5300/event';
+      final eventBusUrl = env['EVENT_BUS_URL'] ?? 'http://tekmek-barramento-de-eventos-service:5300/event';
 
       final httpClient = HttpClient();
       final request = await httpClient.postUrl(Uri.parse(eventBusUrl));
