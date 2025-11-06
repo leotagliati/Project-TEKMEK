@@ -78,8 +78,33 @@ class CartService {
   }
 
   Future<void> checkoutItems(Map<String, dynamic> body) async {
-    final response = await _requestHandler.post(ApiEndpoints.cartCheckout, body);
+    final response = await _requestHandler.post(
+      ApiEndpoints.cartCheckout,
+      body,
+    );
     return response;
+  }
+}
+
+class OrdersService {
+  static final OrdersService _instance = OrdersService._internal();
+  OrdersService._internal();
+  factory OrdersService() {
+    return _instance;
+  }
+
+  final RequestHandler _requestHandler = RequestHandler();
+
+  Future<List<dynamic>> getUserItems(int userId) async {
+    final response = await _requestHandler.get(
+      ApiEndpoints.userOrders,
+      queryParams: {'userId': userId},
+    );
+    if (response is List) {
+      return response;
+    } else {
+      throw Exception('Resposta inesperada do servidor');
+    }
   }
 }
 

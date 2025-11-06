@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:front_flutter/models/product.dart';
+import 'package:front_flutter/models/order.dart';
 import 'package:intl/intl.dart';
 
 class OrderProductComponent extends StatelessWidget {
-  final Product product;
+  final OrderItem product;
   final int amount;
 
   const OrderProductComponent({
