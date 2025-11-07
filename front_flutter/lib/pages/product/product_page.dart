@@ -115,7 +115,7 @@ class _ProductPageState extends State<ProductPage> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 960),
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         ProductDisplayComponent(product: product),
@@ -153,7 +153,7 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ),
                         ProductSpecsComponent(product: product),
-                        SizedBox(height: 256),
+                        SizedBox(height: 128),
                       ],
                     ),
                   ),

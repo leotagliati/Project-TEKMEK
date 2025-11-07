@@ -36,7 +36,10 @@ class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
           ),
         ),
         SizedBox(height: 16),
-        Text(widget.product.name, style: TextStyle(fontSize: 24)),
+        Text(
+          widget.product.name,
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
         Wrap(
           spacing: 4,
           crossAxisAlignment: WrapCrossAlignment.center,
