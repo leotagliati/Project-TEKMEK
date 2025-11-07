@@ -39,8 +39,10 @@ class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
         Text(widget.product.name, style: TextStyle(fontSize: 24)),
         Wrap(
           spacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.star_border),
                 Icon(Icons.star_border),
