@@ -14,13 +14,13 @@ class CartItem {
   });
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
-    print(
-      "=== DEBUG: Tipos dos campos recebidos no JSON ===",
-    ); // isso é intencional, muitas vezes temos error de conversao de objeto
-    json.forEach((key, value) {
-      print("$key -> ${value.runtimeType}: $value");
-    });
-    print("===============================================");
+    // print(
+    //   "=== DEBUG: Tipos dos campos recebidos no JSON ===",
+    // ); // isso é intencional, muitas vezes temos error de conversao de objeto
+    // json.forEach((key, value) {
+    //   print("$key -> ${value.runtimeType}: $value");
+    // });
+    // print("===============================================");
     CartItem jsonConverted = CartItem(
       id: (json['product_id'] as num).toInt(),
       name: json['name'] as String,
@@ -30,7 +30,6 @@ class CartItem {
       imageUrl: json['image_url'] as String,
       amount: (json['quantity'] as num).toInt(),
     );
-
     return (jsonConverted);
   }
 }
