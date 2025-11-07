@@ -20,15 +20,15 @@ const eventRoutes = {
     ],
 
     ProductCreated: [
-        { service: 'cartService' }
+        { service: 'cartService' }, { service: 'orderGenerationService' }
     ],
 
     ProductUpdated: [
-        { service: 'cartService' }
+        { service: 'cartService' }, { service: 'orderGenerationService' }
     ],
 
     ProductRemoved: [
-        { service: 'cartService' }
+        { service: 'cartService' }, { service: 'orderGenerationService' }
     ]
 };
 

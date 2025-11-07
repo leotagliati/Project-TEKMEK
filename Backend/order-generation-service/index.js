@@ -97,49 +97,101 @@ app.post('/event', async (req, res) => {
     try {
         const { type, data } = req.body;
 
-        // Escuta apenas eventos de checkout
-        if (type === 'CartCheckoutInitiated') {
-            const { userId, items } = data;
+        switch (type) {
+            case 'CartCheckoutInitiated': {
+                const { userId, items } = data;
 
-            if (!userId || !items || items.length === 0) {
-                return res.status(400).json({ error: 'Dados inválidos no evento.' });
-            }
+                if (!userId || !items || items.length === 0) {
+                    return res.status(400).json({ error: 'Dados inválidos no evento.' });
+                }
 
-            // Calcula o valor total do pedido
-            const totalValue = items.reduce((acc, item) => acc + (item.price), 0);
+                const totalValue = items.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0);
 
-            // Cria novo pedido
-            const newOrder = await pool.query(
-                `INSERT INTO orders_tb (user_id, status, valor_total, created_at, updated_at)
-                 VALUES ($1, $2, $3, NOW(), NOW())
-                 RETURNING id`,
-                [userId, 'PENDING', totalValue]
-            );
-
-            const orderId = newOrder.rows[0].id;
-            console.log(`Pedido #${orderId} criado para o usuário ${userId}`);
-
-            // Insere os itens do pedido
-            for (const item of items) {
-                await pool.query(
-                    `INSERT INTO order_items_tb (order_id, product_id, quantity, price)
-                     VALUES ($1, $2, $3, $4)`,
-                    [orderId, item.productId, item.quantity, item.price]
+                const newOrder = await pool.query(
+                    `INSERT INTO orders_tb (user_id, status, valor_total, created_at, updated_at)
+                     VALUES ($1, $2, $3, NOW(), NOW())
+                     RETURNING id`,
+                    [userId, 'PENDING', totalValue]
                 );
+
+                const orderId = newOrder.rows[0].id;
+                console.log(`Pedido #${orderId} criado para o usuário ${userId}`);
+
+                for (const item of items) {
+                    await pool.query(
+                        `INSERT INTO order_items_tb (order_id, product_id, quantity, price)
+                         VALUES ($1, $2, $3, $4)`,
+                        [orderId, item.productId, item.quantity, item.price]
+                    );
+                }
+
+                console.log(`Itens adicionados ao pedido #${orderId}.`);
+                return res.status(200).json({ message: `Pedido #${orderId} criado com sucesso.` });
             }
 
-            console.log(`Itens adicionados ao pedido #${orderId}.`);
-            return res.status(200).json({ message: `Pedido #${orderId} criado com sucesso.` });
+            case 'ProductCreated': {
+                const { id, name, price, image_url } = data;
+
+                if (!id || !name || !price || !image_url) {
+                    return res.status(400).json({ error: 'Dados inválidos no evento ProductCreated.' });
+                }
+
+                await pool.query(
+                    `INSERT INTO order_products_tb (product_id, name, price, image_url)
+                     VALUES ($1, $2, $3, $4)
+                     ON CONFLICT (product_id) DO NOTHING`,
+                    [id, name, price, image_url]
+                );
+
+                console.log(`Produto #${id} adicionado em order_products_tb.`);
+                return res.status(200).json({ message: `Produto #${id} adicionado com sucesso.` });
+            }
+
+            case 'ProductUpdated': {
+                const { id, name, price, image_url } = data;
+
+                if (!id || !name || !price || !image_url) {
+                    return res.status(400).json({ error: 'Dados inválidos no evento ProductUpdated.' });
+                }
+
+                await pool.query(
+                    `UPDATE order_products_tb
+                     SET name = $2, price = $3, image_url = $4
+                     WHERE product_id = $1`,
+                    [id, name, price, image_url]
+                );
+
+                console.log(`Produto #${id} atualizado em order_products_tb.`);
+                return res.status(200).json({ message: `Produto #${id} atualizado com sucesso.` });
+            }
+
+            case 'ProductRemoved': {
+                const { id } = data;
+
+                if (!id) {
+                    return res.status(400).json({ error: 'ID do produto ausente no evento ProductRemoved.' });
+                }
+
+                await pool.query(
+                    `DELETE FROM order_products_tb WHERE product_id = $1`,
+                    [id]
+                );
+
+                console.log(`Produto #${id} removido de order_products_tb.`);
+                return res.status(200).json({ message: `Produto #${id} removido com sucesso.` });
+            }
+
+            // Outros eventos ignorados
+            default:
+                console.log(`Evento '${type}' ignorado.`);
+                return res.status(200).json({ message: `Evento '${type}' ignorado.` });
         }
-
-        // Ignora outros tipos de evento
-        return res.status(200).json({ message: `Evento '${type}' ignorado.` });
-
     } catch (error) {
         console.error('Erro ao processar evento:', error);
         return res.status(500).json({ error: 'Erro interno ao processar evento.' });
     }
 });
+
 
 const port = process.env.MS_PORT;
 app.listen(port, () => {
