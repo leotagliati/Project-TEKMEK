@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:front_flutter/api/services.dart';
 import 'package:front_flutter/models/cart_item.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:front_flutter/utils/auth_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class CartComponent extends StatefulWidget {
   const CartComponent({super.key});
@@ -68,6 +68,7 @@ class _CartComponentState extends State<CartComponent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao carregar itens do carrinho'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -83,6 +84,7 @@ class _CartComponentState extends State<CartComponent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Você precisa estar logado para finalizar o pedido.'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -99,12 +101,23 @@ class _CartComponentState extends State<CartComponent> {
       });
       if (mounted) {
         Scaffold.of(context).closeEndDrawer();
-        context.go('/orders');
+        context.go('/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Pedido finalizado com sucesso.',
+              style: TextStyle(color: Colors.black),
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.greenAccent,
+          ),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao finalizar carrinho.'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
