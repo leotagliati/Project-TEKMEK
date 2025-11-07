@@ -25,6 +25,14 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    print(
+      "=== DEBUG: Tipos dos campos recebidos no JSON ===",
+    ); // isso é intencional, muitas vezes temos error de conversao de objeto
+    json.forEach((key, value) {
+      print("$key -> ${value.runtimeType}: $value");
+    });
+    print("===============================================");
+
     Product jsonConverted = Product(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
