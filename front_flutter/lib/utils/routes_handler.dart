@@ -5,17 +5,19 @@ import 'package:front_flutter/pages/product/product_page.dart';
 import 'package:go_router/go_router.dart';
 import '../pages/login/login_page.dart';
 import '../pages/admin/admin_page.dart';
-import 'package:front_flutter/utils/auth_provider.dart'; // Importe seu provider
+import 'package:front_flutter/pages/orders/orders_page.dart'; // <-- MUDANÇA: Importar a página de pedidos
+import 'package:front_flutter/utils/auth_provider.dart'; 
 
 class AppRouter {
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
       refreshListenable: authProvider,
-
       initialLocation: '/',
       routes: [
-        GoRoute(path: '/', builder: (context, state) => const HomePage()),
-
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const HomePage(),
+        ),
         GoRoute(
           path: '/product/:id',
           redirect: (context, state) {
@@ -30,6 +32,18 @@ class AppRouter {
             return ProductPage(productId: productId);
           },
         ),
+        
+        // --- MUDANÇA: Rota de Pedidos Adicionada ---
+        GoRoute(
+          path: '/orders',
+          builder: (context, state) => const OrdersPage(),
+          redirect: (context, state) {
+            // Protege a rota, assim como o menu faz
+            if (!authProvider.isLoggedIn) return '/login';
+            return null;
+          },
+        ),
+        // --- FIM DA MUDANÇA ---
 
         GoRoute(
           path: '/login',
@@ -53,17 +67,14 @@ class AppRouter {
           },
         ),
       ],
-
       redirect: (context, state) {
         final isLoggedIn = authProvider.isLoggedIn;
 
         if (state.matchedLocation == '/login' && isLoggedIn) {
           return '/';
         }
-
         return null;
       },
-
       errorBuilder: (context, state) => Scaffold(
         appBar: AppBar(title: const Text('Página Não Encontrada')),
         body: Center(

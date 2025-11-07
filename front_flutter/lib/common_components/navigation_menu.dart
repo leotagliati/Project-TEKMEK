@@ -37,7 +37,7 @@ class NavigationMenu extends StatelessWidget {
               title: Text("Meus pedidos"),
               onTap: () {
                 Navigator.pop(context);
-                context.go('/meus-pedidos');
+                context.go('/orders');
               },
             ),
             ListTile(

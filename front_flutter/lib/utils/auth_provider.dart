@@ -30,7 +30,6 @@ class AuthProvider with ChangeNotifier {
         _user = userData;
         _isLoggedIn = true;
       } catch (e) {
-        // Token é inválido ou expirou, limpa
         await _tokenHandler.deleteToken();
         _isLoggedIn = false;
         _user = null;
@@ -45,6 +44,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     final userData = await _authService.login(email, password);
+
     _user = userData;
     _isLoggedIn = true;
     _isLoading = false;
