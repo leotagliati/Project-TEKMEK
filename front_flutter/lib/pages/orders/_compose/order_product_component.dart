@@ -68,7 +68,7 @@ class OrderProductComponent extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              'R\$${currency.format(product.price * amount)}',
+                              'R\$${currency.format(product.price)}',
                               style: TextStyle(fontSize: 16),
                             ),
                           ],

@@ -106,7 +106,7 @@ app.post('/event', async (req, res) => {
             }
 
             // Calcula o valor total do pedido
-            const totalValue = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const totalValue = items.reduce((acc, item) => acc + (item.price), 0);
 
             // Cria novo pedido
             const newOrder = await pool.query(
@@ -117,7 +117,7 @@ app.post('/event', async (req, res) => {
             );
 
             const orderId = newOrder.rows[0].id;
-            console.log(`🧾 Pedido #${orderId} criado para o usuário ${userId}`);
+            console.log(`Pedido #${orderId} criado para o usuário ${userId}`);
 
             // Insere os itens do pedido
             for (const item of items) {
@@ -128,7 +128,7 @@ app.post('/event', async (req, res) => {
                 );
             }
 
-            console.log(`📦 Itens adicionados ao pedido #${orderId}.`);
+            console.log(`Itens adicionados ao pedido #${orderId}.`);
             return res.status(200).json({ message: `Pedido #${orderId} criado com sucesso.` });
         }
 
