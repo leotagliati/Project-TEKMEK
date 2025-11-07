@@ -14,7 +14,7 @@ class ProductDisplayComponent extends StatefulWidget {
 class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
   var currency = NumberFormat('#,##0.00', 'pt_BR');
 
-  final List<String> radioOptions = ['Cabo', 'Wireless'];
+  final List<String> radioOptions = ['Normal', 'Expressa', 'Agendada'];
   String? _selectedOption;
 
   @override
@@ -53,7 +53,7 @@ class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
           style: TextStyle(fontSize: 24),
         ),
         Container(color: Colors.grey[400], height: 2),
-        Text('Tipo'),
+        Text('Entrega'),
         Row(
           spacing: 8,
           children: radioOptions.map((option) {
