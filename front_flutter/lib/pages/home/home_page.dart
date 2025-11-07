@@ -46,6 +46,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _loadProductsFiltered(Map<String, dynamic> filters) async {
+    try {
+      final List<Product> productsList = await productsService
+          .getProductsFiltered(filters);
+
+      setState(() {
+        products = productsList;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar produtos filtrados.'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      print('Erro ao carregar produtos filtrados: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -92,14 +113,19 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         SizedBox(height: 16),
-                        HomeFiltersComponent(),
+                        HomeFiltersComponent(
+                          onApplyFilters: _loadProductsFiltered,
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 24,
+                ),
                 child: FlexibleWrap(
                   isOneRowExpanded: true,
                   spacing: 16,
