@@ -46,7 +46,9 @@ class _CartComponentState extends State<CartComponent> {
 
   void _loadUserCartItens(String userId) async {
     if (!mounted) return;
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final List<dynamic> data = await cartService.getUserItems(userId);
@@ -70,7 +72,9 @@ class _CartComponentState extends State<CartComponent> {
         ),
       );
       print('Erro ao carregar itens do carrinho: $e');
-      setState(() { _isLoading = false; });
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -143,7 +147,9 @@ class _CartComponentState extends State<CartComponent> {
 
     if (!auth.isLoading && (auth.isLoggedIn != (authProvider.user != null))) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() { _isInit = true; });
+        setState(() {
+          _isInit = true;
+        });
       });
     }
 
@@ -195,29 +201,29 @@ class _CartComponentState extends State<CartComponent> {
                             child: Center(child: CircularProgressIndicator()),
                           )
                         : !auth.isLoggedIn
-                            ? Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text('Faça login para ver seu carrinho.')
-                                  ],
-                                ),
-                              )
-                            : Column(
-                                spacing: 16,
-                                children: products.isNotEmpty
-                                    ? productComponents
-                                    : [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text('O carrinho está vazio.')
-                                          ],
-                                        ),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text('Faça login para ver seu carrinho.'),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            spacing: 16,
+                            children: products.isNotEmpty
+                                ? productComponents
+                                : [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text('O carrinho está vazio.'),
                                       ],
-                              ),
+                                    ),
+                                  ],
+                          ),
                     Container(color: Colors.grey[400], height: 2),
                     Row(
                       children: [
