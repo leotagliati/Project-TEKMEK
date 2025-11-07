@@ -15,59 +15,6 @@ class _SearchComponentState extends State<SearchComponent> {
   final SearchController controller = SearchController();
 
   ProductsService productsService = ProductsService();
-  List<Product> products = [];
-
-  Future<void> _searchProducts(String term) async {
-    final List<dynamic> data = await productsService.searchProducts(term);
-    try {
-      final List<Product> productsList = data
-          .map((item) => Product.fromJson(item as Map<String, dynamic>))
-          .toList();
-
-      setState(() {
-        products = productsList;
-      });
-    } catch (e) {
-      print('Erro ao procurar produtos: $e');
-    }
-  }
-
-  // Populando a lista de produtos de maneira fixa
-  // A lista deve ser populada usando um SELECT *
-  // E deve ser repopulada quando clicar no submit utilizando o input como termo de busca
-  @override
-  void initState() {
-    super.initState();
-    products = [];
-    products.add(
-      Product(
-        id: 1,
-        name: 'Keychron K3 Max',
-        price: 499.99,
-        imageUrl: 'https://i.imgur.com/1bBhl4O.png',
-        description:
-            'O K3 Max é um teclado mecânico sem fio discreto com layout de 75%. Ele suporta conexões de 2,4 GHz, Bluetooth e com fio. Com suporte ao QMK/VIA, oferece infinitas possibilidades e maior produtividade no seu trabalho e jogos!',
-        layoutSize: '75%',
-        connectivity: 'Wireless',
-        productType: 'Teclado Mecânico',
-        keycapType: 'Perfil Baixo (Low Profile) ABS',
-      ),
-    );
-    products.add(
-      Product(
-        id: 1,
-        name: 'Keychron K3 Max',
-        price: 499.99,
-        imageUrl: 'https://i.imgur.com/1bBhl4O.png',
-        description:
-            'O K3 Max é um teclado mecânico sem fio discreto com layout de 75%. Ele suporta conexões de 2,4 GHz, Bluetooth e com fio. Com suporte ao QMK/VIA, oferece infinitas possibilidades e maior produtividade no seu trabalho e jogos!',
-        layoutSize: '75%',
-        connectivity: 'Wireless',
-        productType: 'Teclado Mecânico',
-        keycapType: 'Perfil Baixo (Low Profile) ABS',
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +31,7 @@ class _SearchComponentState extends State<SearchComponent> {
       viewHintText: "Pesquise aqui...",
       viewTrailing: [
         IconButton(
-          onPressed: () {},
+          onPressed: () => {},
           icon: Icon(Icons.search),
           tooltip: 'Buscar',
         ),
@@ -105,29 +52,54 @@ class _SearchComponentState extends State<SearchComponent> {
           tooltip: 'Buscar',
         );
       },
-      suggestionsBuilder: (BuildContext context, SearchController controller) {
-        if (products.isNotEmpty) {
-          return List<ListTile>.generate(products.length, (int index) {
-            return ListTile(
-              title: SearchProductComponent(product: products[index]),
-              onTap: () {
-                setState(() {
-                  controller.closeView('');
-                  context.go('/product/${products[index].id}');
-                });
-              },
-            );
-          });
-        } else {
-          return [
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Text('Nenhum resultado.'),
-            ),
-          ];
-        }
-      },
-      viewOnSubmitted: (value) => _searchProducts(value),
+      suggestionsBuilder:
+          (BuildContext context, SearchController controller) async {
+            final String searchTerm = controller.text.trim();
+
+            if (searchTerm.isEmpty) {
+              return [];
+            }
+
+            try {
+              final List<dynamic> data = await productsService.searchProducts(
+                searchTerm,
+              );
+
+              if (data.isEmpty) {
+                return [
+                  const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Text('Nenhum resultado.'),
+                  ),
+                ];
+              }
+
+              final List<Product> productsList = data
+                  .map((item) => Product.fromJson(item as Map<String, dynamic>))
+                  .toList();
+
+              return List<ListTile>.generate(productsList.length, (int index) {
+                return ListTile(
+                  title: SearchProductComponent(product: productsList[index]),
+                  onTap: () {
+                    setState(() {
+                      controller.closeView('');
+                      context.go('/product/${productsList[index].id}');
+                    });
+                  },
+                );
+              });
+            } catch (e) {
+              print('Erro ao procurar produtos: $e');
+              return [
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Text('Nenhum resultado'),
+                ),
+              ];
+            }
+          },
+      viewOnSubmitted: (searchTerm) {},
     );
   }
 }

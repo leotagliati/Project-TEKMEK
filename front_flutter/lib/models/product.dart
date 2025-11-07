@@ -25,13 +25,13 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    print(
-      "=== DEBUG: Tipos dos campos recebidos no JSON ===",
-    ); // isso é intencional, muitas vezes temos error de conversao de objeto
-    json.forEach((key, value) {
-      print("$key -> ${value.runtimeType}: $value");
-    });
-    print("===============================================");
+    // print(
+    //   "=== DEBUG: Tipos dos campos recebidos no JSON ===",
+    // ); // isso é intencional, muitas vezes temos error de conversao de objeto
+    // json.forEach((key, value) {
+    //   print("$key -> ${value.runtimeType}: $value");
+    // });
+    // print("===============================================");
 
     Product jsonConverted = Product(
       id: (json['id'] as num).toInt(),
@@ -44,7 +44,6 @@ class Product {
       productType: json['product_type'] as String,
       keycapType: json['keycaps_type'] as String,
     );
-
     return (jsonConverted);
   }
 }
