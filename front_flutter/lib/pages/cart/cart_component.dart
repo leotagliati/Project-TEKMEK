@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:front_flutter/api/services.dart';
 import 'package:front_flutter/models/cart_item.dart';
 import 'package:front_flutter/pages/cart/cart_product_component.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:front_flutter/utils/auth_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class CartComponent extends StatefulWidget {
   const CartComponent({super.key});
@@ -46,7 +46,9 @@ class _CartComponentState extends State<CartComponent> {
 
   void _loadUserCartItens(String userId) async {
     if (!mounted) return;
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final List<dynamic> data = await cartService.getUserItems(userId);
@@ -66,11 +68,14 @@ class _CartComponentState extends State<CartComponent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao carregar itens do carrinho'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
       print('Erro ao carregar itens do carrinho: $e');
-      setState(() { _isLoading = false; });
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -79,6 +84,7 @@ class _CartComponentState extends State<CartComponent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Você precisa estar logado para finalizar o pedido.'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -95,12 +101,23 @@ class _CartComponentState extends State<CartComponent> {
       });
       if (mounted) {
         Scaffold.of(context).closeEndDrawer();
-        context.go('/orders');
+        context.go('/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Pedido finalizado com sucesso.',
+              style: TextStyle(color: Colors.black),
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.greenAccent,
+          ),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erro ao finalizar carrinho'),
+          content: Text('Erro ao finalizar carrinho.'),
+          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -143,7 +160,9 @@ class _CartComponentState extends State<CartComponent> {
 
     if (!auth.isLoading && (auth.isLoggedIn != (authProvider.user != null))) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() { _isInit = true; });
+        setState(() {
+          _isInit = true;
+        });
       });
     }
 
@@ -195,29 +214,29 @@ class _CartComponentState extends State<CartComponent> {
                             child: Center(child: CircularProgressIndicator()),
                           )
                         : !auth.isLoggedIn
-                            ? Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text('Faça login para ver seu carrinho.')
-                                  ],
-                                ),
-                              )
-                            : Column(
-                                spacing: 16,
-                                children: products.isNotEmpty
-                                    ? productComponents
-                                    : [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text('O carrinho está vazio.')
-                                          ],
-                                        ),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text('Faça login para ver seu carrinho.'),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            spacing: 16,
+                            children: products.isNotEmpty
+                                ? productComponents
+                                : [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text('O carrinho está vazio.'),
                                       ],
-                              ),
+                                    ),
+                                  ],
+                          ),
                     Container(color: Colors.grey[400], height: 2),
                     Row(
                       children: [

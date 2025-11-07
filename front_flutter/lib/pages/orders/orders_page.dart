@@ -39,7 +39,7 @@ class _OrdersPageState extends State<OrdersPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Erro ao carregar pedidos'),
+          content: const Text('Erro ao carregar pedidos.'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 3),

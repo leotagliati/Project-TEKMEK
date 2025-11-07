@@ -1,7 +1,7 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flexible_wrap/flexible_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:front_flutter/common_components/app_bar_component.dart';
+import 'package:front_flutter/common_components/search_component.dart';
 import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/common_components/navigation_menu.dart';
@@ -9,11 +9,8 @@ import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
-
 import 'package:front_flutter/utils/auth_provider.dart';
 import 'package:provider/provider.dart';
-
-import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,33 +20,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final carouselController = CarouselSliderController();
-
   ProductsService productsService = ProductsService();
-
-  int current = 0;
   List<Product> products = [];
-
-  final List<Widget> banners = [
-    BannerComponent(
-      imageUrl:
-          'https://images.pexels.com/photos/13094372/pexels-photo-13094372.jpeg',
-      title: 'Seu setup, suas regras',
-      description: 'Switches, keycaps e bases para um teclado único',
-    ),
-    BannerComponent(
-      imageUrl:
-          'https://images.pexels.com/photos/17479950/pexels-photo-17479950.jpeg',
-      title: 'Monte. Modifique. Domine.',
-      description: 'Liberdade total com teclados hot-swappable',
-    ),
-    BannerComponent(
-      imageUrl:
-          'https://images.pexels.com/photos/6782533/pexels-photo-6782533.jpeg',
-      title: 'Design que Inspira',
-      description: 'A peça central que faltava na sua mesa',
-    ),
-  ];
 
   Future<void> _loadProducts() async {
     try {
@@ -65,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erro ao carregar produtos'),
+          content: Text('Erro ao carregar produtos.'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
@@ -112,77 +84,20 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               SizedBox(height: 20),
-              Stack(
-                fit: StackFit.loose,
-                children: [
-                  CarouselSlider(
-                    items: banners,
-                    carouselController: carouselController,
-                    options: CarouselOptions(
-                      height:
-                          MediaQuery.of(context).size.width > breakpointMobile
-                          ? 320
-                          : MediaQuery.of(context).size.width > 460
-                          ? 200
-                          : 240,
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 5),
-                      autoPlayAnimationDuration: Duration(milliseconds: 1200),
-                      enlargeCenterPage: true,
-                      viewportFraction: 1,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          current = current = index;
-                        });
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: banners.asMap().entries.map((entry) {
-                        return GestureDetector(
-                          onTap: () =>
-                              carouselController.animateToPage(entry.key),
-                          child: Container(
-                            width: 8.0,
-                            height: 8.0,
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 4.0,
-                            ),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color:
-                                  (Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.black
-                                          : Colors.white)
-                                      .withOpacity(
-                                        current == entry.key ? 0.9 : 0.4,
-                                      ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
+              BannerComponent(),
               SizedBox(height: 24),
               Row(
                 children: [
-                  //Text(
-                  //  authProvider.isLoggedIn
-                  //  ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
-                  //  : "Seja bem vindo!",
-                  // style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  // fontWeight: FontWeight.bold
-
-                  //),
+                  Expanded(
+                    child: Text(
+                      'Meus pedidos',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SearchComponent(),
                 ],
               ),
               SizedBox(height: 16),

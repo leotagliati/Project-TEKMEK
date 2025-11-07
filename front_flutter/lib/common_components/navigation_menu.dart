@@ -28,7 +28,7 @@ class NavigationMenu extends StatelessWidget {
 
             onTap: () {
               Navigator.pop(context);
-              context.go('/');
+              context.go('/home');
             },
           ),
           if (isLoggedIn) ...[
@@ -46,7 +46,7 @@ class NavigationMenu extends StatelessWidget {
               onTap: () async {
                 Navigator.pop(context);
                 await authProvider.logout();
-                context.go('/');
+                context.go('/home');
               },
             ),
           ] else ...[
