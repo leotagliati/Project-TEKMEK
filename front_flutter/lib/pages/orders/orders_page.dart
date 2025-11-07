@@ -29,7 +29,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
       final List<dynamic> data = await ordersService.getUserItems(userId);
       
-      final List<Order> ordersList = data
+      final List<Order> ordersList = data.reversed
           .map((item) => Order.fromJson(item as Map<String, dynamic>))
           .toList();
 
