@@ -9,8 +9,7 @@ import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
-import 'package:front_flutter/utils/auth_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:front_flutter/pages/home/_compose/welcome_component.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,7 +54,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
     List<Widget> productComponents = [];
     for (var product in products) {
       productComponents.add(ProductComponent(product: product));
@@ -67,48 +65,49 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBarComponent(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    authProvider.isLoggedIn
-                        ? "Seja bem vindo, ${authProvider.user?['username'] ?? 'usuário'}!"
-                        : "Seja bem vindo!",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-
-                    // fontWeight: FontWeight.bold
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              BannerComponent(),
-              SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Meus pedidos',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  spacing: 16,
+                  children: [
+                    BannerComponent(),
+                    WelcomeComponent(),
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Produtos',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SearchComponent(),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        HomeFiltersComponent(),
+                      ],
                     ),
-                  ),
-                  SearchComponent(),
-                ],
+                  ],
+                ),
               ),
-              SizedBox(height: 16),
-              HomeFiltersComponent(),
-              SizedBox(height: 24),
-              FlexibleWrap(
-                isOneRowExpanded: true,
-                spacing: 16,
-                runSpacing: 16,
-                children: productComponents,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+                child: FlexibleWrap(
+                  isOneRowExpanded: true,
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: productComponents,
+                ),
               ),
+              SizedBox(height: 128),
             ],
           ),
         ),

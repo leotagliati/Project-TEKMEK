@@ -84,7 +84,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       if (orders.isEmpty)
                         const Text('Nenhum pedido encontrado.'),
                       for (final order in orders) OrderComponent(order: order),
-                      const SizedBox(height: 192),
+                      const SizedBox(height: 128),
                     ],
                   ),
                 ),

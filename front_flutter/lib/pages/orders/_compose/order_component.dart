@@ -18,11 +18,9 @@ class OrderComponent extends StatelessWidget {
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(16),
       ),
-      margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -41,25 +39,27 @@ class OrderComponent extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
             Column(
-              children: order.items
-                  .map(
-                    (orderProduct) => OrderProductComponent(
-                      product: orderProduct,
-                      amount: orderProduct.quantity,
-                    ),
-                  )
-                  .toList(),
+              children: [
+                Column(
+                  children: order.items
+                      .map(
+                        (orderProduct) => OrderProductComponent(
+                          product: orderProduct,
+                          amount: orderProduct.quantity,
+                        ),
+                      )
+                      .toList(),
+                ),
+                Container(color: Colors.grey.shade500, height: 1),
+              ],
             ),
-            const SizedBox(height: 8),
-            Container(color: Colors.grey.shade500, height: 1),
-            const SizedBox(height: 8),
+            SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'Subtotal: R\$${currency.format(order.totalPrice)}',
+                  'Total: R\$${currency.format(order.totalPrice)}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],

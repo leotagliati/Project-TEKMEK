@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   const AppBarComponent({super.key});
@@ -13,7 +14,11 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
             child: SizedBox(
               height: Scaffold.of(context).appBarMaxHeight,
               child: Padding(
-                padding: const EdgeInsets.all(18.0),
+                padding: EdgeInsets.all(
+                  MediaQuery.of(context).size.width > breakpointMobile
+                      ? 18
+                      : 20,
+                ),
                 child: Image.asset('assets/images/tekmek-logo-text-clear.png'),
               ),
             ),

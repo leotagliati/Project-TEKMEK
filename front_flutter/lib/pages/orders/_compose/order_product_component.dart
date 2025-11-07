@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_flutter/models/order.dart';
+import 'package:front_flutter/utils/breakpoints.dart';
 import 'package:intl/intl.dart';
 
 class OrderProductComponent extends StatelessWidget {
@@ -22,7 +23,7 @@ class OrderProductComponent extends StatelessWidget {
           children: [
             Container(color: Colors.grey.shade500, height: 1),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -30,8 +31,12 @@ class OrderProductComponent extends StatelessWidget {
                     borderRadius: BorderRadiusGeometry.circular(8),
                     child: Image.network(
                       product.imageUrl,
-                      width: constraints.maxWidth > 600 ? 144 : 120,
-                      height: constraints.maxWidth > 600 ? 144 : 120,
+                      width: constraints.maxWidth > breakpointMobile
+                          ? 144
+                          : 120,
+                      height: constraints.maxWidth > breakpointMobile
+                          ? 144
+                          : 120,
                       fit: BoxFit.cover,
                     ),
                   ),
