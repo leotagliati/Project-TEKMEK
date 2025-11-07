@@ -37,14 +37,18 @@ class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
         ),
         SizedBox(height: 16),
         Text(widget.product.name, style: TextStyle(fontSize: 24)),
-        Row(
+        Wrap(
           spacing: 4,
           children: [
-            Icon(Icons.star_border),
-            Icon(Icons.star_border),
-            Icon(Icons.star_border),
-            Icon(Icons.star_border),
-            Icon(Icons.star_border),
+            Row(
+              children: [
+                Icon(Icons.star_border),
+                Icon(Icons.star_border),
+                Icon(Icons.star_border),
+                Icon(Icons.star_border),
+                Icon(Icons.star_border),
+              ],
+            ),
             Text('(0 avaliações)'),
           ],
         ),
@@ -54,8 +58,9 @@ class _ProductDisplayComponentState extends State<ProductDisplayComponent> {
         ),
         Container(color: Colors.grey[400], height: 2),
         Text('Entrega'),
-        Row(
+        Wrap(
           spacing: 8,
+          runSpacing: 8,
           children: radioOptions.map((option) {
             final bool isSelected = _selectedOption == option;
             return OutlinedButton(

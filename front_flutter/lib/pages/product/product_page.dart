@@ -6,6 +6,7 @@ import 'package:front_flutter/models/product.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/pages/product/_compose/product_display_component.dart';
 import 'package:front_flutter/pages/product/_compose/product_specs_component.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:front_flutter/utils/auth_provider.dart';
@@ -28,9 +29,12 @@ class _ProductPageState extends State<ProductPage> {
     final userId = authProvider.user?['idlogin'];
 
     if (userId == null) {
+      context.go('/login');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Você precisa estar logado para adicionar itens.'),
+          content: Text(
+            'Você precisa estar logado para adicionar ao carrinho.',
+          ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
         ),

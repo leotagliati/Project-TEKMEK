@@ -46,9 +46,11 @@ class ProductSpecsComponent extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Conectividade: ${product.connectivity} \nLayout: ${product.layoutSize} \nTipo de keycap: ${product.keycapType}',
-                      style: TextStyle(height: 1.5),
+                    Expanded(
+                      child: Text(
+                        'Conectividade: ${product.connectivity} \nLayout: ${product.layoutSize} \nTipo de keycap: ${product.keycapType}',
+                        style: TextStyle(height: 1.5),
+                      ),
                     ),
                   ],
                 ),
