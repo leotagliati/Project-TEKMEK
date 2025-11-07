@@ -41,38 +41,6 @@ async function emitEvent(type, data) {
 // ROTAS DE PRODUTOS
 // =====================================================
 
-// Busca com filtros
-app.post('/api/products/search', async (req, res) => {
-  const { q } = req.query;
-  const { layoutSize, connectionType } = req.body;
-
-  try {
-    const result = await pool.query('SELECT * FROM products_tb');
-    let filtered = result.rows;
-
-    if (q) {
-      const term = q.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        (p.description && p.description.toLowerCase().includes(term))
-      );
-    }
-
-    if (layoutSize && layoutSize.length > 0) {
-      filtered = filtered.filter(p => layoutSize.includes(p.layout_size));
-    }
-
-    if (connectionType && connectionType.length > 0) {
-      filtered = filtered.filter(p => connectionType.includes(p.connectivity));
-    }
-
-    res.json(filtered);
-  } catch (err) {
-    console.error('Erro na busca:', err.stack);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
-  }
-});
-
 // Listar todos os produtos
 app.get('/api/products', async (req, res) => {
   try {
@@ -83,6 +51,32 @@ app.get('/api/products', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('Erro ao buscar produtos:', err.stack);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+// Buscar produto pelo nome
+app.get('/api/products/search', async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res.status(400).json({ error: 'Parâmetro de busca "q" é obrigatório.' });
+  }
+
+  const searchTerm = `%${q}%`;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM products_tb WHERE name ILIKE $1',
+      [searchTerm]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Nenhum produto encontrado com esse nome.' });
+    }
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error('Erro na busca por nome:', err.stack);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
@@ -102,6 +96,38 @@ app.get('/api/products/:id', async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     console.error(`Erro ao buscar produto id#${productId}:`, err.stack);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+// Nova busca com filtros
+app.post('/api/products/filter', async (req, res) => {
+  const {
+    layoutSize = [],
+    connectionType = [],
+    productType = [],
+    keycapsType = []
+  } = req.body || {};
+
+  try {
+    const result = await pool.query('SELECT * FROM products_tb');
+    let filtered = result.rows;
+
+    if (layoutSize.length > 0) {
+      filtered = filtered.filter(p => layoutSize.includes(p.layout_size));
+    }
+    if (connectionType.length > 0) {
+      filtered = filtered.filter(p => connectionType.includes(p.connectivity));
+    }
+    if (productType.length > 0) {
+      filtered = filtered.filter(p => productType.includes(p.product_type));
+    }
+    if (keycapsType.length > 0) {
+      filtered = filtered.filter(p => keycapsType.includes(p.keycaps_type));
+    }
+    res.json(filtered);
+  } catch (err) {
+    console.error('Erro na filtragem:', err.stack);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
