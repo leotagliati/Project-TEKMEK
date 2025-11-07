@@ -14,6 +14,8 @@ class ApiEndpoints {
 
   // Produtos
   static String get products => '$productsMSBaseUrl/api/products';
+  static String get productsWithFilters =>
+      '$productsMSBaseUrl/api/products/filter';
   static String productById(String id) => '$productsMSBaseUrl/api/products/$id';
   static String searchProductsByTerm(String term) =>
       '$productsMSBaseUrl/api/products/search?q=$term';

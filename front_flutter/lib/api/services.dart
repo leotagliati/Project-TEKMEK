@@ -29,6 +29,26 @@ class ProductsService {
     }
   }
 
+  Future<List<Product>> getProductsFiltered(
+    Map<String, dynamic> filters,
+  ) async {
+    final response = await _requestHandler.post(
+      ApiEndpoints.productsWithFilters,
+      filters,
+    );
+
+    if (response is List) {
+      return response
+          .map(
+            (productJson) =>
+                Product.fromJson(productJson as Map<String, dynamic>),
+          )
+          .toList();
+    } else {
+      throw Exception('Resposta inesperada do servidor: esperava uma Lista.');
+    }
+  }
+
   Future<List<dynamic>> searchProducts(String term) async {
     final response = await _requestHandler.get(
       ApiEndpoints.searchProductsByTerm(term),
