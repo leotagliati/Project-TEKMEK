@@ -105,7 +105,7 @@ app.post('/event', async (req, res) => {
                     return res.status(400).json({ error: 'Dados inválidos no evento.' });
                 }
 
-                const totalValue = items.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0);
+                const totalValue = items.reduce((acc, item) => acc + (item.price), 0);
 
                 const newOrder = await pool.query(
                     `INSERT INTO orders_tb (user_id, status, valor_total, created_at, updated_at)
