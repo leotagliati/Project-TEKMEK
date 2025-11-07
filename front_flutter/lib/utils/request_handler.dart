@@ -32,7 +32,7 @@ class RequestHandler {
   RequestHandler._internal();
   factory RequestHandler() => _instance;
 
-  final TokenHandler _tokenHandler = TokenHandler();
+  final TokenHandler _tokenHandler = TokenHandler(); 
 
   /// Monta a URI com query params, se existirem
 

@@ -95,7 +95,13 @@ const registerUser = async (username, password) => {
     [username, hashedPassword, isAdmin]
   );
 
-  return inserted[0];
+  const newUser = inserted[0];
+  return {
+    idlogin: newUser.idlogin,
+    username: newUser.username,
+    isAdmin: newUser.is_admin 
+  };
+
 };
 
 const validateLogin = async (username, password) => {
