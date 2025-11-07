@@ -22,5 +22,8 @@ Router cartRoutes(CartController controller) {
   // POST evento de checkout (enviar para barramento)
   router.post('/api/req-order', controller.checkout);
 
+  // POST recebe os eventos
+  router.post('/event', controller.handleEvent);
+
   return router;
 }

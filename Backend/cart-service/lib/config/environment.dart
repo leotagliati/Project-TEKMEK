@@ -9,4 +9,5 @@ class Environment {
   static String get dbPassword => _env['DB_PASSWORD'] ?? '';
   static String get eventBusUrl =>
       _env['EVENT_BUS_URL'] ?? 'http://localhost:5300/event';
+  static String get msPort => _env['MS_PORT'] ?? 'UNDEFINED_PORT';
 }

@@ -112,4 +112,53 @@ class CartRepository {
       parameters: {'userId': userId},
     );
   }
+
+  Future<void> insertCartProduct({
+    required int productId,
+    required String name,
+    required double price,
+    required String imageUrl,
+  }) async {
+    await conn.execute(
+      Sql.named('''
+      INSERT INTO cart_products_tb (product_id, name, price, image_url)
+      VALUES (@productId, @name, @price, @imageUrl)
+      ON CONFLICT (product_id) DO NOTHING
+    '''),
+      parameters: {
+        'productId': productId,
+        'name': name,
+        'price': price,
+        'imageUrl': imageUrl,
+      },
+    );
+  }
+
+  Future<void> updateCartProduct({
+    required int productId,
+    required String name,
+    required double price,
+    required String imageUrl,
+  }) async {
+    await conn.execute(
+      Sql.named('''
+      UPDATE cart_products_tb
+      SET name = @name, price = @price, image_url = @imageUrl
+      WHERE product_id = @productId
+    '''),
+      parameters: {
+        'productId': productId,
+        'name': name,
+        'price': price,
+        'imageUrl': imageUrl,
+      },
+    );
+  }
+
+  Future<void> deleteCartProduct(int productId) async {
+    await conn.execute(
+      Sql.named('DELETE FROM cart_products_tb WHERE product_id = @productId'),
+      parameters: {'productId': productId},
+    );
+  }
 }

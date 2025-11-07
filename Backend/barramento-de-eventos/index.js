@@ -26,6 +26,10 @@ const eventRoutes = {
     ProductUpdated: [
         { service: 'cartService' }
     ],
+
+    ProductRemoved: [
+        { service: 'cartService' }
+    ]
 };
 
 app.post('/event', async (req, res) => {
@@ -33,12 +37,12 @@ app.post('/event', async (req, res) => {
     const eventType = event.type;
 
     if (eventRoutes[eventType]) {
-        // console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
+        console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
         try {
             const promises = eventRoutes[eventType].map(({ service }) => {
                 const { port } = services[service];
                 const url = `http://localhost:${port}/event`;
-                // console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
+                console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
                 return axios.post(url, event);
             });
 

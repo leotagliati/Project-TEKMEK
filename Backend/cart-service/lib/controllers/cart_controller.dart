@@ -87,7 +87,7 @@ class CartController {
     }
   }
 
-  // PUT /api/cart/update
+  // PUT /api/checkout
   Future<Response> updateCartItem(Request req) async {
     final body = jsonDecode(await req.readAsString());
     final userId = body['userId'];
@@ -129,7 +129,7 @@ class CartController {
     }
   }
 
-  // DELETE /api/cart/remove
+  // DELETE /api/checkout
   Future<Response> removeFromCart(Request req) async {
     final body = jsonDecode(await req.readAsString());
     final userId = body['userId'];
@@ -153,7 +153,7 @@ class CartController {
     }
   }
 
-  // DELETE /api/cart/clear?userId=1
+  // DELETE /api/checkout?userId=1
   Future<Response> clearCart(Request req) async {
     final userId = int.tryParse(req.url.queryParameters['userId'] ?? '');
     if (userId == null) {
@@ -231,6 +231,72 @@ class CartController {
     } catch (e) {
       return Response.internalServerError(
         body: jsonEncode({'error': 'Erro ao buscar produtos do checkout: $e'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  }
+
+  Future<Response> handleEvent(Request req) async {
+    try {
+      final payload = await req.readAsString();
+      final event = jsonDecode(payload);
+
+      final type = event['type'];
+      final data = event['data'];
+
+      print('Evento recebido: $type');
+      print('Dados: $data');
+
+      switch (type) {
+        case 'ProductCreated':
+          await repository.insertCartProduct(
+            productId: data['id'],
+            name: data['name'],
+            price: (data['price'] is int)
+                ? (data['price'] as int).toDouble()
+                : (data['price'] is double)
+                    ? data['price']
+                    : double.tryParse(data['price'].toString()) ?? 0.0,
+            imageUrl: data['image_url'],
+          );
+          print('Tabela de produto sincronizada: ${data['name']}');
+          break;
+
+        case 'ProductUpdated':
+          await repository.updateCartProduct(
+            productId: data['id'],
+            name: data['name'],
+            price: (data['price'] is int)
+                ? (data['price'] as int).toDouble()
+                : (data['price'] is double)
+                    ? data['price']
+                    : double.tryParse(data['price'].toString()) ?? 0.0,
+            imageUrl: data['image_url'],
+          );
+          print('Tabela de produto sincronizada: ${data['name']}');
+          break;
+
+        case 'ProductDeleted':
+          final productId = data['id'];
+          if (productId != null) {
+            await repository.deleteCartProduct(productId);
+            print('Tabela de produto sincronizada: ${data['name']}');
+          }
+          break;
+
+        default:
+          print(
+              'Evento ignorado: $type'); // nao deve acontecer, ja que o barramento envia somente pra quem ouve
+      }
+
+      return Response.ok(
+        jsonEncode({'status': 'Evento processado com sucesso'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      print('Erro ao processar evento: $e');
+      return Response.internalServerError(
+        body: jsonEncode({'error': 'Falha ao processar evento: $e'}),
         headers: {'Content-Type': 'application/json'},
       );
     }

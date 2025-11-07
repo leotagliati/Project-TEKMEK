@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cart_service/config/database.dart';
+import 'package:cart_service/config/environment.dart';
 import 'package:cart_service/controllers/cart_controller.dart';
 import 'package:cart_service/repositories/cart_repo.dart';
 import 'package:cart_service/routes/cart_routes.dart';
@@ -19,7 +20,8 @@ void main() async {
       .addMiddleware(corsHeaders())
       .addHandler(router);
 
-  final server = await io.serve(handler, InternetAddress.anyIPv4, 5245);
+  final server = await io.serve(
+      handler, InternetAddress.anyIPv6, int.parse(Environment.msPort));
   print('--------------------------------------------');
   print('Servidor rodando na porta ${server.port}');
   print('--------------------------------------------');

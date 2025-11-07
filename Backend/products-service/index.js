@@ -26,10 +26,8 @@ pool.connect((err, client, release) => {
   release();
 });
 
-// URL do barramento de eventos (pode ser o Event Bus Node/Dart)
-const EVENT_BUS_URL = process.env.EVENT_BUS_URL || 'http://localhost:5005/event';
+const EVENT_BUS_URL = process.env.EVENT_BUS_URL || 'UNDEFINED_URL';
 
-// Função auxiliar para emitir eventos
 async function emitEvent(type, data) {
   try {
     await axios.post(EVENT_BUS_URL, { type, data });
