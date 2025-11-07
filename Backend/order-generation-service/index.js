@@ -56,7 +56,7 @@ app.get('/api/user/orders', async (req, res) => {
         );
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Nenhum pedido encontrado para este usuário.' });
+            return res.status(200).json([]);
         }
 
         // Agrupa os itens por pedido
