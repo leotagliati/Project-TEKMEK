@@ -8,7 +8,16 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Row(
         children: [
-          Expanded(child: Text("TEKMEK", textAlign: TextAlign.center)),
+          // Expanded(child: Text("TEKMEK", textAlign: TextAlign.center)),
+          Expanded(
+            child: SizedBox(
+              height: Scaffold.of(context).appBarMaxHeight,
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Image.asset('assets/images/tekmek-logo-text-clear.png'),
+              ),
+            ),
+          ),
         ],
       ),
       backgroundColor: Colors.grey[300],
@@ -17,7 +26,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
           minWidth: 56,
           maxWidth: 56,
           minHeight: 56,
-          maxHeight: 56
+          maxHeight: 56,
         ),
         child: Builder(
           builder: (BuildContext context) {
