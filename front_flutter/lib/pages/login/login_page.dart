@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      logo: const AssetImage('images/tekmek_logo.png'),
+      logo: const AssetImage('images/tekmek-logo-clear.png'),
 
       title: 'Seja bem-vindo!',
 
