@@ -5,7 +5,8 @@ import 'package:front_flutter/common_components/navigation_menu.dart';
 import 'package:front_flutter/pages/cart/cart_component.dart';
 import 'package:front_flutter/pages/orders/_compose/order_component.dart';
 import 'package:front_flutter/models/order.dart';
-
+import 'package:front_flutter/utils/auth_provider.dart';
+import 'package:provider/provider.dart';
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
@@ -22,10 +23,16 @@ class _OrdersPageState extends State<OrdersPage> {
     super.initState();
     _loadOrders();
   }
+  int? _getUserId(BuildContext context) {
+    return context.read<AuthProvider>().user?['idlogin'];
+  }
+
+
 
   Future<void> _loadOrders() async {
     try {
-      final userId = 1; //CHUMBADO
+      final userId = _getUserId(context);
+      if (userId == null) return;
 
       final List<dynamic> data = await ordersService.getUserItems(userId);
       
