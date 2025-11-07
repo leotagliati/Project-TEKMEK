@@ -5,25 +5,21 @@ import 'package:front_flutter/pages/product/product_page.dart';
 import 'package:go_router/go_router.dart';
 import '../pages/login/login_page.dart';
 import '../pages/admin/admin_page.dart';
-import 'package:front_flutter/pages/orders/orders_page.dart'; // <-- MUDANÇA: Importar a página de pedidos
-import 'package:front_flutter/utils/auth_provider.dart'; 
+import 'package:front_flutter/utils/auth_provider.dart';
 
 class AppRouter {
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
       refreshListenable: authProvider,
-      initialLocation: '/',
+      initialLocation: '/home',
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const HomePage(),
-        ),
+        GoRoute(path: '/home', builder: (context, state) => const HomePage()),
         GoRoute(
           path: '/product/:id',
           redirect: (context, state) {
             final id = state.pathParameters['id'];
             if (id == null || int.tryParse(id) == null) {
-              return '/';
+              return '/home';
             }
             return null;
           },
@@ -32,19 +28,14 @@ class AppRouter {
             return ProductPage(productId: productId);
           },
         ),
-        
-        // --- MUDANÇA: Rota de Pedidos Adicionada ---
         GoRoute(
           path: '/orders',
           builder: (context, state) => const OrdersPage(),
           redirect: (context, state) {
-            // Protege a rota, assim como o menu faz
             if (!authProvider.isLoggedIn) return '/login';
             return null;
           },
         ),
-        // --- FIM DA MUDANÇA ---
-
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
@@ -69,9 +60,8 @@ class AppRouter {
       ],
       redirect: (context, state) {
         final isLoggedIn = authProvider.isLoggedIn;
-
         if (state.matchedLocation == '/login' && isLoggedIn) {
-          return '/';
+          return '/home';
         }
         return null;
       },

@@ -72,7 +72,7 @@ class LoginScreen extends StatelessWidget {
       onRecoverPassword: (name) => _recoverPassword(context, name),
 
       onSubmitAnimationCompleted: () {
-        GoRouter.of(context).pushReplacement('/');
+        GoRouter.of(context).pushReplacement('/home');
       },
 
       theme: LoginTheme(

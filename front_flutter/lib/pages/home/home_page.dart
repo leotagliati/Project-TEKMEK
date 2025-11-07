@@ -9,10 +9,8 @@ import 'package:front_flutter/pages/home/_compose/banner_component.dart';
 import 'package:front_flutter/pages/home/_compose/filters_button.dart';
 import 'package:front_flutter/pages/home/_compose/product_component.dart';
 import 'package:front_flutter/api/services.dart';
-
 import 'package:front_flutter/utils/auth_provider.dart';
 import 'package:provider/provider.dart';
-
 import 'package:front_flutter/utils/breakpoints.dart';
 
 class HomePage extends StatefulWidget {
@@ -65,7 +63,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erro ao carregar produtos'),
+          content: Text('Erro ao carregar produtos.'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),

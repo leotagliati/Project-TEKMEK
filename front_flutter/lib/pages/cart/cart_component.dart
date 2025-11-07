@@ -104,7 +104,7 @@ class _CartComponentState extends State<CartComponent> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erro ao finalizar carrinho'),
+          content: Text('Erro ao finalizar carrinho.'),
           backgroundColor: Colors.redAccent,
         ),
       );
