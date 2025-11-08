@@ -8,6 +8,6 @@ RUN dart pub get
 
 COPY . .
 
-EXPOSE 5316
+EXPOSE 5245
 
 CMD ["dart", "run", "index.dart"]

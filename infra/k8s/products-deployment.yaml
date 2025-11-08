@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-build-keyboard-deployment
+  name: tekmek-products-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: build-keyboard
+      app: products
   template:
     metadata:
       labels:
-        app: build-keyboard
+        app: products
     spec:
       containers:
-        - name: build-keyboard
-          image: quazmo/tekmek-build-keyboard
+        - name: products
+          image: quazmo/tekmek-products
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-build-keyboard-clusterip-service
+  name: tekmek-products-clusterip-service
 spec:
   selector:
-    app: build-keyboard
+    app: products
   ports:
-    - name: build-keyboard
+    - name: products
       protocol: TCP
-      port: 5310
-      targetPort: 5310
+      port: 5240
+      targetPort: 5240

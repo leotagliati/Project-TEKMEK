@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-admin-product-manager-deployment
+  name: tekmek-order-generation-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: admin-product-manager
+      app: order-generation
   template:
     metadata:
       labels:
-        app: admin-product-manager
+        app: order-generation
     spec:
       containers:
-        - name: admin-product-manager
-          image: quazmo/tekmek-admin-product-manager
+        - name: order-generation
+          image: quazmo/tekmek-order-generation
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-admin-product-manager-clusterip-service
+  name: tekmek-order-generation-clusterip-service
 spec:
   selector:
-    app: admin-product-manager
+    app: order-generation
   ports:
-    - name: admin-product-manager
+    - name: order-generation
       protocol: TCP
-      port: 3000
-      targetPort: 3000
+      port: 5250
+      targetPort: 5250

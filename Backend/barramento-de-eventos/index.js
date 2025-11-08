@@ -5,11 +5,24 @@ const app = express();
 app.use(express.json());
 
 const services = {
-    userLoginService: { port: process.env.USER_LOGIN_SERVICE_PORT },
-    cartService: { port: process.env.CART_SERVICE_PORT },
-    orderGenerationService: { port: process.env.ORDER_GENERATION_SERVICE_PORT },
-    productsService: { port: process.env.PRODUCTS_SERVICE_PORT },
+    userLoginService: { 
+        port: process.env.USER_LOGIN_SERVICE_PORT,
+        url: process.env.USER_LOGIN_SERVICE_URL
+     },
+    cartService: { 
+        port: process.env.CART_SERVICE_PORT,
+        url: process.env.CART_SERVICE_URL
+     },
+    orderGenerationService: { 
+        port: process.env.ORDER_GENERATION_SERVICE_PORT,
+        url: process.env.ORDER_GENERATION_SERVICE_URL
+    },
+    productsService: { 
+        port: process.env.PRODUCTS_SERVICE_PORT,
+        url:  process.env.PRODUCTS_SERVICE_URL
+    },
 };
+
 
 const eventRoutes = {
     // Registrar os servicos que ouvem os eventos
@@ -40,8 +53,9 @@ app.post('/event', async (req, res) => {
         console.log(`Microsserviços ouvindo o evento '${eventType}':`, eventRoutes[eventType]);
         try {
             const promises = eventRoutes[eventType].map(({ service }) => {
-                const { port } = services[service];
-                const url = `http://localhost:${port}/event`;
+                const { port } = services[service.port];
+                const { baseurl } = services[service.url];
+                const url = `http://${baseurl}:${port}/event`;
                 console.log(`Enviando evento '${eventType}' para o microsserviço: ${service} na rota: ${url}`);
                 return axios.post(url, event);
             });

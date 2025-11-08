@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tekmek-search-products-deployment
+  name: tekmek-cart-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: search-products
+      app: cart
   template:
     metadata:
       labels:
-        app: search-products
+        app: cart
     spec:
       containers:
-        - name: search-products
-          image: quazmo/tekmek-search-products
+        - name: cart
+          image: quazmo/tekmek-cart
           resources:
             limits:
               memory: 256Mi
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tekmek-search-products-clusterip-service
+  name: tekmek-cart-clusterip-service
 spec:
   selector:
-    app: search-products
+    app: cart
   ports:
-    - name: search-products
+    - name: cart
       protocol: TCP
-      port: 5240
-      targetPort: 5240
+      port: 5245
+      targetPort: 5245

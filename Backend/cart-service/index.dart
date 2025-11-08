@@ -21,7 +21,7 @@ void main() async {
       .addHandler(router);
 
   final server = await io.serve(
-      handler, InternetAddress.anyIPv6, int.parse(Environment.msPort));
+      handler, InternetAddress.anyIPv4, int.parse(Environment.msPort));
   print('--------------------------------------------');
   print('Servidor rodando na porta ${server.port}');
   print('--------------------------------------------');
