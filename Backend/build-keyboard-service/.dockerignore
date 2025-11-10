@@ -1,0 +1,5 @@
+<<<<<<< HEAD:Backend/cart-service/.dockerignore
+.dart_tool
+=======
+node_modules
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc:Backend/build-keyboard-service/.dockerignore

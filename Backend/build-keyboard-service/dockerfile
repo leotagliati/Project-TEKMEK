@@ -1,0 +1,29 @@
+<<<<<<< HEAD:Backend/cart-service/dockerfile
+FROM dart:stable
+
+WORKDIR /app
+
+COPY pubspec.* ./
+
+RUN dart pub get
+
+COPY . .
+
+EXPOSE 5316
+
+CMD ["dart", "run", "index.dart"]
+=======
+FROM node:24-alpine3.21
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5310
+
+CMD ["node", "index.js"]
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc:Backend/build-keyboard-service/dockerfile

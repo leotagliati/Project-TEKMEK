@@ -19,7 +19,6 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "login-register-service": "file:",
-    "mysql2": "^3.14.1",
-    "pg": "^8.16.0"
+    "mysql2": "^3.14.1"
   }
 }

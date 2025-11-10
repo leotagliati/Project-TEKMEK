@@ -3,17 +3,25 @@ import ProductCard from './components/ProductCard'
 import client from './utils/searchClient.js'
 import { InputText } from 'primereact/inputtext'
 import ProductFilters from './components/ProductFilters.jsx'
+<<<<<<< HEAD
 import { Link, useParams } from 'react-router-dom'
 import Cart from './components/cart.jsx'
 
+=======
+import { Link } from 'react-router-dom'
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc
 
 export const ProductSearchPage = () => {
     const [produtos, setProdutos] = useState([])
     const [filters, setFilters] = useState({})
     const [searchTerm, setSearchTerm] = useState('')
+<<<<<<< HEAD
     const [showCart, setShowCart] = useState(false)
     const { idlogin } = useParams()
     const username = localStorage.getItem("username")
+=======
+
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc
 
     useEffect(() => {
         client.post('/search',
@@ -44,13 +52,14 @@ export const ProductSearchPage = () => {
             {/* Header e Barra de Pesquisa */}
             <div>
                 <header className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4 py-2">
-                    <Link to="/" className="d-flex align-items-center text-decoration-none text-dark">
-                        <img src="logo.png" alt="Logo" style={{ height: '50px' }} />
-                        <h2 className="ms-2">Tekmek</h2>
-                    </Link>
+                    <a className="navbar-brand me-4" href="#">TEKMEK</a>
 
                     <div className="flex-grow-1 d-flex justify-content-center">
+<<<<<<< HEAD
                         <div className="p-input-icon-left" style={{ width: '100%', maxWidth: '600px' }}>
+=======
+                        <div className="p-input-icon-left " style={{ width: '100%', maxWidth: '600px' }}>
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc
                             <i className="px-2 pi pi-search" />
                             <InputText
                                 placeholder="Search"
@@ -59,7 +68,6 @@ export const ProductSearchPage = () => {
                             />
                         </div>
                     </div>
-
                     <div className="d-flex align-items-center gap-3 ms-4">
                         <Link to="/login" className="text-dark" title="Login">
                             <i className="pi pi-user" style={{ fontSize: '1.3rem' }} />
@@ -77,6 +85,7 @@ export const ProductSearchPage = () => {
                     </div>
                 </header>
             </div>
+<<<<<<< HEAD
 
             {/* Mensagem personalizada */}
             <div className="text-center mt-4">
@@ -84,11 +93,15 @@ export const ProductSearchPage = () => {
             </div>
 
             <div className='mt-4 d-flex'>
+=======
+            <div className='d-flex'>
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc
                 {/* Sidebar de Filtros */}
                 <ProductFilters onChange={handleFiltersChange} />
 
                 {/* Lista de Produtos */}
                 <main className='bg-light col-9 p-4' style={{ height: '100vh', overflowY: 'auto' }}>
+<<<<<<< HEAD
                     <div className='row row-gap-4'>
                         {produtos.length > 0 ? (
                             produtos.map((product) => (
@@ -106,6 +119,29 @@ export const ProductSearchPage = () => {
                                 <h3>Nenhum produto encontrado</h3>
                             </div>
                         )}
+=======
+                    <div className='row'>
+                        {
+                            produtos.length > 0 ? (
+                                produtos.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        id={product.id}
+                                        title={product.name}
+                                        description={product.description}
+                                        price={product.price}
+                                        image={product.image_url}
+                                    />
+                                ))
+                            ) : (
+                                <div className='col-12 text-center'>
+                                    <h3>Nenhum produto encontrado</h3>
+                                </div>
+                            )
+
+                        }
+
+>>>>>>> ab3efef0e4dffaefacf2aaed0b7a952279394fbc
                     </div>
                 </main>
             </div>
