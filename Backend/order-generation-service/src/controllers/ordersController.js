@@ -1,13 +1,10 @@
 import { ordersService } from "../services/ordersService"
 
 export const ordersController = {
-    async getAll(req, res) {
-
-    },
     async getOrdersByUserId(req, res) {
         try {
             const orders = await ordersService.getOrdersByUserId(req.params.id);
-            if (!orders || orders.length) return res.status(404).json({ error: 'Nenhum pedido encontrado.' });
+            if (!orders || orders.length === 0) return res.status(404).json({ error: 'Nenhum pedido encontrado.' });
             res.json(orders);
         } catch (err) {
             console.error(err);

@@ -3,6 +3,6 @@ const { ordersController } = require("../controllers/ordersController");
 
 const router = Router();
 
-router.get('/', ordersController.getOrdersByUserId);
+router.get('/user', ordersController.getOrdersByUserId);
 
 export default router;
